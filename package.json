@@ -1,8 +1,8 @@
 {
-  "name": "hmpps-template-typescript",
+  "name": "approved-premises-alpha",
   "version": "0.0.1",
-  "description": "HMPPS Typescript Template",
-  "repository": "git@github.com:ministryofjustice/hmpps-template-typescript.git",
+  "description": "Approved Premises Alpha",
+  "repository": "git@github.com:ministryofjustice/approved-premises-alpha.git",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
