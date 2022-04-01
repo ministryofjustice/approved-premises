@@ -22,7 +22,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - SPRING_H2_CONSOLE_SETTINGS_WEBALLOWOTHERS=true
 
   app:
     build: .
@@ -36,8 +36,8 @@ services:
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
       # These will need to match new creds in the seed auth service auth
-      - API_CLIENT_ID=client-id
-      - API_CLIENT_SECRET=client-secret
+      - API_CLIENT_ID=approved-premises
+      - API_CLIENT_SECRET=clientsecret
       - SYSTEM_CLIENT_ID=system-client-id
       - SYSTEM_CLIENT_SECRET=system-client-secret
 
