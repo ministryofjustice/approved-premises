@@ -1,0 +1,39 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Find a placement" %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <h1>Find a matching AP placement</h1>
+        <form method="get" action="/placements">
+          {{ govukInput({
+            label: {
+              text: "What is the target location for this person?"
+            },
+            classes: "govuk-input--width-20",
+            hint: {
+                text: "Enter a place name or postcode"
+              },
+            id: "placement_search[location]",
+            name: "placement_search[location]"
+          }) }}
+
+
+          {{ govukButton({
+            text: "Find matching AP placements"
+          }) }}
+
+        </form>
+
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
+
+

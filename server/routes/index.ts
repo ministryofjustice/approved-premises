@@ -9,6 +9,10 @@ export default function routes(router: Router): Router {
     res.render('pages/index')
   })
 
+  get('/placements', (req, res, next) => {
+    res.render('pages/placementsIndex')
+  })
+
   get('/risks/summary', (req, res, next) => {
     const risks = {
       risks: {
