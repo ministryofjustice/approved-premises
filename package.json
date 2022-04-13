@@ -109,9 +109,12 @@
     "nunjucks": "^3.2.3",
     "passport": "^0.5.2",
     "passport-oauth2": "^1.6.1",
+    "pg": "^8.7.3",
     "prom-client": "^14.0.1",
     "redis": "^4.0.4",
+    "reflect-metadata": "^0.1.13",
     "superagent": "^7.1.1",
+    "typeorm": "^0.3.6",
     "url-value-parser": "^2.1.0",
     "uuid": "^8.3.2"
   },
