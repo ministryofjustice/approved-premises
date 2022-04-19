@@ -1,12 +1,32 @@
 import type { RequestHandler, Router } from 'express'
-
+import { Premises } from '../entity/premises'
+import SeedPremises from '../services/seedPremises'
+import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
 
   get('/', (req, res, next) => {
     res.render('pages/index')
+  })
+
+  get('/premises', async (req, res, next) => {
+    const premises = await AppDataSource.getRepository(Premises).find()
+    const apRows = premises.map(ap => {
+      return [{ text: ap.name }, { text: ap.postcode }]
+    })
+    res.render('pages/premisesIndex', { apRows, csrfToken: req.csrfToken() })
+  })
+
+  post('/seed/premises', async (req, res, next) => {
+    await SeedPremises.run()
+    const premises = await AppDataSource.getRepository(Premises).find()
+    const apRows = premises.map(ap => {
+      return [{ text: ap.name }, { text: ap.postcode }]
+    })
+    res.redirect('/premises')
   })
 
   get('/placements', (req, res, next) => {
