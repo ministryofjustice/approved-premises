@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 
 {% set pageTitle = applicationName + " - Find a placement" %}
@@ -13,6 +14,28 @@
       <div class="govuk-grid-column-full">
         <h1>Approved premises</h1>
 
+        {{ govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: [
+            {
+              key: {
+                text: "Count of premises"
+              },
+              value: {
+                text: apCount
+              }
+            },
+            {
+              key: {
+                text: "Count of beds"
+              },
+              value: {
+                text: "to follow"
+              }
+            }
+          ]
+        }) }}
+
         <form action="/seed/premises" method="post">
           <input type="hidden" name="_csrf" value={{csrfToken}}>
 
@@ -24,12 +47,22 @@
           }) }}
         </form>
 
+
         {{ govukTable({
           captionClasses: "govuk-table__caption--l",
           firstCellIsHeader: true,
           head: [
             {
+              text: "AP Code"
+            },
+            {
               text: "Name"
+            },
+            {
+              text: "Town"
+            },
+            {
+              text: "Probation region"
             },
             {
               text: "Postcode"

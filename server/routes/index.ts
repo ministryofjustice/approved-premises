@@ -1,5 +1,5 @@
 import type { RequestHandler, Router } from 'express'
-import { Premises } from '../entity/premises'
+import Premises from '../entity/premises'
 import SeedPremises from '../services/seedPremises'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -13,19 +13,28 @@ export default function routes(router: Router): Router {
   })
 
   get('/premises', async (req, res, next) => {
-    const premises = await AppDataSource.getRepository(Premises).find()
-    const apRows = premises.map(ap => {
-      return [{ text: ap.name }, { text: ap.postcode }]
+    const premises = await AppDataSource.getRepository(Premises).find({
+      order: {
+        probationRegion: 'ASC',
+        town: 'ASC',
+        name: 'ASC',
+      },
     })
-    res.render('pages/premisesIndex', { apRows, csrfToken: req.csrfToken() })
+    const apCount = await AppDataSource.getRepository(Premises).count()
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apCode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.probationRegion },
+        { text: ap.postcode },
+      ]
+    })
+    res.render('pages/premisesIndex', { apCount, apRows, csrfToken: req.csrfToken() })
   })
 
   post('/seed/premises', async (req, res, next) => {
     await SeedPremises.run()
-    const premises = await AppDataSource.getRepository(Premises).find()
-    const apRows = premises.map(ap => {
-      return [{ text: ap.name }, { text: ap.postcode }]
-    })
     res.redirect('/premises')
   })
 

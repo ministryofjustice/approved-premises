@@ -84,6 +84,7 @@
     ]
   },
   "dependencies": {
+    "@fast-csv/parse": "^4.3.6",
     "@ministryofjustice/frontend": "^1.2.0",
     "agentkeepalive": "^4.2.1",
     "applicationinsights": "^2.2.1",

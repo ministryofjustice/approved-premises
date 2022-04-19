@@ -45,7 +45,8 @@ export default {
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
   database: {
-    url: process.env.DATABASE_URL
+    url: process.env.DATABASE_URL,
+    seedfile: process.env.DATABASE_SEED_FILE,
   },
   apis: {
     hmppsAuth: {
