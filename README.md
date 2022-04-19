@@ -14,6 +14,16 @@ The app requires:
 * hmpps-auth - for authentication
 * redis - session store and token caching
 
+### Environment variables
+
+For simplicity during our alpha phase, we are using a full-stack approach with a
+database. We use a couple of db-related environment variables, which can be set
+locally e.g. in a `.env` file.
+
+- `DATABASE_URL` - path to the db
+- `DATABASE_SEED_FILE` - absolute file path to CSV with details of APs and their beds
+
+
 ### Running the app for development
 
 To start the main services excluding the example typescript template app: 
