@@ -1,5 +1,6 @@
 import type { RequestHandler, Router } from 'express'
 import Premises from '../entity/premises'
+import Bed from '../entity/bed'
 import SeedPremises from '../services/seedPremises'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -8,7 +9,7 @@ export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
 
-  get('/', (req, res, next) => {
+  get('/', (_req, res, next) => {
     res.render('pages/index')
   })
 
@@ -21,6 +22,7 @@ export default function routes(router: Router): Router {
       },
     })
     const apCount = await AppDataSource.getRepository(Premises).count()
+    const bedCount = await AppDataSource.getRepository(Bed).count()
     const apRows = premises.map(ap => {
       return [
         { text: ap.apCode },
@@ -30,10 +32,10 @@ export default function routes(router: Router): Router {
         { text: ap.postcode },
       ]
     })
-    res.render('pages/premisesIndex', { apCount, apRows, csrfToken: req.csrfToken() })
+    res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
   })
 
-  post('/seed/premises', async (req, res, next) => {
+  post('/seed/premises', async (_req, res, next) => {
     await SeedPremises.run()
     res.redirect('/premises')
   })

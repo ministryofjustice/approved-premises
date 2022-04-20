@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, Index, OneToMany } from 'typeorm'
+// eslint-disable-next-line import/no-cycle
+import Bed from './bed'
 
 @Entity()
 export default class Premises {
@@ -30,4 +32,7 @@ export default class Premises {
 
   @Column()
   postcode: string
+
+  @OneToMany(() => Bed, bed => bed.premises)
+  beds: Bed[]
 }

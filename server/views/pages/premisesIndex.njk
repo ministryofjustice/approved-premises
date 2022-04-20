@@ -14,62 +14,74 @@
       <div class="govuk-grid-column-full">
         <h1>Approved premises</h1>
 
-        {{ govukSummaryList({
-          classes: 'govuk-summary-list--no-border',
-          rows: [
-            {
-              key: {
-                text: "Count of premises"
-              },
-              value: {
-                text: apCount
-              }
-            },
-            {
-              key: {
-                text: "Count of beds"
-              },
-              value: {
-                text: "to follow"
-              }
-            }
-          ]
-        }) }}
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            {{ govukSummaryList({
+              classes: 'govuk-summary-list--no-border',
+              rows: [
+                {
+                  key: {
+                    text: "Total premises"
+                  },
+                  value: {
+                    text: apCount,
+                    classes: 'govuk-!-text-align-right'
+                  }
+                },
+                {
+                  key: {
+                    text: "Total beds"
+                  },
+                  value: {
+                    text: bedCount,
+                    classes: 'govuk-!-text-align-right'
+                  }
+                }
+              ]
+            }) }}
 
-        <form action="/seed/premises" method="post">
-          <input type="hidden" name="_csrf" value={{csrfToken}}>
+            <form action="/seed/premises" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
 
-          {{ govukButton({
-            element: "button",
-            type: "submit",
-            text: "Seed APs",
-            classes: "govuk-button--warning"
-          }) }}
-        </form>
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Seed APs",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
+          </div>
 
+          <div class="govuk-grid-column-one-half">
+          </div>
+        </div>
 
-        {{ govukTable({
-          captionClasses: "govuk-table__caption--l",
-          firstCellIsHeader: true,
-          head: [
-            {
-              text: "AP Code"
-            },
-            {
-              text: "Name"
-            },
-            {
-              text: "Town"
-            },
-            {
-              text: "Probation region"
-            },
-            {
-              text: "Postcode"
-            }
-          ],
-          rows: apRows
-        }) }}
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            {{ govukTable({
+              captionClasses: "govuk-table__caption--l",
+              firstCellIsHeader: true,
+              head: [
+                {
+                  text: "AP Code"
+                },
+                {
+                  text: "Name"
+                },
+                {
+                  text: "Town"
+                },
+                {
+                  text: "Probation region"
+                },
+                {
+                  text: "Postcode"
+                }
+              ],
+              rows: apRows
+            }) }}
+          </div>
+        </div>
       </div>
     </div>
   </main>

@@ -1,8 +1,8 @@
-import * as fs from 'fs'
 import * as csv from '@fast-csv/parse'
 import AppDataSource from '../dataSource'
 import config from '../config'
 import Premises from '../entity/premises'
+import Bed from '../entity/bed'
 
 const headers = [
   'name',
@@ -14,26 +14,27 @@ const headers = [
   'postcode',
   'bed_count',
   'ap_bed_code',
-].concat([...Array(28)])
+  'gender',
+].concat([...Array(27)])
 
 const SeedPremises = {
   async run() {
-    console.log('running seeding')
+    console.log('Seeding premises')
 
-    await AppDataSource.manager.query(`TRUNCATE TABLE premises`)
+    await AppDataSource.manager.query(`TRUNCATE TABLE beds, premises;`)
 
     const processedPremises = new Set(['Approved Premises'])
-    const processingList: Premises[] = []
+    const apProcessingList: Premises[] = []
 
-    await fs
-      .createReadStream(config.database.seedfile)
-      .pipe(csv.parse({ headers, ignoreEmpty: true }))
+    csv
+      .parseFile(config.database.seedfile, { headers, ignoreEmpty: true, skipLines: 1 })
       .on('error', error => console.error(error))
       .on('data', row => {
         const apCode = row.ap_bed_code.replace(/\d+/, '')
 
-        if (!processedPremises.has(apCode) && row.name !== 'Approved Premises') {
+        if (!processedPremises.has(apCode) && row.name.length > 0) {
           console.log(`** Seeding  ${row.name}  ${apCode}`)
+          console.log(row.name.length)
           console.log(row)
 
           const premises = new Premises()
@@ -46,14 +47,43 @@ const SeedPremises = {
           premises.address = row.address
           premises.postcode = row.postcode
 
-          processingList.push(premises)
+          apProcessingList.push(premises)
         }
 
         processedPremises.add(apCode)
       })
-      .on('end', (rowCount: number) => {
-        AppDataSource.manager.save(processingList)
-        console.log(`Parsed ${rowCount} rows`)
+      .on('end', async () => {
+        const allPremises = await AppDataSource.manager.save(apProcessingList)
+        console.log(`Seeded ${allPremises.length} APs...`)
+        SeedPremises.seedBeds(allPremises)
+      })
+  },
+
+  async seedBeds(allPremises: Premises[]) {
+    console.log('Now to seed the beds...')
+    console.log(`We have ${allPremises.length} APs ready to associate`)
+
+    const bedProcessingList: Bed[] = []
+
+    csv
+      .parseFile(config.database.seedfile, { headers, ignoreEmpty: true, skipLines: 1 })
+      .on('error', error => console.error(error))
+      .on('data', row => {
+        if (row.name.length > 0) {
+          const apCode = row.ap_bed_code.replace(/\d+/, '')
+
+          console.log(`** Seeding  ${apCode} ${row.ap_bed_code}`)
+          const bed = new Bed()
+          bed.bedCode = row.ap_bed_code
+          bed.premises = allPremises.find(p => p.apCode === apCode)
+          bed.gender = row.gender
+
+          bedProcessingList.push(bed)
+        }
+      })
+      .on('end', async () => {
+        const allBeds = await AppDataSource.manager.save(bedProcessingList)
+        console.log(`Seeded ${allBeds.length} Beds...`)
       })
   },
 }
