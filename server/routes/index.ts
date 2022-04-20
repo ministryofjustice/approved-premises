@@ -21,6 +21,14 @@ export default function routes(router: Router): Router {
         name: 'ASC',
       },
     })
+    const bedCounts = await AppDataSource.getRepository(Premises)
+      .createQueryBuilder('premises')
+      .select('premises.apCode', 'apCode')
+      .addSelect('COUNT(beds.id)', 'bedCount')
+      .innerJoin('premises.beds', 'beds')
+      .groupBy('premises.apCode')
+      .getRawMany()
+
     const apCount = await AppDataSource.getRepository(Premises).count()
     const bedCount = await AppDataSource.getRepository(Bed).count()
     const apRows = premises.map(ap => {
@@ -30,6 +38,7 @@ export default function routes(router: Router): Router {
         { text: ap.town },
         { text: ap.probationRegion },
         { text: ap.postcode },
+        { text: bedCounts.find(b => b.apCode === ap.apCode).bedCount },
       ]
     })
     res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
