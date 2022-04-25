@@ -50,6 +50,16 @@
                 classes: "govuk-button--warning"
               }) }}
             </form>
+            <form action="/seed/geolocations" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Seed Geolocations",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
           </div>
 
           <div class="govuk-grid-column-one-half">
@@ -76,6 +86,9 @@
                 },
                 {
                   text: "Postcode"
+                },
+                {
+                  text: "Coordinates"
                 },
                 {
                   text: "Beds"

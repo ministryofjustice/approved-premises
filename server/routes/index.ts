@@ -2,6 +2,7 @@ import type { RequestHandler, Router } from 'express'
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import SeedPremises from '../services/seedPremises'
+import SeedGeolocations from '../services/seedGeolocations'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
@@ -38,6 +39,7 @@ export default function routes(router: Router): Router {
         { text: ap.town },
         { text: ap.probationRegion },
         { text: ap.postcode },
+        { text: [ap.lat, ap.lon] },
         { text: bedCounts.find(b => b.apCode === ap.apCode).bedCount },
       ]
     })
@@ -46,6 +48,11 @@ export default function routes(router: Router): Router {
 
   post('/seed/premises', async (_req, res, next) => {
     await SeedPremises.run()
+    res.redirect('/premises')
+  })
+
+  post('/seed/geolocations', async (_req, res, next) => {
+    await SeedGeolocations.run()
     res.redirect('/premises')
   })
 

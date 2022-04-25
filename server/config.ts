@@ -47,6 +47,7 @@ export default {
   database: {
     url: process.env.DATABASE_URL,
     seedfile: process.env.DATABASE_SEED_FILE,
+    geoseedfile: process.env.GEOLOCATION_SEED_FILE,
   },
   apis: {
     hmppsAuth: {

@@ -2,6 +2,11 @@ import { Entity, Column, PrimaryGeneratedColumn, Index, OneToMany } from 'typeor
 // eslint-disable-next-line import/no-cycle
 import Bed from './bed'
 
+// export interface Geometry {
+//   type: 'Point'
+//   coordinates: [number, number]
+// }
+
 @Entity()
 export default class Premises {
   @PrimaryGeneratedColumn()
@@ -32,6 +37,23 @@ export default class Premises {
 
   @Column()
   postcode: string
+
+  @Column('double precision', {
+    nullable: true,
+  })
+  lat: number
+
+  @Column('double precision', {
+    nullable: true,
+  })
+  lon: number
+
+  // @Column('geometry', {
+  //   spatialFeatureType: 'Point',
+  //   srid: 4326,
+  // })
+  // @Index({ spatial: true })
+  // location: Geometry;
 
   @OneToMany(() => Bed, bed => bed.premises)
   beds: Bed[]
