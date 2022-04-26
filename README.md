@@ -22,6 +22,7 @@ locally e.g. in a `.env` file.
 
 - `DATABASE_URL` - path to the db
 - `DATABASE_SEED_FILE` - absolute file path to CSV with details of APs and their beds
+- `GEOLOCATION_SEED_FILE` - absolute file path to CSV with details of AP coordinates
 
 
 ### Running the app for development
