@@ -15,6 +15,31 @@ export default class Bed {
   @Index()
   gender: string
 
+  @Column({
+    nullable: true,
+  })
+  iap: boolean
+
+  @Column({
+    nullable: true,
+  })
+  pipe: boolean
+
+  @Column({
+    nullable: true,
+  })
+  enhanced_security: boolean
+
+  @Column({
+    nullable: true,
+  })
+  step_free_access_to_communal_areas: boolean
+
+  @Column({
+    nullable: true,
+  })
+  lift_or_stairlift: boolean
+
   @ManyToOne(() => Premises, premises => premises.beds)
   premises: Premises
 }

@@ -15,9 +15,19 @@ const headers = [
   'bed_count',
   'ap_bed_code',
   'gender',
-].concat([...Array(27)])
+  'iap',
+  'pipe',
+  'enhanced_security',
+]
+  .concat([...Array(9)])
+  .concat(['step_free_access_to_communal_areas', 'lift_or_stairlift'])
+  .concat([...Array(16)])
 
 const SeedPremises = {
+  toBoolean(value: string): boolean {
+    return value.toLowerCase() === 'yes'
+  },
+
   async run() {
     console.log('Seeding premises')
 
@@ -77,6 +87,11 @@ const SeedPremises = {
           bed.bedCode = row.ap_bed_code
           bed.premises = allPremises.find(p => p.apCode === apCode)
           bed.gender = row.gender
+          bed.iap = this.toBoolean(row.iap)
+          bed.pipe = this.toBoolean(row.pipe)
+          bed.enhanced_security = this.toBoolean(row.enhanced_security)
+          bed.step_free_access_to_communal_areas = this.toBoolean(row.step_free_access_to_communal_areas)
+          bed.lift_or_stairlift = this.toBoolean(row.lift_or_stairlift)
 
           bedProcessingList.push(bed)
         }
