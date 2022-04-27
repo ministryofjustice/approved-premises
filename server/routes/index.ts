@@ -30,7 +30,10 @@ export default function routes(router: Router): Router {
       .groupBy('premises.apCode')
       .getRawMany()
 
-    const apCount = await AppDataSource.getRepository(Premises).count()
+    // throws a error after adding the `location` field of type `geometry`
+    // const apCount = await AppDataSource.getRepository(Premises).count()
+
+    const apCount = premises.length
     const bedCount = await AppDataSource.getRepository(Bed).count()
     const apRows = premises.map(ap => {
       return [

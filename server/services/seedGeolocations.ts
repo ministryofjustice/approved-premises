@@ -23,7 +23,7 @@ const SeedGeolocations = {
           const premises = allPremises.find(p => p.apCode === row.apCode)
           premises.lat = row.lat
           premises.lon = row.lon
-          // premises.location = { coordinates: [1, 2], type: 'Point' }
+          premises.location = { coordinates: [row.lon, row.lat], type: 'Point' }
           apProcessingList.push(premises)
         }
       })
