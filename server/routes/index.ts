@@ -3,6 +3,7 @@ import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
+import PlacementFinder from '../services/placementFinder'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
@@ -59,8 +60,24 @@ export default function routes(router: Router): Router {
     res.redirect('/premises')
   })
 
-  get('/placements', (req, res, next) => {
-    res.render('pages/placementsIndex')
+  get('/placements', async (req, res, next) => {
+    res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+  })
+
+  post('/placement_search', async (req, res, next) => {
+    const placeOrPostcode: string = req.body.placement_search.location
+    const premises = await PlacementFinder.near(placeOrPostcode)
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apcode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.localauthorityarea },
+        { text: ap.postcode },
+        { text: ap.distance.toFixed(2) },
+      ]
+    })
+    res.render('pages/placementsIndex', { premises, apRows })
   })
 
   get('/risks/summary', (req, res, next) => {
