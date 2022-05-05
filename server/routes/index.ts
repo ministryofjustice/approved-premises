@@ -1,6 +1,7 @@
 import type { RequestHandler, Router } from 'express'
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
+import Booking from '../entity/booking'
 import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
 import SeedBookings from '../services/seedBookings'
@@ -63,11 +64,41 @@ export default function routes(router: Router): Router {
 
   post('/seed/bookings', async (_req, res, next) => {
     await SeedBookings.run()
-    res.redirect('/premises')
+    res.redirect('/bookings')
   })
 
   get('/placements', async (req, res, next) => {
     res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+  })
+
+  get('/bookings', async (_req, res, next) => {
+    const durationInWeeks = (startTime: Date, endTime: Date): number => {
+      const millSecondsPerWeek = 1000 * 60 * 60 * 24 * 7
+      const durationInMilliSeconds = endTime.getTime() - startTime.getTime()
+      return Math.floor(durationInMilliSeconds / millSecondsPerWeek)
+    }
+
+    const bookings = await AppDataSource.getRepository(Booking).find({
+      order: { start_time: 'ASC' },
+      relations: {
+        bed: {
+          premises: true,
+        },
+      },
+    })
+    const bookingsCount = bookings.length
+    const bookingRows = bookings.map(booking => {
+      return [
+        { text: booking.bed.premises.apCode },
+        { text: booking.bed.premises.name },
+        { text: booking.bed.bedCode },
+        { text: booking.bed.premises.town },
+        { text: booking.start_time.toDateString() },
+        { text: booking.end_time.toDateString() },
+        { text: durationInWeeks(booking.start_time, booking.end_time) },
+      ]
+    })
+    res.render('pages/bookingsIndex', { bookingRows, bookingsCount })
   })
 
   post('/placement_search', async (req, res, next) => {
