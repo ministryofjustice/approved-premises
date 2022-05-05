@@ -1,6 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, Index, ManyToOne, OneToMany } from 'typeorm'
 // eslint-disable-next-line import/no-cycle
 import Premises from './premises'
+// eslint-disable-next-line import/no-cycle
+import Booking from './booking'
 
 @Entity('beds')
 export default class Bed {
@@ -42,4 +44,7 @@ export default class Bed {
 
   @ManyToOne(() => Premises, premises => premises.beds)
   premises: Premises
+
+  @OneToMany(() => Booking, booking => booking.bed)
+  bookings: Booking[]
 }

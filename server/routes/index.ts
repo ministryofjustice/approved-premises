@@ -3,6 +3,7 @@ import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
+import SeedBookings from '../services/seedBookings'
 import PlacementFinder from '../services/placementFinder'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -57,6 +58,11 @@ export default function routes(router: Router): Router {
 
   post('/seed/geolocations', async (_req, res, next) => {
     await SeedGeolocations.run()
+    res.redirect('/premises')
+  })
+
+  post('/seed/bookings', async (_req, res, next) => {
+    await SeedBookings.run()
     res.redirect('/premises')
   })
 
