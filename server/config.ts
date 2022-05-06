@@ -49,6 +49,9 @@ export default {
     seedfile: process.env.DATABASE_SEED_FILE,
     geoseedfile: process.env.GEOLOCATION_SEED_FILE,
   },
+  opensearch: {
+    url: process.env.OPENSEARCH_URL,
+  },
   apis: {
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
