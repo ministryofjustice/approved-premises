@@ -1,0 +1,117 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+
+{% set pageTitle = applicationName + " - Find a placement" %}
+
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <h1>Approved premises</h1>
+
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            {{ govukSummaryList({
+              classes: 'govuk-summary-list--no-border',
+              rows: [
+                {
+                  key: {
+                    text: "Total premises"
+                  },
+                  value: {
+                    text: apCount,
+                    classes: 'govuk-!-text-align-right'
+                  }
+                },
+                {
+                  key: {
+                    text: "Total beds"
+                  },
+                  value: {
+                    text: bedCount,
+                    classes: 'govuk-!-text-align-right'
+                  }
+                }
+              ]
+            }) }}
+
+            <form action="/seed/premises" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Seed APs",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
+            <form action="/seed/geolocations" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Seed Geolocations",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
+            <form action="/seed/bookings" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Seed Bookings",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
+          </div>
+
+          <div class="govuk-grid-column-one-half">
+          </div>
+        </div>
+
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            {{ govukTable({
+              captionClasses: "govuk-table__caption--l",
+              firstCellIsHeader: true,
+              head: [
+                {
+                  text: "AP Code"
+                },
+                {
+                  text: "Name"
+                },
+                {
+                  text: "Town"
+                },
+                {
+                  text: "Probation region"
+                },
+                {
+                  text: "Postcode"
+                },
+                {
+                  text: "Coordinates"
+                },
+                {
+                  text: "Beds"
+                }
+              ],
+              rows: apRows
+            }) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
+
+

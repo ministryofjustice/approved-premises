@@ -13,6 +13,19 @@ The easiest way to run the app is to use docker compose to create the service an
 The app requires: 
 * hmpps-auth - for authentication
 * redis - session store and token caching
+* PostGIS - the Postgres extension needs to be installed *on the specific db* with
+`CREATE EXTENSION postgis;` See [https://postgis.net/install/](https://postgis.net/install/) if you need to install PostGIS itself.
+
+### Environment variables
+
+For simplicity during our alpha phase, we are using a full-stack approach with a
+database. We use a couple of db-related environment variables, which can be set
+locally e.g. in a `.env` file.
+
+- `DATABASE_URL` - path to the db
+- `DATABASE_SEED_FILE` - absolute file path to CSV with details of APs and their beds
+- `GEOLOCATION_SEED_FILE` - absolute file path to CSV with details of AP coordinates
+
 
 ### Running the app for development
 

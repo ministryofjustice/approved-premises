@@ -1,12 +1,120 @@
 import type { RequestHandler, Router } from 'express'
-
+import Premises from '../entity/premises'
+import Bed from '../entity/bed'
+import Booking from '../entity/booking'
+import SeedPremises from '../services/seedPremises'
+import SeedGeolocations from '../services/seedGeolocations'
+import SeedBookings from '../services/seedBookings'
+import PlacementFinder from '../services/placementFinder'
+import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
 
-  get('/', (req, res, next) => {
+  get('/', (_req, res, next) => {
     res.render('pages/index')
+  })
+
+  get('/premises', async (req, res, next) => {
+    const premises = await AppDataSource.getRepository(Premises).find({
+      order: {
+        probationRegion: 'ASC',
+        town: 'ASC',
+        name: 'ASC',
+      },
+    })
+    const bedCounts = await AppDataSource.getRepository(Premises)
+      .createQueryBuilder('premises')
+      .select('premises.apCode', 'apCode')
+      .addSelect('COUNT(beds.id)', 'bedCount')
+      .innerJoin('premises.beds', 'beds')
+      .groupBy('premises.apCode')
+      .getRawMany()
+
+    // throws a error after adding the `location` field of type `geometry`
+    // const apCount = await AppDataSource.getRepository(Premises).count()
+
+    const apCount = premises.length
+    const bedCount = await AppDataSource.getRepository(Bed).count()
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apCode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.probationRegion },
+        { text: ap.postcode },
+        { text: [ap.lat, ap.lon] },
+        { text: bedCounts.find(b => b.apCode === ap.apCode).bedCount },
+      ]
+    })
+    res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
+  })
+
+  post('/seed/premises', async (_req, res, next) => {
+    await SeedPremises.run()
+    res.redirect('/premises')
+  })
+
+  post('/seed/geolocations', async (_req, res, next) => {
+    await SeedGeolocations.run()
+    res.redirect('/premises')
+  })
+
+  post('/seed/bookings', async (_req, res, next) => {
+    await SeedBookings.run()
+    res.redirect('/bookings')
+  })
+
+  get('/placements', async (req, res, next) => {
+    res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+  })
+
+  get('/bookings', async (_req, res, next) => {
+    const durationInWeeks = (startTime: Date, endTime: Date): number => {
+      const millSecondsPerWeek = 1000 * 60 * 60 * 24 * 7
+      const durationInMilliSeconds = endTime.getTime() - startTime.getTime()
+      return Math.floor(durationInMilliSeconds / millSecondsPerWeek)
+    }
+
+    const bookings = await AppDataSource.getRepository(Booking).find({
+      order: { start_time: 'ASC' },
+      relations: {
+        bed: {
+          premises: true,
+        },
+      },
+    })
+    const bookingsCount = bookings.length
+    const bookingRows = bookings.map(booking => {
+      return [
+        { text: booking.bed.premises.apCode },
+        { text: booking.bed.premises.name },
+        { text: booking.bed.bedCode },
+        { text: booking.bed.premises.town },
+        { text: booking.start_time.toDateString() },
+        { text: booking.end_time.toDateString() },
+        { text: durationInWeeks(booking.start_time, booking.end_time) },
+      ]
+    })
+    res.render('pages/bookingsIndex', { bookingRows, bookingsCount })
+  })
+
+  post('/placement_search', async (req, res, next) => {
+    const placeOrPostcode: string = req.body.placement_search.location
+    const premises = await PlacementFinder.near(placeOrPostcode)
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apcode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.localauthorityarea },
+        { text: ap.postcode },
+        { text: ap.distance.toFixed(2) },
+      ]
+    })
+    res.render('pages/placementsIndex', { premises, apRows })
   })
 
   get('/risks/summary', (req, res, next) => {
