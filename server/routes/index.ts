@@ -1,4 +1,6 @@
 import type { RequestHandler, Router } from 'express'
+import { plainToClass } from 'class-transformer'
+
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import Booking from '../entity/booking'
@@ -11,6 +13,7 @@ import PlacementFinder from '../services/placementFinder'
 import PlacementMatcher from '../services/placementMatcher'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import FilterArgs from '../common/dto/filter-args'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -146,20 +149,22 @@ export default function routes(router: Router): Router {
   })
 
   post('/match-placements', async (req, res, next) => {
-    const placeOrPostcode: string = req.body.placement_search.location
-    const placementMatcher = new PlacementMatcher(placeOrPostcode)
+    const filterArgs = plainToClass(FilterArgs, req.body.placement_search)
+    const placementMatcher = new PlacementMatcher(filterArgs)
     const premises = await placementMatcher.results()
     const apRows = premises.map(ap => {
       return [
         { text: ap.apCode },
         { text: ap.name },
         { text: ap.town },
-        { text: ap.localAuthorityArea },
-        { text: ap.postcode },
         { text: ap.distance.toFixed(2) },
+        { text: ap.beds.some((bed: Bed) => bed.enhanced_security) },
+        { text: ap.beds.some((bed: Bed) => bed.step_free_access_to_communal_areas) },
+        { text: ap.beds.some((bed: Bed) => bed.lift_or_stairlift) },
+        { text: ap.score },
       ]
     })
-    res.render('match-placements/index', { premises, apRows })
+    res.render('match-placements/index', { premises, apRows, filterArgs })
   })
 
   get('/risks/summary', (req, res, next) => {
