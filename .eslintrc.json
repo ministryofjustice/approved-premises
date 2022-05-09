@@ -44,6 +44,7 @@
           }
         ],
         "@typescript-eslint/semi": 0,
+        "import/prefer-default-export": 0,
         "import/no-unresolved": "error",
         "prettier/prettier": [
           "error",
