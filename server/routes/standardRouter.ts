@@ -10,7 +10,7 @@ const testMode = process.env.NODE_ENV === 'test'
 export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
 
-  router.use(auth.authenticationMiddleware(tokenVerifier))
+  // router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
 
   // CSRF protection

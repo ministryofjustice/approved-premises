@@ -8,6 +8,7 @@ import SeedBookings from '../services/seedBookings'
 import BookingCreator from '../services/bookingCreator'
 import IndexBedAvailability from '../services/indexBedAvailability'
 import PlacementFinder from '../services/placementFinder'
+import PlacementMatcher from '../services/placementMatcher'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
@@ -138,6 +139,27 @@ export default function routes(router: Router): Router {
       ]
     })
     res.render('pages/placementsIndex', { premises, apRows })
+  })
+
+  get('/match-placements', async (req, res, next) => {
+    res.render('match-placements/index', { csrfToken: req.csrfToken() })
+  })
+
+  post('/match-placements', async (req, res, next) => {
+    const placeOrPostcode: string = req.body.placement_search.location
+    const placementMatcher = new PlacementMatcher(placeOrPostcode)
+    const premises = await placementMatcher.results()
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apCode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.localAuthorityArea },
+        { text: ap.postcode },
+        { text: ap.distance.toFixed(2) },
+      ]
+    })
+    res.render('match-placements/index', { premises, apRows })
   })
 
   get('/risks/summary', (req, res, next) => {
