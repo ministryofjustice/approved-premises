@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 
 {% set pageTitle = applicationName + " - Bookings" %}
@@ -28,6 +29,11 @@
                   }
                 }
               ]
+            }) }}
+            {{ govukButton({
+              text: "Make new booking",
+              classes: "govuk-button--secondary",
+              href: "/bookings/new"
             }) }}
           </div>
 

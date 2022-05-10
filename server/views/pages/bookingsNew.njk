@@ -1,0 +1,61 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Make a booking" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <h1>Make a booking</h1>
+
+        <form method="post" action="/bookings">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+          {{ govukInput({
+            label: {
+              text: "Bed code"
+            },
+            classes: "govuk-input--width-10",
+            hint: {
+                text: "Enter a bed code"
+              },
+            id: "booking[bed_code]",
+            name: "booking[bed_code]"
+          }) }}
+
+          {{ govukInput({
+            label: {
+              text: "Start date"
+            },
+            classes: "govuk-input--width-10",
+            hint: {
+                text: "The date on which the booking starts, in yyyy-mm-dd format e.g. '2022-08-15'"
+              },
+            id: "booking[start_date]",
+            name: "booking[start_date]"
+          }) }}
+
+          {{ govukInput({
+            label: {
+              text: "Duration in weeks"
+            },
+            classes: "govuk-input--width-10",
+            hint: {
+                text: "Enter the length of the stay required, in weeks e.g. '12'"
+              },
+            id: "booking[duration_in_weeks]",
+            name: "booking[duration_in_weeks]"
+          }) }}
+
+          {{ govukButton({
+            text: "Make booking"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
+
+
