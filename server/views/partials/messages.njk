@@ -1,0 +1,18 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% if (successMessages) %}
+  {% for message in successMessages %}
+    {{ govukNotificationBanner({
+      html: message,
+      type: 'success'
+    }) }}
+  {% endfor %}
+{% endif %}
+
+{% if infoMessages %}
+  {% for message in infoMessages %}
+    {{ govukNotificationBanner({
+      html: message
+    }) }}
+  {% endfor %}
+{% endif %}

@@ -46,6 +46,8 @@ export default function setUpAuth(): Router {
 
   router.use((req, res, next) => {
     res.locals.user = req.user
+    res.locals.successMessages = req.flash('success')
+    res.locals.infoMessages = req.flash('info')
     next()
   })
 
