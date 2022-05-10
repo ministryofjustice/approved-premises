@@ -1,4 +1,10 @@
-import 'dotenv/config'
+import { config as setConfig } from 'dotenv'
+
+if (process.env.NODE_ENV === 'test') {
+  setConfig({ path: `.env.test` })
+} else {
+  setConfig({ path: `.env` })
+}
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -51,6 +57,7 @@ export default {
   },
   opensearch: {
     url: process.env.OPENSEARCH_URL,
+    indexName: process.env.OPENSEARCH_INDEX_NAME,
   },
   apis: {
     hmppsAuth: {

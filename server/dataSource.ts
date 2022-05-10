@@ -10,7 +10,7 @@ const AppDataSource = new DataSource({
   url: config.database.url,
   username: 'postgres',
   entities: [Premises, Bed, Booking],
-  // dropSchema: process.env.NODE_ENV == 'test',
+  dropSchema: process.env.NODE_ENV === 'test',
   migrations: ['./dist/db/migrate/*.js'],
   migrationsRun: true,
   synchronize: true,

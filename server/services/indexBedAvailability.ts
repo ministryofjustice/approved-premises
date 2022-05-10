@@ -1,27 +1,31 @@
 import AppDataSource from '../dataSource'
 import OpenSearchClient from '../data/openSearchClient'
 import Bed from '../entity/bed'
+import config from '../config'
 
 const IndexBedAvailability = {
-  indexName: 'bed_availability',
+  indexName: config.opensearch.indexName,
 
   async run(): Promise<void> {
     console.log('Indexing in opensearch....')
-    const indexName = 'bed_availability'
     const allBeds = await AppDataSource.getRepository(Bed).find({
       relations: ['premises', 'bookings'],
     })
 
     console.log('Deleting index....')
 
-    await OpenSearchClient.indices.delete({
-      index: indexName,
-    })
+    try {
+      await OpenSearchClient.indices.delete({
+        index: this.indexName,
+      })
+    } catch (error) {
+      console.log('Index does not exist - skipping deletion')
+    }
 
     console.log('Creating index....')
 
     await OpenSearchClient.indices.create({
-      index: indexName,
+      index: this.indexName,
       body: {
         mappings: {
           properties: {
@@ -29,6 +33,16 @@ const IndexBedAvailability = {
               properties: {
                 location: {
                   type: 'geo_point',
+                },
+              },
+            },
+            bookings: {
+              properties: {
+                start_time: {
+                  type: 'date',
+                },
+                end_time: {
+                  type: 'date',
                 },
               },
             },
