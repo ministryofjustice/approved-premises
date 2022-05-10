@@ -161,6 +161,7 @@ export default function routes(router: Router): Router {
         { text: ap.beds.some((bed: Bed) => bed.enhanced_security) },
         { text: ap.beds.some((bed: Bed) => bed.step_free_access_to_communal_areas) },
         { text: ap.beds.some((bed: Bed) => bed.lift_or_stairlift) },
+        { text: ap.beds[0].gender },
         { text: ap.score },
       ]
     })

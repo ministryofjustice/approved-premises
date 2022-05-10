@@ -41,7 +41,10 @@ export default class PlacementMatcher {
     const searchResults = response.body.hits
     const ids = searchResults.hits.map((hit: any) => hit._source.premises.id)
 
-    const premises = await AppDataSource.getRepository(Premises).find({ where: { id: In(ids) }, relations: ['beds'] })
+    const premises = await AppDataSource.getRepository(Premises).find({
+      where: { id: In(ids), beds: { gender: this.filterArgs.gender } },
+      relations: ['beds'],
+    })
     const sortedPremisesWithMetadata = premises
       .map(p => {
         const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.id)
@@ -60,7 +63,7 @@ export default class PlacementMatcher {
   private query(lat: number, lon: number) {
     let query
 
-    const filters = (this.filterArgs.requirements || []).map(requirement => {
+    const shouldFilters = (this.filterArgs.requirements || []).map(requirement => {
       return {
         term: {
           [requirement]: {
@@ -71,10 +74,10 @@ export default class PlacementMatcher {
       }
     })
 
-    if (filters.length) {
+    if (shouldFilters.length) {
       query = {
         bool: {
-          should: filters,
+          should: shouldFilters,
         },
       }
     } else {
