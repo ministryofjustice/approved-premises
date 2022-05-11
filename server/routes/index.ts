@@ -5,6 +5,7 @@ import Booking from '../entity/booking'
 import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
 import SeedBookings from '../services/seedBookings'
+import BookingCreator from '../services/bookingCreator'
 import PlacementFinder from '../services/placementFinder'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -69,6 +70,22 @@ export default function routes(router: Router): Router {
 
   get('/placements', async (req, res, next) => {
     res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+  })
+
+  get('/bookings/new', async (req, res, next) => {
+    res.render('pages/bookingsNew', { csrfToken: req.csrfToken() })
+  })
+
+  post('/bookings', async (req, res, next) => {
+    const durationInWeeks = req.body.booking.duration_in_weeks
+    const bedCode = req.body.booking.bed_code
+    const startDate = req.body.booking.start_date
+
+    const creator = new BookingCreator(durationInWeeks, bedCode, startDate)
+    const booking = await creator.run()
+    req.flash('success', `Booking created for ${booking.bed.bedCode}`)
+
+    res.redirect('/bookings')
   })
 
   get('/bookings', async (_req, res, next) => {
