@@ -6,6 +6,7 @@ import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
 import SeedBookings from '../services/seedBookings'
 import BookingCreator from '../services/bookingCreator'
+import IndexBedAvailability from '../services/indexBedAvailability'
 import PlacementFinder from '../services/placementFinder'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -65,6 +66,11 @@ export default function routes(router: Router): Router {
 
   post('/seed/bookings', async (_req, res, next) => {
     await SeedBookings.run()
+    res.redirect('/bookings')
+  })
+
+  post('/index/bedAvailability', async (_req, res, next) => {
+    await IndexBedAvailability.run()
     res.redirect('/bookings')
   })
 

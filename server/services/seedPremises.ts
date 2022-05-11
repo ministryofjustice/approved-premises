@@ -1,5 +1,6 @@
 import * as csv from '@fast-csv/parse'
 import AppDataSource from '../dataSource'
+import OpenSearchClient from '../data/openSearchClient'
 import config from '../config'
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
@@ -31,7 +32,7 @@ const SeedPremises = {
   async run() {
     console.log('Seeding premises')
 
-    await AppDataSource.manager.query(`TRUNCATE TABLE beds, premises;`)
+    // await AppDataSource.manager.query(`TRUNCATE TABLE beds, premises;`)
 
     const processedPremises = new Set(['Approved Premises'])
     const apProcessingList: Premises[] = []
