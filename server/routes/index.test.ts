@@ -108,11 +108,10 @@ describe('POST /match-placements', () => {
       .expect(res => {
         const dom = new JSDOM(res.text)
 
-        expect(res.text).not.toContain('Closer Premises')
-
         const results = dom.window.document.querySelectorAll('table tbody tr')
 
         expect(results[0].textContent).toContain('Close Premises')
+        expect(results[1].textContent).toContain('Closer Premises')
       })
   })
 

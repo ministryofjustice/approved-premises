@@ -66,8 +66,6 @@ export default class PlacementMatcher {
   }
 
   private query(lat: number, lon: number) {
-    let query
-
     const shouldFilters = (this.filterArgs.requirements || []).map(requirement => {
       return {
         term: {
@@ -79,22 +77,6 @@ export default class PlacementMatcher {
       }
     }) as any[]
 
-    if (shouldFilters.length) {
-      query = {
-        bool: {
-          should: shouldFilters,
-        },
-      }
-    } else {
-      query = {
-        bool: {
-          must: {
-            match_all: {},
-          },
-        },
-      }
-    }
-
     const functions = []
 
     if (this.filterArgs.date_from) {
@@ -105,10 +87,28 @@ export default class PlacementMatcher {
       functions.push(this.distanceQuery(lat, lon))
     }
 
+    if (shouldFilters.length) {
+      functions.push({
+        filter: {
+          bool: {
+            should: shouldFilters,
+          },
+        },
+        weight: 1,
+      })
+    }
+
     return {
       function_score: {
-        query,
+        query: {
+          bool: {
+            must: {
+              match_all: {},
+            },
+          },
+        },
         functions,
+        score_mode: 'sum',
       },
     }
   }
