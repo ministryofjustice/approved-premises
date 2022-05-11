@@ -81,7 +81,8 @@ export default function routes(router: Router): Router {
     const bedCode = req.body.booking.bed_code
     const startDate = req.body.booking.start_date
 
-    const booking = await BookingCreator.run({ durationInWeeks, bedCode, startDate })
+    const creator = new BookingCreator(durationInWeeks, bedCode, startDate)
+    const booking = await creator.run()
     req.flash('success', `Booking created for ${booking.bed.bedCode}`)
 
     res.redirect('/bookings')

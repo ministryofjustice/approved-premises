@@ -2,27 +2,30 @@ import AppDataSource from '../dataSource'
 import Bed from '../entity/bed'
 import Booking from '../entity/booking'
 
-const BookingCreator = {
-  endTime(startTime: Date, durationInDays: number) {
-    const endTime = new Date(startTime.getTime())
-    endTime.setDate(startTime.getDate() + durationInDays)
+class BookingCreator {
+  constructor(private durationInWeeks: string, private bedCode: string, private startDate: string) {}
+
+  startTime() {
+    return new Date(this.startDate)
+  }
+
+  endTime() {
+    const durationInDays = Number(this.durationInWeeks) * 7
+    const endTime = new Date(this.startTime().getTime())
+    endTime.setDate(this.startTime().getDate() + durationInDays)
     return endTime
-  },
+  }
 
-  async run(params: { durationInWeeks: string; startDate: string; bedCode: string }): Promise<Booking> {
-    const startTime = new Date(params.startDate)
-    const durationInDays = Number(params.durationInWeeks) * 7
-    const endTime = this.endTime(startTime, durationInDays)
-    const bed = await AppDataSource.getRepository(Bed).findOneBy({ bedCode: params.bedCode })
-
+  async run(): Promise<Booking> {
+    const bed = await AppDataSource.getRepository(Bed).findOneBy({ bedCode: this.bedCode })
     const booking = new Booking()
     booking.bed = bed
-    booking.start_time = startTime
-    booking.end_time = endTime
+    booking.start_time = this.startTime()
+    booking.end_time = this.endTime()
 
     const createdBooking = await AppDataSource.manager.save(booking)
     return createdBooking
-  },
+  }
 }
 
 export default BookingCreator
