@@ -1,3 +1,4 @@
+import moment from 'moment'
 import AppDataSource from '../dataSource'
 import OpenSearchClient from '../data/openSearchClient'
 import Bed from '../entity/bed'
@@ -36,15 +37,8 @@ const IndexBedAvailability = {
                 },
               },
             },
-            bookings: {
-              properties: {
-                start_time: {
-                  type: 'date',
-                },
-                end_time: {
-                  type: 'date',
-                },
-              },
+            availability: {
+              type: 'date',
             },
           },
         },
@@ -57,6 +51,11 @@ const IndexBedAvailability = {
   },
 
   async indexBed(bed: Bed): Promise<any> {
+    const allDates = this.dateRange(new Date(), moment().add(1, 'year').toDate())
+    const bookedDates = bed.bookings.flatMap(booking => this.dateRange(booking.start_time, booking.end_time))
+
+    const availableDates = allDates.filter((n: Array<Date>) => !bookedDates.includes(n))
+
     await OpenSearchClient.index({
       id: bed.id.toString(),
       index: this.indexName,
@@ -76,15 +75,25 @@ const IndexBedAvailability = {
             lon: bed.premises.lon,
           },
         },
-        bookings: bed.bookings.map(booking => {
-          return {
-            start_time: booking.start_time,
-            end_time: booking.end_time,
-          }
-        }),
+        availability: availableDates,
       },
       refresh: true,
     })
+  },
+
+  dateRange(from: Date, to: Date): Array<number> {
+    const dates = []
+
+    let start = from.getTime()
+    const end = to.getTime()
+
+    while (start <= end) {
+      dates.push(start)
+      const date = new Date(start)
+      start = moment(date).add(1, 'days').startOf('day').toDate().getTime()
+    }
+
+    return dates
   },
 }
 

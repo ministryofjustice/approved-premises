@@ -1,6 +1,8 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_source", "_score"] }] */
 import { In } from 'typeorm'
+import moment from 'moment'
 
+import { float } from '@opensearch-project/opensearch/api/types'
 import AppDataSource from '../dataSource'
 import Premises from '../entity/premises'
 import OpenSearchClient from '../data/openSearchClient'
@@ -75,7 +77,7 @@ export default class PlacementMatcher {
           },
         },
       }
-    })
+    }) as any[]
 
     if (shouldFilters.length) {
       query = {
@@ -93,53 +95,51 @@ export default class PlacementMatcher {
       }
     }
 
+    const functions = []
+
+    if (this.filterArgs.date_from) {
+      functions.push(this.availabilityQuery())
+    }
+
+    if (lat && lon) {
+      functions.push(this.distanceQuery(lat, lon))
+    }
+
     return {
       function_score: {
-        functions: [
-          {
-            gauss: {
-              'premises.location': {
-                origin: { lat, lon },
-                scale: '50miles',
-              },
-            },
-          },
-          {
-            filter: {
-              bool: {
-                must_not: [
-                  {
-                    range: {
-                      'bookings.start_time': {
-                        gte: this.filterArgs.date_from,
-                      },
-                    },
-                  },
-                  {
-                    range: {
-                      'bookings.end_time': {
-                        gte: this.filterArgs.date_to,
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-            gauss: {
-              'bookings.start_time': {
-                origin: this.filterArgs.date_from,
-                scale: '10d',
-                offset: '2d',
-              },
-              'bookings.end_time': {
-                origin: this.filterArgs.date_to,
-                scale: '10d',
-                offset: '2d',
-              },
-            },
-          },
-        ],
         query,
+        functions,
+      },
+    }
+  }
+
+  distanceQuery(lat: float, lon: float): any {
+    return {
+      gauss: {
+        'premises.location': {
+          origin: { lat, lon },
+          scale: '50miles',
+        },
+      },
+    }
+  }
+
+  availabilityQuery(): any {
+    const start = moment(this.filterArgs.date_from)
+    const end = moment(this.filterArgs.date_to)
+    const duration = end.diff(start, 'days')
+
+    const centrePoint = start
+      .add(duration / 2, 'days')
+      .toDate()
+      .getTime()
+
+    return {
+      gauss: {
+        availability: {
+          origin: centrePoint,
+          scale: `${Math.round(duration / 2)}d`,
+        },
       },
     }
   }
