@@ -83,10 +83,6 @@ export default class PlacementMatcher {
       .where('premises.id IN(:...ids)', { ids: ids })
       .groupBy('premises.id')
 
-    if (this.filterArgs.gender) {
-      query = query.andWhere('gender = :gender', { gender: this.filterArgs.gender })
-    }
-
     if (this.filterArgs.date_from) {
       query = query.addSelect(
         `COUNT(beds.id) filter (
@@ -102,6 +98,8 @@ export default class PlacementMatcher {
   }
 
   private query(lat: number, lon: number) {
+    let query
+
     const shouldFilters = (this.filterArgs.requirements || []).map(requirement => {
       return {
         term: {
@@ -134,15 +132,27 @@ export default class PlacementMatcher {
       })
     }
 
-    return {
-      function_score: {
-        query: {
-          bool: {
-            must: {
-              match_all: {},
-            },
+    if (this.filterArgs.gender) {
+      query = {
+        term: {
+          'bed.gender': {
+            value: this.filterArgs.gender,
           },
         },
+      }
+    } else {
+      query = {
+        bool: {
+          must: {
+            match_all: {},
+          },
+        },
+      }
+    }
+
+    return {
+      function_score: {
+        query,
         functions,
         score_mode: 'sum',
       },
