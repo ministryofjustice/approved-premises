@@ -32,7 +32,7 @@ const SeedPremises = {
   async run() {
     console.log('Seeding premises')
 
-    // await AppDataSource.manager.query(`TRUNCATE TABLE beds, premises;`)
+    await AppDataSource.manager.query(`TRUNCATE TABLE bookings, beds, premises;`)
 
     const processedPremises = new Set(['Approved Premises'])
     const apProcessingList: Premises[] = []
