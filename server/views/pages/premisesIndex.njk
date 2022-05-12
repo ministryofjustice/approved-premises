@@ -70,6 +70,16 @@
                 classes: "govuk-button--warning"
               }) }}
             </form>
+            <form action="/index/bedAvailability" method="post">
+              <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+              {{ govukButton({
+                element: "button",
+                type: "submit",
+                text: "Index Bed Availability",
+                classes: "govuk-button--warning"
+              }) }}
+            </form>
           </div>
 
           <div class="govuk-grid-column-one-half">

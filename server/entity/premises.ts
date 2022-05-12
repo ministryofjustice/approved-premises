@@ -54,8 +54,8 @@ export default class Premises {
     srid: 4326,
   })
   @Index({ spatial: true })
-  location: Geometry;
+  location: Geometry
 
-  @OneToMany(() => Bed, bed => bed.premises)
+  @OneToMany(() => Bed, bed => bed.premises, { cascade: true })
   beds: Bed[]
 }

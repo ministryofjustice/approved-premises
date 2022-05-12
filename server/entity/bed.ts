@@ -45,6 +45,6 @@ export default class Bed {
   @ManyToOne(() => Premises, premises => premises.beds)
   premises: Premises
 
-  @OneToMany(() => Booking, booking => booking.bed)
+  @OneToMany(() => Booking, booking => booking.bed, { cascade: true })
   bookings: Booking[]
 }

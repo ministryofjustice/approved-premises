@@ -1,4 +1,6 @@
 import type { RequestHandler, Router } from 'express'
+import { plainToClass } from 'class-transformer'
+
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import Booking from '../entity/booking'
@@ -6,9 +8,12 @@ import SeedPremises from '../services/seedPremises'
 import SeedGeolocations from '../services/seedGeolocations'
 import SeedBookings from '../services/seedBookings'
 import BookingCreator from '../services/bookingCreator'
+import IndexBedAvailability from '../services/indexBedAvailability'
 import PlacementFinder from '../services/placementFinder'
+import PlacementMatcher from '../services/placementMatcher'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import FilterArgs from '../common/dto/filter-args'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -65,6 +70,11 @@ export default function routes(router: Router): Router {
 
   post('/seed/bookings', async (_req, res, next) => {
     await SeedBookings.run()
+    res.redirect('/bookings')
+  })
+
+  post('/index/bedAvailability', async (_req, res, next) => {
+    await IndexBedAvailability.run()
     res.redirect('/bookings')
   })
 
@@ -132,6 +142,30 @@ export default function routes(router: Router): Router {
       ]
     })
     res.render('pages/placementsIndex', { premises, apRows })
+  })
+
+  get('/match-placements', async (req, res, next) => {
+    res.render('match-placements/index', { csrfToken: req.csrfToken() })
+  })
+
+  post('/match-placements', async (req, res, next) => {
+    const filterArgs = plainToClass(FilterArgs, req.body.placement_search)
+    const placementMatcher = new PlacementMatcher(filterArgs)
+    const premises = await placementMatcher.results()
+    const apRows = premises.map(ap => {
+      return [
+        { text: ap.apCode },
+        { text: ap.name },
+        { text: ap.town },
+        { text: ap.distance.toFixed(2) },
+        { text: ap.beds.some((bed: Bed) => bed.enhanced_security) },
+        { text: ap.beds.some((bed: Bed) => bed.step_free_access_to_communal_areas) },
+        { text: ap.beds.some((bed: Bed) => bed.lift_or_stairlift) },
+        { text: ap.beds[0].gender },
+        { text: ap.score },
+      ]
+    })
+    res.render('match-placements/index', { premises, apRows, filterArgs })
   })
 
   get('/risks/summary', (req, res, next) => {
