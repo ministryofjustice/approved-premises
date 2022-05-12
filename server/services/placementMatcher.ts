@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_source", "_score"] }] */
-import { In } from 'typeorm'
+import { Repository } from 'typeorm'
 import moment from 'moment'
 
 import { float } from '@opensearch-project/opensearch/api/types'
@@ -10,7 +10,11 @@ import FilterArgs from '../common/dto/filter-args'
 import config from '../config'
 
 export default class PlacementMatcher {
-  constructor(private readonly filterArgs: FilterArgs) {}
+  repository: Repository<Premises>
+
+  constructor(private readonly filterArgs: FilterArgs) {
+    this.repository = AppDataSource.getRepository(Premises)
+  }
 
   public async results(): Promise<any[]> {
     const { indexName } = config.opensearch
@@ -46,13 +50,11 @@ export default class PlacementMatcher {
     const searchResults = response.body.hits
     const ids = searchResults.hits.map((hit: any) => hit._source.premises.id)
 
-    const premises = await AppDataSource.getRepository(Premises).find({
-      where: { id: In(ids), beds: { gender: this.filterArgs.gender } },
-      relations: ['beds'],
-    })
-    const sortedPremisesWithMetadata = premises
+    const premises = await this.fetchPremisesByIds(ids)
+
+    const results = premises
       .map(p => {
-        const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.id)
+        const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.premises_id)
 
         return {
           ...p,
@@ -62,7 +64,41 @@ export default class PlacementMatcher {
       })
       .sort((a, b) => b.score - a.score)
 
-    return sortedPremisesWithMetadata
+    return results
+  }
+
+  private async fetchPremisesByIds(ids: Array<string>): Promise<any[]> {
+    let query = this.repository
+      .createQueryBuilder('premises')
+      .distinctOn(['premises.id'])
+      .select(['premises'])
+      .addSelect(['array_agg("beds"."gender") AS gender'])
+      .addSelect(['array_agg("beds"."enhanced_security") AS enhanced_security'])
+      .addSelect(['array_agg("beds"."lift_or_stairlift") AS lift_or_stairlift'])
+      .addSelect(['array_agg("beds"."step_free_access_to_communal_areas") AS step_free_access_to_communal_areas'])
+      .addSelect(['array_agg("beds"."iap") AS iap'])
+      .addSelect(['array_agg("beds"."pipe") AS pipe'])
+      .leftJoin('premises.beds', 'beds')
+      .leftJoin('beds.bookings', 'bookings')
+      .where('premises.id IN(:...ids)', { ids: ids })
+      .groupBy('premises.id')
+
+    if (this.filterArgs.gender) {
+      query = query.andWhere('gender = :gender', { gender: this.filterArgs.gender })
+    }
+
+    if (this.filterArgs.date_from) {
+      query = query.addSelect(
+        `COUNT(beds.id) filter (
+    WHERE
+      bookings IS NULL
+      OR NOT (DATE '${this.filterArgs.date_from.toDateString()}', DATE '${this.filterArgs.date_to.toDateString()}') OVERLAPS (bookings.start_time, bookings.end_time)
+  )`,
+        'bed_count'
+      )
+    }
+
+    return await query.getRawMany()
   }
 
   private query(lat: number, lon: number) {

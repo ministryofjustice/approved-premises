@@ -154,14 +154,15 @@ export default function routes(router: Router): Router {
     const premises = await placementMatcher.results()
     const apRows = premises.map(ap => {
       return [
-        { text: ap.apCode },
-        { text: ap.name },
-        { text: ap.town },
+        { text: ap.premises_apCode },
+        { text: ap.premises_name },
+        { text: ap.premises_town },
         { text: ap.distance.toFixed(2) },
-        { text: ap.beds.some((bed: Bed) => bed.enhanced_security) },
-        { text: ap.beds.some((bed: Bed) => bed.step_free_access_to_communal_areas) },
-        { text: ap.beds.some((bed: Bed) => bed.lift_or_stairlift) },
-        { text: ap.beds[0].gender },
+        { text: ap.enhanced_security[0] },
+        { text: ap.step_free_access_to_communal_areas[0] },
+        { text: ap.lift_or_stairlift[0] },
+        { text: ap.gender[0] },
+        { text: ap.bed_count || 'N/A', attributes: { 'data-bed-count': '' } },
         { text: ap.score },
       ]
     })

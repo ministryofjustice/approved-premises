@@ -160,7 +160,9 @@ describe('POST /match-placements', () => {
         expect(results.length).toEqual(2)
 
         expect(results[0].textContent).toContain('Premises with available space')
+        expect(results[0].querySelector('[data-bed-count]').textContent).toEqual('1')
         expect(results[1].textContent).toContain('Premises without available space')
+        expect(results[1].querySelector('[data-bed-count]').textContent).toEqual('0')
       })
   })
 })
