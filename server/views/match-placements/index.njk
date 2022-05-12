@@ -99,7 +99,7 @@
                   label: "Month",
                   name: "placement_search[date_from][month]",
                   classes: "govuk-input govuk-date-input__input govuk-input--width-2",
-                  value: (filterArgs.date_from and filterArgs.date_from.getMonth())
+                  value: (filterArgs.date_from and filterArgs.date_from.getMonth() + 1)
                 },
                 {
                   label: "Year",
@@ -128,7 +128,7 @@
                   label: "Month",
                   name: "placement_search[date_to][month]",
                   classes: "govuk-input govuk-date-input__input govuk-input--width-2",
-                  value: (filterArgs.date_to and filterArgs.date_to.getMonth())
+                  value: (filterArgs.date_to and filterArgs.date_to.getMonth() + 1)
                 },
                 {
                   label: "Year",
