@@ -33,7 +33,7 @@ export default class PlacementMatcher {
         script_fields: {
           distance: {
             script: {
-              inline: "doc['premises.location'].arcDistance(params.lat,params.lon) * 0.00062137",
+              inline: "doc['location'].arcDistance(params.lat,params.lon) * 0.00062137",
               lang: 'painless',
               params: {
                 lat,
@@ -46,15 +46,15 @@ export default class PlacementMatcher {
     }
 
     const response = await OpenSearchClient.search(body)
-
     const searchResults = response.body.hits
-    const ids = searchResults.hits.map((hit: any) => hit._source.premises.id)
+
+    const ids = searchResults.hits.map((hit: any) => hit._id)
 
     const premises = await this.fetchPremisesByIds(ids)
 
     const results = premises
       .map(p => {
-        const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.premises_id)
+        const searchResult = searchResults.hits.find((r: any) => r._id === String(p.premises_id))
 
         return {
           ...p,
@@ -128,14 +128,14 @@ export default class PlacementMatcher {
             should: shouldFilters,
           },
         },
-        weight: 1,
+        weight: 20,
       })
     }
 
     if (this.filterArgs.gender) {
       query = {
         term: {
-          'bed.gender': {
+          gender: {
             value: this.filterArgs.gender,
           },
         },
@@ -154,7 +154,6 @@ export default class PlacementMatcher {
       function_score: {
         query,
         functions,
-        score_mode: 'sum',
       },
     }
   }
@@ -162,31 +161,42 @@ export default class PlacementMatcher {
   distanceQuery(lat: float, lon: float): any {
     return {
       gauss: {
-        'premises.location': {
+        location: {
           origin: { lat, lon },
           scale: '50miles',
         },
       },
+      weight: 20,
     }
   }
 
   availabilityQuery(): any {
-    const start = moment(this.filterArgs.date_from)
-    const end = moment(this.filterArgs.date_to)
-    const duration = end.diff(start, 'days')
-
-    const centrePoint = start
-      .add(duration / 2, 'days')
-      .toDate()
-      .getTime()
-
     return {
-      gauss: {
-        availability: {
-          origin: centrePoint,
-          scale: `${Math.round(duration / 2)}d`,
+      filter: {
+        bool: {
+          must_not: {
+            nested: {
+              path: 'beds',
+              query: {
+                bool: {
+                  should: [
+                    {
+                      range: {
+                        'beds.bookings': {
+                          lte: this.filterArgs.date_to,
+                          gte: this.filterArgs.date_from,
+                          relation: 'intersects',
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
         },
       },
+      weight: 40,
     }
   }
 }
