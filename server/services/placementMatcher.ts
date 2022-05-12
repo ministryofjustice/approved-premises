@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_source", "_score"] }] */
-import { In } from 'typeorm'
+import { Repository } from 'typeorm'
 import moment from 'moment'
 
 import { float } from '@opensearch-project/opensearch/api/types'
@@ -10,12 +10,18 @@ import FilterArgs from '../common/dto/filter-args'
 import config from '../config'
 
 export default class PlacementMatcher {
-  constructor(private readonly filterArgs: FilterArgs) {}
+  repository: Repository<Premises>
+
+  constructor(private readonly filterArgs: FilterArgs) {
+    this.repository = AppDataSource.getRepository(Premises)
+  }
 
   public async results(): Promise<any[]> {
     const { indexName } = config.opensearch
-
-    console.log('Finding suitable, available, nearby candidate placements near', this.filterArgs.location)
+    const respository = console.log(
+      'Finding suitable, available, nearby candidate placements near',
+      this.filterArgs.location
+    )
 
     const lat = 53.7901124
     const lon = -1.560001909
@@ -46,10 +52,12 @@ export default class PlacementMatcher {
     const searchResults = response.body.hits
     const ids = searchResults.hits.map((hit: any) => hit._source.premises.id)
 
-    const premises = await AppDataSource.getRepository(Premises).find({
-      where: { id: In(ids), beds: { gender: this.filterArgs.gender } },
-      relations: ['beds'],
-    })
+    const premises = await this.repository
+      .createQueryBuilder('premises')
+      .leftJoinAndSelect('premises.beds', 'beds')
+      .where('premises.id IN(:...ids)', { ids: ids })
+      .getMany()
+
     const sortedPremisesWithMetadata = premises
       .map(p => {
         const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.id)
