@@ -103,7 +103,7 @@ describe('POST /match-placements', () => {
 
     return request(app)
       .post('/match-placements')
-      .send({ placement_search: { location: 'Some location', requirements: ['bed.lift_or_stairlift'] } })
+      .send({ placement_search: { location: 'Some location', requirements: ['lift_or_stairlift'] } })
       .expect('Content-Type', /html/)
       .expect(res => {
         const dom = new JSDOM(res.text)

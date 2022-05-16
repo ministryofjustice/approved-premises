@@ -52,7 +52,7 @@
           }) }}
 
           {{ govukCheckboxes({
-            idPrefix: "placement_search[location]",
+            idPrefix: "placement_search[requirements]",
             name: "placement_search[requirements][]",
             fieldset: {
               legend: {
@@ -64,19 +64,19 @@
             },
             items: [
               {
-                value: "bed.enhanced_security",
+                value: "enhanced_security",
                 text: "Enhanced security",
-                checked: (filterArgs.requirements|length and 'bed.enhanced_security' in filterArgs.requirements)
+                checked: (filterArgs.requirements|length and 'enhanced_security' in filterArgs.requirements)
               },
               {
-                value: "bed.step_free_access_to_communal_areas",
+                value: "step_free_access_to_communal_areas",
                 text: "Step free access to communal areas",
-                checked: (filterArgs.requirements|length and 'bed.step_free_access_to_communal_areas' in filterArgs.requirements)
+                checked: (filterArgs.requirements|length and 'step_free_access_to_communal_areas' in filterArgs.requirements)
               },
               {
-                value: "bed.lift_or_stairlift",
+                value: "lift_or_stairlift",
                 text: "Lift or Stairlift Available",
-                checked: (filterArgs.requirements|length and 'bed.lift_or_stairlift' in filterArgs.requirements)
+                checked: (filterArgs.requirements|length and 'lift_or_stairlift' in filterArgs.requirements)
               }
             ]
           }) }}
@@ -99,7 +99,7 @@
                   label: "Month",
                   name: "placement_search[date_from][month]",
                   classes: "govuk-input govuk-date-input__input govuk-input--width-2",
-                  value: (filterArgs.date_from and filterArgs.date_from.getMonth())
+                  value: (filterArgs.date_from and filterArgs.date_from.getMonth() + 1)
                 },
                 {
                   label: "Year",
@@ -128,7 +128,7 @@
                   label: "Month",
                   name: "placement_search[date_to][month]",
                   classes: "govuk-input govuk-date-input__input govuk-input--width-2",
-                  value: (filterArgs.date_to and filterArgs.date_to.getMonth())
+                  value: (filterArgs.date_to and filterArgs.date_to.getMonth() + 1)
                 },
                 {
                   label: "Year",

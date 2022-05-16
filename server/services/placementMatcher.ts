@@ -27,13 +27,13 @@ export default class PlacementMatcher {
     const body = {
       index: indexName,
       body: {
-        size: '10000',
+        size: '20',
         query: this.query(lat, lon),
         stored_fields: ['_source'],
         script_fields: {
           distance: {
             script: {
-              inline: "doc['premises.location'].arcDistance(params.lat,params.lon) * 0.00062137",
+              inline: "doc['location'].arcDistance(params.lat,params.lon) * 0.00062137",
               lang: 'painless',
               params: {
                 lat,
@@ -46,18 +46,24 @@ export default class PlacementMatcher {
     }
 
     const response = await OpenSearchClient.search(body)
-
     const searchResults = response.body.hits
-    const ids = searchResults.hits.map((hit: any) => hit._source.premises.id)
+
+    const ids = searchResults.hits.map((hit: any) => hit._id)
 
     const premises = await this.fetchPremisesByIds(ids)
 
     const results = premises
       .map(p => {
-        const searchResult = searchResults.hits.find((r: any) => r._source.premises.id === p.premises_id)
+        const searchResult = searchResults.hits.find((r: any) => r._id === String(p.premises_id))
 
         return {
           ...p,
+          gender: searchResult._source.gender,
+          iap: searchResult._source.iap,
+          pipe: searchResult._source.pipe,
+          enhanced_security: searchResult._source.enhanced_security,
+          step_free_access_to_communal_areas: searchResult._source.step_free_access_to_communal_areas,
+          lift_or_stairlift: searchResult._source.lift_or_stairlift,
           distance: searchResult.fields.distance[0],
           score: searchResult._score,
         }
@@ -72,20 +78,10 @@ export default class PlacementMatcher {
       .createQueryBuilder('premises')
       .distinctOn(['premises.id'])
       .select(['premises'])
-      .addSelect(['array_agg("beds"."gender") AS gender'])
-      .addSelect(['array_agg("beds"."enhanced_security") AS enhanced_security'])
-      .addSelect(['array_agg("beds"."lift_or_stairlift") AS lift_or_stairlift'])
-      .addSelect(['array_agg("beds"."step_free_access_to_communal_areas") AS step_free_access_to_communal_areas'])
-      .addSelect(['array_agg("beds"."iap") AS iap'])
-      .addSelect(['array_agg("beds"."pipe") AS pipe'])
       .leftJoin('premises.beds', 'beds')
       .leftJoin('beds.bookings', 'bookings')
       .where('premises.id IN(:...ids)', { ids: ids })
       .groupBy('premises.id')
-
-    if (this.filterArgs.gender) {
-      query = query.andWhere('gender = :gender', { gender: this.filterArgs.gender })
-    }
 
     if (this.filterArgs.date_from) {
       query = query.addSelect(
@@ -102,6 +98,8 @@ export default class PlacementMatcher {
   }
 
   private query(lat: number, lon: number) {
+    let query
+
     const shouldFilters = (this.filterArgs.requirements || []).map(requirement => {
       return {
         term: {
@@ -130,21 +128,32 @@ export default class PlacementMatcher {
             should: shouldFilters,
           },
         },
-        weight: 1,
+        weight: 20,
       })
+    }
+
+    if (this.filterArgs.gender) {
+      query = {
+        term: {
+          gender: {
+            value: this.filterArgs.gender,
+          },
+        },
+      }
+    } else {
+      query = {
+        bool: {
+          must: {
+            match_all: {},
+          },
+        },
+      }
     }
 
     return {
       function_score: {
-        query: {
-          bool: {
-            must: {
-              match_all: {},
-            },
-          },
-        },
+        query,
         functions,
-        score_mode: 'sum',
       },
     }
   }
@@ -152,31 +161,31 @@ export default class PlacementMatcher {
   distanceQuery(lat: float, lon: float): any {
     return {
       gauss: {
-        'premises.location': {
+        location: {
           origin: { lat, lon },
           scale: '50miles',
         },
       },
+      weight: 20,
     }
   }
 
   availabilityQuery(): any {
-    const start = moment(this.filterArgs.date_from)
-    const end = moment(this.filterArgs.date_to)
-    const duration = end.diff(start, 'days')
-
-    const centrePoint = start
-      .add(duration / 2, 'days')
-      .toDate()
-      .getTime()
-
     return {
-      gauss: {
-        availability: {
-          origin: centrePoint,
-          scale: `${Math.round(duration / 2)}d`,
+      filter: {
+        bool: {
+          must_not: {
+            range: {
+              bookings: {
+                lte: this.filterArgs.date_to,
+                gte: this.filterArgs.date_from,
+                relation: 'intersects',
+              },
+            },
+          },
         },
       },
+      weight: 40,
     }
   }
 }

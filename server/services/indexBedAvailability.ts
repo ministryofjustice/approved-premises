@@ -1,7 +1,6 @@
-import moment from 'moment'
 import AppDataSource from '../dataSource'
 import OpenSearchClient from '../data/openSearchClient'
-import Bed from '../entity/bed'
+import Premises from '../entity/premises'
 import config from '../config'
 
 const IndexBedAvailability = {
@@ -9,8 +8,8 @@ const IndexBedAvailability = {
 
   async run(): Promise<void> {
     console.log('Indexing in opensearch....')
-    const allBeds = await AppDataSource.getRepository(Bed).find({
-      relations: ['premises', 'bookings'],
+    const allPremises = await AppDataSource.getRepository(Premises).find({
+      relations: ['beds', 'beds.bookings'],
     })
 
     console.log('Deleting index....')
@@ -30,15 +29,14 @@ const IndexBedAvailability = {
       body: {
         mappings: {
           properties: {
-            premises: {
-              properties: {
-                location: {
-                  type: 'geo_point',
-                },
-              },
+            location: {
+              type: 'geo_point',
             },
-            availability: {
-              type: 'date',
+            gender: {
+              type: 'keyword',
+            },
+            bookings: {
+              type: 'date_range',
             },
           },
         },
@@ -47,53 +45,36 @@ const IndexBedAvailability = {
 
     console.log('Indexing beds....')
 
-    await Promise.all(allBeds.map(bed => this.indexBed(bed)))
+    await Promise.all(allPremises.map(premises => this.indexPremises(premises)))
   },
 
-  async indexBed(bed: Bed): Promise<any> {
-    const allDates = this.dateRange(new Date(), moment().add(1, 'year').toDate())
-    const bookedDates = bed.bookings.flatMap(booking => this.dateRange(booking.start_time, booking.end_time))
+  async indexPremises(premises: Premises): Promise<any> {
+    const bookings = []
 
-    const availableDates = allDates.filter((n: Array<Date>) => !bookedDates.includes(n))
+    for (const bed of premises.beds) {
+      for (const booking of bed.bookings) {
+        bookings.push({ gte: booking.start_time, lte: booking.end_time })
+      }
+    }
 
     await OpenSearchClient.index({
-      id: bed.id.toString(),
+      id: premises.id.toString(),
       index: this.indexName,
       body: {
-        bed: {
-          gender: bed.gender,
-          iap: bed.iap,
-          pipe: bed.pipe,
-          enhanced_security: bed.enhanced_security,
-          step_free_access_to_communal_areas: bed.step_free_access_to_communal_areas,
-          lift_or_stairlift: bed.lift_or_stairlift,
+        location: {
+          lat: premises.lat,
+          lon: premises.lon,
         },
-        premises: {
-          id: bed.premises.id,
-          location: {
-            lat: bed.premises.lat,
-            lon: bed.premises.lon,
-          },
-        },
-        availability: availableDates,
+        gender: premises.beds[0].gender,
+        iap: premises.beds[0].iap,
+        pipe: premises.beds[0].pipe,
+        enhanced_security: premises.beds[0].enhanced_security,
+        step_free_access_to_communal_areas: premises.beds[0].step_free_access_to_communal_areas,
+        lift_or_stairlift: premises.beds[0].lift_or_stairlift,
+        bookings,
       },
       refresh: true,
     })
-  },
-
-  dateRange(from: Date, to: Date): Array<number> {
-    const dates = []
-
-    let start = from.getTime()
-    const end = to.getTime()
-
-    while (start <= end) {
-      dates.push(start)
-      const date = new Date(start)
-      start = moment(date).add(1, 'days').startOf('day').toDate().getTime()
-    }
-
-    return dates
   },
 }
 
