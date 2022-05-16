@@ -35,13 +35,8 @@ const IndexBedAvailability = {
             gender: {
               type: 'keyword',
             },
-            beds: {
-              type: 'nested',
-              properties: {
-                bookings: {
-                  type: 'date_range',
-                },
-              },
+            bookings: {
+              type: 'date_range',
             },
           },
         },
@@ -54,6 +49,14 @@ const IndexBedAvailability = {
   },
 
   async indexPremises(premises: Premises): Promise<any> {
+    const bookings = []
+
+    for (const bed of premises.beds) {
+      for (const booking of bed.bookings) {
+        bookings.push({ gte: booking.start_time, lte: booking.end_time })
+      }
+    }
+
     await OpenSearchClient.index({
       id: premises.id.toString(),
       index: this.indexName,
@@ -68,13 +71,7 @@ const IndexBedAvailability = {
         enhanced_security: premises.beds[0].enhanced_security,
         step_free_access_to_communal_areas: premises.beds[0].step_free_access_to_communal_areas,
         lift_or_stairlift: premises.beds[0].lift_or_stairlift,
-        beds: premises.beds.map(bed => {
-          return {
-            bookings: bed.bookings.map(booking => {
-              return { gte: booking.start_time, lte: booking.end_time }
-            }),
-          }
-        }),
+        bookings,
       },
       refresh: true,
     })
