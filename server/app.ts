@@ -5,6 +5,7 @@ import createError from 'http-errors'
 
 import indexRoutes from './routes'
 import bookingRoutes from './routes/bookingRoutes'
+import placementRoutes from './routes/placementRoutes'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import standardRouter from './routes/standardRouter'
@@ -38,6 +39,7 @@ export default function createApp(userService: UserService): express.Application
 
   app.use('/', indexRoutes(standardRouter(userService)))
   app.use('/', bookingRoutes(standardRouter(userService)))
+  app.use('/', placementRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
