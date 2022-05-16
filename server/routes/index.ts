@@ -58,26 +58,6 @@ export default function routes(router: Router): Router {
     res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
   })
 
-  post('/seed/premises', async (_req, res, next) => {
-    await SeedPremises.run()
-    res.redirect('/premises')
-  })
-
-  post('/seed/geolocations', async (_req, res, next) => {
-    await SeedGeolocations.run()
-    res.redirect('/premises')
-  })
-
-  post('/seed/bookings', async (_req, res, next) => {
-    await SeedBookings.run()
-    res.redirect('/bookings')
-  })
-
-  post('/index/bedAvailability', async (_req, res, next) => {
-    await IndexBedAvailability.run()
-    res.redirect('/bookings')
-  })
-
   get('/placements', async (req, res, next) => {
     res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
   })
