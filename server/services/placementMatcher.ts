@@ -58,6 +58,12 @@ export default class PlacementMatcher {
 
         return {
           ...p,
+          gender: searchResult._source.gender,
+          iap: searchResult._source.iap,
+          pipe: searchResult._source.pipe,
+          enhanced_security: searchResult._source.enhanced_security,
+          step_free_access_to_communal_areas: searchResult._source.step_free_access_to_communal_areas,
+          lift_or_stairlift: searchResult._source.lift_or_stairlift,
           distance: searchResult.fields.distance[0],
           score: searchResult._score,
         }
@@ -72,12 +78,6 @@ export default class PlacementMatcher {
       .createQueryBuilder('premises')
       .distinctOn(['premises.id'])
       .select(['premises'])
-      .addSelect(['array_agg("beds"."gender") AS gender'])
-      .addSelect(['array_agg("beds"."enhanced_security") AS enhanced_security'])
-      .addSelect(['array_agg("beds"."lift_or_stairlift") AS lift_or_stairlift'])
-      .addSelect(['array_agg("beds"."step_free_access_to_communal_areas") AS step_free_access_to_communal_areas'])
-      .addSelect(['array_agg("beds"."iap") AS iap'])
-      .addSelect(['array_agg("beds"."pipe") AS pipe'])
       .leftJoin('premises.beds', 'beds')
       .leftJoin('beds.bookings', 'bookings')
       .where('premises.id IN(:...ids)', { ids: ids })
