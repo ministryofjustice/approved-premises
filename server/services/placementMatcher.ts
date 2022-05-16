@@ -175,22 +175,11 @@ export default class PlacementMatcher {
       filter: {
         bool: {
           must_not: {
-            nested: {
-              path: 'beds',
-              query: {
-                bool: {
-                  should: [
-                    {
-                      range: {
-                        'beds.bookings': {
-                          lte: this.filterArgs.date_to,
-                          gte: this.filterArgs.date_from,
-                          relation: 'intersects',
-                        },
-                      },
-                    },
-                  ],
-                },
+            range: {
+              bookings: {
+                lte: this.filterArgs.date_to,
+                gte: this.filterArgs.date_from,
+                relation: 'intersects',
               },
             },
           },
