@@ -1,0 +1,64 @@
+#!/bin/sh
+
+# script/setup: Set up the application for the first time after cloning, or set
+#               it back to the initial unused state.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+app_name=$(basename "$PWD")
+dev_db="$app_name-development"
+test_db="$app_name-test"
+
+if ! brew bundle check >/dev/null 2>&1; then
+  echo "==> Installing Homebrew dependencies…"
+  brew bundle install --verbose --no-lock
+fi
+
+echo "==> Dropping and recreating the database..."
+
+dropdb "$dev_db" > /dev/null 2>&1 || true
+dropdb "$test_db" > /dev/null 2>&1 || true
+
+createdb "$dev_db"
+createdb "$test_db"
+
+if [ ! -f .env ]; then
+  echo "==> Creating env file for dev..."
+
+  echo "Enter the full path to the database seed file:"
+  read -r database_seed_file
+
+  echo "Enter the full path to the geolocation seed file:"
+  read -r geolocation_seed_file
+
+  dev_env_file=$(sed  < ".env.example" \
+    -e "s~\$DATABASE_NAME~$dev_db~g" \
+    -e "s~\$INDEX_NAME~bed_availability~g" \
+    -e "s~\$DATABASE_SEED_FILE~$database_seed_file~g" \
+    -e "s~\$GEOLOCATION_SEED_FILE~$geolocation_seed_file~g")
+  echo "$dev_env_file" > .env
+fi
+
+if [ ! -f .env.test ]; then
+  echo "==> Creating env file for test..."
+
+  if [ -z "${database_seed_file}" ]; then
+    echo "Enter the full path to the database seed file:"
+    read -r database_seed_file
+  fi
+
+  if [ -z "${geolocation_seed_file}" ]; then
+    echo "Enter the full path to the geolocation seed file:"
+    read -r geolocation_seed_file
+  fi
+
+
+  test_env_file=$(sed  < ".env.example" \
+    -e "s~\$DATABASE_NAME~$test_db~g" \
+    -e "s~\$INDEX_NAME~bed_availability_test~g" \
+    -e "s~\$DATABASE_SEED_FILE~$database_seed_file~g" \
+    -e "s~\$GEOLOCATION_SEED_FILE~$geolocation_seed_file~g")
+  echo "$test_env_file" > .env.test
+fi
