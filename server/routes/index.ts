@@ -4,26 +4,25 @@ import { plainToClass } from 'class-transformer'
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'
 import Booking from '../entity/booking'
-import SeedPremises from '../services/seedPremises'
-import SeedGeolocations from '../services/seedGeolocations'
-import SeedBookings from '../services/seedBookings'
 import BookingCreator from '../services/bookingCreator'
-import IndexBedAvailability from '../services/indexBedAvailability'
 import PlacementFinder from '../services/placementFinder'
 import PlacementMatcher from '../services/placementMatcher'
 import AppDataSource from '../dataSource'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import FilterArgs from '../common/dto/filter-args'
 
-export default function routes(router: Router): Router {
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
+export const get = (router: Router, path: string, handler: RequestHandler): Router =>
+  router.get(path, asyncMiddleware(handler))
 
-  get('/', (_req, res, next) => {
+export const post = (router: Router, path: string, handler: RequestHandler): Router =>
+  router.post(path, asyncMiddleware(handler))
+
+export default function routes(router: Router): Router {
+  get(router, '/', (_req, res, next) => {
     res.render('pages/index')
   })
 
-  get('/premises', async (req, res, next) => {
+  get(router, '/premises', async (req, res, next) => {
     const premises = await AppDataSource.getRepository(Premises).find({
       order: {
         probationRegion: 'ASC',
@@ -58,15 +57,15 @@ export default function routes(router: Router): Router {
     res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
   })
 
-  get('/placements', async (req, res, next) => {
+  get(router, '/placements', async (req, res, next) => {
     res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
   })
 
-  get('/bookings/new', async (req, res, next) => {
+  get(router, '/bookings/new', async (req, res, next) => {
     res.render('pages/bookingsNew', { csrfToken: req.csrfToken() })
   })
 
-  post('/bookings', async (req, res, next) => {
+  post(router, '/bookings', async (req, res, next) => {
     const durationInWeeks = req.body.booking.duration_in_weeks
     const bedCode = req.body.booking.bed_code
     const startDate = req.body.booking.start_date
@@ -78,7 +77,7 @@ export default function routes(router: Router): Router {
     res.redirect('/bookings')
   })
 
-  get('/bookings', async (_req, res, next) => {
+  get(router, '/bookings', async (_req, res, next) => {
     const durationInWeeks = (startTime: Date, endTime: Date): number => {
       const millSecondsPerWeek = 1000 * 60 * 60 * 24 * 7
       const durationInMilliSeconds = endTime.getTime() - startTime.getTime()
@@ -108,7 +107,7 @@ export default function routes(router: Router): Router {
     res.render('pages/bookingsIndex', { bookingRows, bookingsCount })
   })
 
-  post('/placement_search', async (req, res, next) => {
+  post(router, '/placement_search', async (req, res, next) => {
     const placeOrPostcode: string = req.body.placement_search.location
     const premises = await PlacementFinder.near(placeOrPostcode)
     const apRows = premises.map(ap => {
@@ -124,11 +123,11 @@ export default function routes(router: Router): Router {
     res.render('pages/placementsIndex', { premises, apRows })
   })
 
-  get('/match-placements', async (req, res, next) => {
+  get(router, '/match-placements', async (req, res, next) => {
     res.render('match-placements/index', { csrfToken: req.csrfToken() })
   })
 
-  post('/match-placements', async (req, res, next) => {
+  post(router, '/match-placements', async (req, res, next) => {
     const filterArgs = plainToClass(FilterArgs, req.body.placement_search)
     const placementMatcher = new PlacementMatcher(filterArgs)
     const premises = await placementMatcher.results()
@@ -149,7 +148,7 @@ export default function routes(router: Router): Router {
     res.render('match-placements/index', { premises, apRows, filterArgs })
   })
 
-  get('/risks/summary', (req, res, next) => {
+  get(router, '/risks/summary', (req, res, next) => {
     const risks = {
       risks: {
         mappa: {
@@ -172,7 +171,7 @@ export default function routes(router: Router): Router {
     res.render('pages/riskSummary', risks)
   })
 
-  get('/risks/predictors', (req, res, next) => {
+  get(router, '/risks/predictors', (req, res, next) => {
     const predictorScores = {
       current: {
         date: '23 Jul 2021 at 12:00:00',
