@@ -27,7 +27,7 @@ export default class PlacementMatcher {
     const body = {
       index: indexName,
       body: {
-        size: '10000',
+        size: '20',
         query: this.query(lat, lon),
         stored_fields: ['_source'],
         script_fields: {
