@@ -5,17 +5,29 @@ services:
     image: 'bitnami/redis:5.0'
     networks:
       - hmpps
-    container_name: redis 
+    container_name: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - '6379:6379'
 
+  opensearch:
+    image: 'opensearchproject/opensearch'
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: 'true'
+    ports:
+      - '9200:9200'
+    networks:
+      - hmpps
+    volumes:
+      - opensearchdata:/usr/share/opensearch/data:rw
+
   hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    container_name: hmpps-auth 
+    container_name: hmpps-auth
     ports:
       - "9090:8080"
     healthcheck:
@@ -43,3 +55,5 @@ services:
 
 networks:
   hmpps:
+volumes:
+  opensearchdata:
