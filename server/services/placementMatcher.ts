@@ -1,6 +1,5 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_source", "_score"] }] */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_source", "_score", "_id"] }] */
 import { Repository } from 'typeorm'
-import moment from 'moment'
 
 import { float } from '@opensearch-project/opensearch/api/types'
 import AppDataSource from '../dataSource'
@@ -80,7 +79,7 @@ export default class PlacementMatcher {
       .select(['premises'])
       .leftJoin('premises.beds', 'beds')
       .leftJoin('beds.bookings', 'bookings')
-      .where('premises.id IN(:...ids)', { ids: ids })
+      .where('premises.id IN(:...ids)', { ids })
       .groupBy('premises.id')
 
     if (this.filterArgs.date_from) {
@@ -94,7 +93,7 @@ export default class PlacementMatcher {
       )
     }
 
-    return await query.getRawMany()
+    return query.getRawMany()
   }
 
   private query(lat: number, lon: number) {
