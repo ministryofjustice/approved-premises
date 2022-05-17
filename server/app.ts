@@ -5,7 +5,7 @@ import createError from 'http-errors'
 
 import indexRoutes from './routes'
 import bookingRoutes from './routes/bookingRoutes'
-import placementRoutes from './routes/placementRoutes'
+import placementRoutes, { placementsUrlPrefix } from './routes/placementRoutes'
 import riskRoutes from './routes/riskRoutes'
 import premisesRoutes from './routes/premisesRoutes'
 import nunjucksSetup from './utils/nunjucksSetup'
@@ -41,7 +41,7 @@ export default function createApp(userService: UserService): express.Application
 
   app.use('/', indexRoutes(standardRouter(userService)))
   app.use('/', bookingRoutes(standardRouter(userService)))
-  app.use('/', placementRoutes(standardRouter(userService)))
+  app.use(placementsUrlPrefix, placementRoutes(standardRouter(userService)))
   app.use('/', riskRoutes(standardRouter(userService)))
   app.use('/', premisesRoutes(standardRouter(userService)))
 

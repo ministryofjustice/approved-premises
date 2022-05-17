@@ -35,7 +35,7 @@ describe('GET /', () => {
   })
 })
 
-describe('POST /match-placements', () => {
+describe('POST /placements/match', () => {
   let premisesRepository: Repository<Premises>
   let bedRepository: Repository<Bed>
 
@@ -67,7 +67,7 @@ describe('POST /match-placements', () => {
     await IndexBedAvailability.run()
 
     return request(app)
-      .post('/match-placements')
+      .post('/placements/match')
       .send({ placement_search: { location: 'Some location' } })
       .expect('Content-Type', /html/)
       .expect(res => {
@@ -102,7 +102,7 @@ describe('POST /match-placements', () => {
     await IndexBedAvailability.run()
 
     return request(app)
-      .post('/match-placements')
+      .post('/placements/match')
       .send({ placement_search: { location: 'Some location', requirements: ['lift_or_stairlift'] } })
       .expect('Content-Type', /html/)
       .expect(res => {
@@ -143,7 +143,7 @@ describe('POST /match-placements', () => {
     await IndexBedAvailability.run()
 
     return request(app)
-      .post('/match-placements')
+      .post('/placements/match')
       .send({
         placement_search: {
           location: 'Some location',

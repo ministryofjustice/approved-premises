@@ -6,12 +6,14 @@ import { get, post } from './index'
 import PlacementFinder from '../services/placementFinder'
 import PlacementMatcher from '../services/placementMatcher'
 
+export const placementsUrlPrefix = '/placements'
+
 export default function PlacementRoutes(router: Router): Router {
-  get(router, '/placements', async (req, res, next) => {
+  get(router, '/geosearch/new', async (req, res, next) => {
     res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
   })
 
-  post(router, '/placement_search', async (req, res, next) => {
+  post(router, '/geosearch', async (req, res, next) => {
     const placeOrPostcode: string = req.body.placement_search.location
     const premises = await PlacementFinder.near(placeOrPostcode)
     const apRows = premises.map(ap => {
@@ -27,11 +29,11 @@ export default function PlacementRoutes(router: Router): Router {
     res.render('pages/placementsIndex', { premises, apRows })
   })
 
-  get(router, '/match-placements', async (req, res, next) => {
+  get(router, '/match/new', async (req, res, next) => {
     res.render('match-placements/index', { csrfToken: req.csrfToken() })
   })
 
-  post(router, '/match-placements', async (req, res, next) => {
+  post(router, '/match', async (req, res, next) => {
     const filterArgs = plainToClass(FilterArgs, req.body.placement_search)
     const placementMatcher = new PlacementMatcher(filterArgs)
     const premises = await placementMatcher.results()
