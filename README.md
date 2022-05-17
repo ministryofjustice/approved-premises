@@ -2,71 +2,51 @@
 
 Apply for and manage approved premises
 
-## Running the app
-The easiest way to run the app is to use docker compose to create the service and all dependencies. 
+## Prerequisites
 
-`docker-compose pull`
+* Docker
+* NodeJS
 
-`docker-compose up`
+You will also need two CSV files stored in a known location on your system:
 
-### Dependencies
-The app requires: 
-* hmpps-auth - for authentication
-* redis - session store and token caching
-* PostGIS - the Postgres extension needs to be installed *on the specific db* with
-`CREATE EXTENSION postgis;` See [https://postgis.net/install/](https://postgis.net/install/) if you need to install PostGIS itself.
+* A CSV with details of APs and their beds
+* A CSV with details of AP coordinates
 
-### Environment variables
+To get hold of these, speak to a member of the Approved Premises team.
 
-For simplicity during our alpha phase, we are using a full-stack approach with a
-database. We use a couple of db-related environment variables, which can be set
-locally e.g. in a `.env` file.
+You will be asked for the full path of these two files during the setup process.
 
-- `DATABASE_URL` - path to the db
-- `DATABASE_SEED_FILE` - absolute file path to CSV with details of APs and their beds
-- `GEOLOCATION_SEED_FILE` - absolute file path to CSV with details of AP coordinates
+## Setup
 
+When running the application for the first time, run the following command:
 
-### Running the app for development
+```bash
+script/setup
+```
 
-To start the main services excluding the example typescript template app: 
+This will tear down and setup the application, create .env files and bootstrap the application.
 
-`docker-compose up --scale=app=0`
+If you're coming back to the application after a certain amount of time, you can run:
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v14.x`
+```bash
+script/bootstrap
+```
 
-And then, to build the assets and start the app with nodemon:
+This will install dependencies and seed the databases.
 
-`npm run start:dev`
+## Running the application
 
-### Run linter
+To run the server, from the root directory, run:
 
-`npm run lint`
+```bash
+script/server
+```
 
-### Run tests
+This starts the backing services using Docker, and runs the server on `localhost:3000`.
 
-`npm run test`
+## Running the tests
 
-### Running integration tests
+To run linting, unit and end-to-end tests, from the root directory, run:
 
-For local running, start a test db, redis, and wiremock instance by:
+script/test
 
-`docker-compose -f docker-compose-test.yml up`
-
-Then run the server in test mode by:
-
-`npm run start-feature` (or `npm run start-feature:dev` to run with nodemon)
-
-And then either, run tests in headless mode with:
-
-`npm run int-test`
- 
-Or run tests with the cypress UI:
-
-`npm run int-test-ui`
-
-
-### Dependency Checks
-
-The template project has implemented some scheduled checks to ensure that key dependencies are kept up to date.
-If these are not desired in the cloned project, remove references to `check_outdated` job from `.circleci/config.yml`
