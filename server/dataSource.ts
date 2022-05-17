@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
+
 import config from './config'
 import Bed from './entity/bed'
 import Booking from './entity/booking'
@@ -11,7 +12,7 @@ const AppDataSource = new DataSource({
   username: 'postgres',
   entities: [Premises, Bed, Booking],
   dropSchema: process.env.NODE_ENV === 'test',
-  migrations: ['./dist/db/migrate/*.js'],
+  migrations: ['./dist/server/db/migrate/*.js'],
   migrationsRun: true,
   synchronize: true,
   logging: false,
