@@ -39,47 +39,6 @@
                 }
               ]
             }) }}
-
-            <form action="/seed/premises" method="post">
-              <input type="hidden" name="_csrf" value={{csrfToken}}>
-
-              {{ govukButton({
-                element: "button",
-                type: "submit",
-                text: "Seed APs",
-                classes: "govuk-button--warning"
-              }) }}
-            </form>
-            <form action="/seed/geolocations" method="post">
-              <input type="hidden" name="_csrf" value={{csrfToken}}>
-
-              {{ govukButton({
-                element: "button",
-                type: "submit",
-                text: "Seed Geolocations",
-                classes: "govuk-button--warning"
-              }) }}
-            </form>
-            <form action="/seed/bookings" method="post">
-              <input type="hidden" name="_csrf" value={{csrfToken}}>
-
-              {{ govukButton({
-                element: "button",
-                type: "submit",
-                text: "Seed Bookings",
-                classes: "govuk-button--warning"
-              }) }}
-            </form>
-            <form action="/index/bedAvailability" method="post">
-              <input type="hidden" name="_csrf" value={{csrfToken}}>
-
-              {{ govukButton({
-                element: "button",
-                type: "submit",
-                text: "Index Bed Availability",
-                classes: "govuk-button--warning"
-              }) }}
-            </form>
           </div>
 
           <div class="govuk-grid-column-one-half">

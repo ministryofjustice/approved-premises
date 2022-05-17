@@ -62,7 +62,6 @@ const SeedBookings = {
 
     const allBookings = await AppDataSource.manager.save(bookingProcessingList)
     console.log(`Seeded ${allBookings.length} bookings...`)
-    console.log(allBookings)
   },
 }
 
