@@ -12,7 +12,7 @@ context('SignIn', () => {
     cy.signIn()
 
     // Given I am on the placement search page
-    cy.visit('/placements')
+    cy.visit('/placements/geosearch/new')
     const searchPage = Page.verifyOnPage(PlacementsSearchPage)
     searchPage.headerUserName().should('contain.text', 'J. Smith')
 
