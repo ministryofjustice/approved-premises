@@ -10,7 +10,7 @@ export const placementsUrlPrefix = '/placements'
 
 export default function PlacementRoutes(router: Router): Router {
   get(router, '/geosearch/new', async (req, res, next) => {
-    res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+    res.render('pages/placementsIndex')
   })
 
   post(router, '/geosearch', async (req, res, next) => {
@@ -30,7 +30,7 @@ export default function PlacementRoutes(router: Router): Router {
   })
 
   get(router, '/match/new', async (req, res, next) => {
-    res.render('match-placements/index', { csrfToken: req.csrfToken() })
+    res.render('match-placements/index')
   })
 
   post(router, '/match', async (req, res, next) => {
