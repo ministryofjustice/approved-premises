@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# script/bootstrap: Resolve all dependencies that the application requires to
+#                   run.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+script/utils/launch-docker.sh
+
+echo "==> Installing application dependencies..."
+
+nodenv install --skip-existing
+npm install
+
+script/utils/start-backing-services.sh
+
+echo "==> Seeding premises..."
+
+npm run seed:premises
+
+echo "==> Seeding bookings..."
+
+npm run seed:bookings
+
+echo "==> Indexing premises..."
+
+npm run index:bed-availability

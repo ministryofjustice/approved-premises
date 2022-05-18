@@ -62,3 +62,5 @@ if [ ! -f .env.test ]; then
     -e "s~\$GEOLOCATION_SEED_FILE~$geolocation_seed_file~g")
   echo "$test_env_file" > .env.test
 fi
+
+script/bootstrap
