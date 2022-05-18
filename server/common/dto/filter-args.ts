@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 
 const convertDate = (plainDate: { year: string; month: string; day: string }) => {
   if (plainDate.year && plainDate.month && plainDate.day) {

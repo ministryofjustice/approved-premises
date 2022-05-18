@@ -1,3 +1,5 @@
+/* eslint "@typescript-eslint/no-unused-vars": 0 */
+
 import { Router } from 'express'
 import csurf from 'csurf'
 import auth from '../authentication/auth'

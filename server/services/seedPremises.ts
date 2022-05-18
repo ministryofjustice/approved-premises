@@ -1,6 +1,5 @@
 import * as csv from '@fast-csv/parse'
 import AppDataSource from '../dataSource'
-import OpenSearchClient from '../data/openSearchClient'
 import config from '../config'
 import Premises from '../entity/premises'
 import Bed from '../entity/bed'

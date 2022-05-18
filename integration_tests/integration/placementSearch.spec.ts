@@ -1,4 +1,3 @@
-import IndexPage from '../pages/index'
 import PlacementsSearchPage from '../pages/placementSearch'
 import Page from '../pages/page'
 

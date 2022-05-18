@@ -1,3 +1,5 @@
+/* eslint "@typescript-eslint/no-unused-vars": 0 */
+
 import express from 'express'
 
 import path from 'path'

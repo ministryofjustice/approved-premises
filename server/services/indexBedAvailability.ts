@@ -48,14 +48,12 @@ const IndexBedAvailability = {
     await Promise.all(allPremises.map(premises => this.indexPremises(premises)))
   },
 
-  async indexPremises(premises: Premises): Promise<any> {
-    const bookings = []
-
-    for (const bed of premises.beds) {
-      for (const booking of bed.bookings) {
-        bookings.push({ gte: booking.start_time, lte: booking.end_time })
-      }
-    }
+  async indexPremises(premises: Premises): Promise<void> {
+    const bookings = premises.beds.flatMap(bed =>
+      bed.bookings.map(booking => {
+        return { gte: booking.start_time, lte: booking.end_time }
+      })
+    )
 
     await OpenSearchClient.index({
       id: premises.id.toString(),
