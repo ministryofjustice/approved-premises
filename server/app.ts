@@ -1,5 +1,3 @@
-/* eslint "@typescript-eslint/no-unused-vars": 0 */
-
 import express from 'express'
 
 import path from 'path'
@@ -38,8 +36,8 @@ export default function createApp(userService: UserService): express.Application
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   nunjucksSetup(app, path)
-  // app.use(setUpAuthentication())
-  // app.use(authorisationMiddleware())
+  app.use(setUpAuthentication())
+  app.use(authorisationMiddleware())
 
   app.use('/', indexRoutes(standardRouter(userService)))
   app.use('/', bookingRoutes(standardRouter(userService)))
