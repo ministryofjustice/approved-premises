@@ -22,11 +22,11 @@ context('SignIn', () => {
     cy.contains('Find matching AP placements').click()
 
     // Then I should see available beds ranked by distance
-    cy.get('.search-result').should($p => {
-      const distances = $p.map((i, el) => {
-        return Cypress.$(el).find('.distance-from-target').text
+    cy.get('table tbody tr')
+      .find('td[data-distance]')
+      .then(results => {
+        const distances = results.map((_i, row) => row.innerText).toArray()
+        expect(distances).to.deep.eq(distances.sort())
       })
-      expect(distances.get()).to.deep.eq(distances.sort)
-    })
   })
 })
