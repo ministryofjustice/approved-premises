@@ -4,7 +4,7 @@ import { validate, ValidationError } from 'class-validator'
 import ReferralReason from '../common/dto/referral-reason'
 import ApType from '../common/dto/ap-type'
 
-type ALLOWED_STEPS = 'referral-reason' | 'type-of-ap'
+type ALLOWED_STEPS = 'referral-reason' | 'type-of-ap' | 'enhanced-risk' | 'opd-pathway' | 'esap-reasons'
 type ALLOWED_DTOS = ReferralReason | ApType
 
 interface ErrorMessages {
@@ -34,6 +34,16 @@ export class ReferralApplication {
   nextStep(): ALLOWED_STEPS {
     return {
       'referral-reason': () => (this.params.reason === 'no-reason' ? 'not-eligible' : 'type-of-ap'),
+      'type-of-ap': () => {
+        switch (this.params.type) {
+          case 'standard':
+            return 'enhanced-risk'
+          case 'pipe':
+            return 'opd-pathway'
+          case 'esap':
+            return 'esap-reasons'
+        }
+      },
     }[this.step]()
   }
 
@@ -41,6 +51,9 @@ export class ReferralApplication {
     return {
       'referral-reason': plainToClass(ReferralReason, this.params),
       'type-of-ap': plainToClass(ApType, this.params),
+      'enhanced-risk': undefined,
+      'opd-pathway': undefined,
+      'esap-reasons': undefined,
     }[this.step]
   }
 

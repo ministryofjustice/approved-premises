@@ -84,4 +84,27 @@ describe('ReferralApplicationForm', () => {
       })
     })
   })
+
+  describe('with an AP type', () => {
+    it('should return `enhanced-risk` for a type of `standard`', () => {
+      const application = new ReferralApplication('type-of-ap', { type: 'standard' })
+      const nextStep = application.nextStep()
+
+      expect(nextStep).toEqual('enhanced-risk')
+    })
+
+    it('should return `opd-pathway` for a type of `pipe`', () => {
+      const application = new ReferralApplication('type-of-ap', { type: 'pipe' })
+      const nextStep = application.nextStep()
+
+      expect(nextStep).toEqual('opd-pathway')
+    })
+
+    it('should return `esap-reasons` for a type of `esap`', () => {
+      const application = new ReferralApplication('type-of-ap', { type: 'esap' })
+      const nextStep = application.nextStep()
+
+      expect(nextStep).toEqual('esap-reasons')
+    })
+  })
 })
