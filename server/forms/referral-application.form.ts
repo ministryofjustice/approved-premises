@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
 import ReferralReason from '../common/dto/referral-reason'
 
-type ALLOWED_STEPS = 'referral-reason'
+type ALLOWED_STEPS = 'referral-reason' | 'type-of-ap'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -29,9 +29,16 @@ export class ReferralApplication {
     return Object.keys(this.errors).length
   }
 
+  nextStep(): ALLOWED_STEPS {
+    return {
+      'referral-reason': () => 'type-of-ap',
+    }[this.step]()
+  }
+
   private dtoForStep(): typeof ReferralReason {
     return {
       'referral-reason': ReferralReason,
+      'type-of-ap': undefined,
     }[this.step]
   }
 

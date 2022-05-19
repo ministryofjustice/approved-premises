@@ -41,4 +41,15 @@ describe('ReferralApplicationForm', () => {
       })
     })
   })
+
+  describe('nextStep', () => {
+    describe('with a referral reason', () => {
+      it('it should return `type-of-ap`', () => {
+        const application = new ReferralApplication('referral-reason', {})
+        const nextStep = application.nextStep()
+
+        expect(nextStep).toEqual('type-of-ap')
+      })
+    })
+  })
 })
