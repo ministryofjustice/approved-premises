@@ -31,7 +31,7 @@ export class ReferralApplication {
 
   nextStep(): ALLOWED_STEPS {
     return {
-      'referral-reason': () => 'type-of-ap',
+      'referral-reason': () => (this.params.reason === 'no-reason' ? 'not-eligible' : 'type-of-ap'),
     }[this.step]()
   }
 

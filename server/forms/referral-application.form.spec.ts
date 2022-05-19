@@ -44,11 +44,18 @@ describe('ReferralApplicationForm', () => {
 
   describe('nextStep', () => {
     describe('with a referral reason', () => {
-      it('it should return `type-of-ap`', () => {
-        const application = new ReferralApplication('referral-reason', {})
+      it('it should return `type-of-ap` when there is not `no-reason`', () => {
+        const application = new ReferralApplication('referral-reason', { reason: 'likely' })
         const nextStep = application.nextStep()
 
         expect(nextStep).toEqual('type-of-ap')
+      })
+
+      it('it should return `not-eligible` when there is `no-reason`', () => {
+        const application = new ReferralApplication('referral-reason', { reason: 'no-reason' })
+        const nextStep = application.nextStep()
+
+        expect(nextStep).toEqual('not-eligible')
       })
     })
   })
