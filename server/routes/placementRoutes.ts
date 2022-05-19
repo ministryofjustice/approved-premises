@@ -23,7 +23,7 @@ export default function PlacementRoutes(router: Router): Router {
         { text: ap.town },
         { text: ap.localauthorityarea },
         { text: ap.postcode },
-        { text: ap.distance.toFixed(2) },
+        { text: ap.distance.toFixed(2), attributes: { 'data-distance': 'true' } },
       ]
     })
     res.render('pages/placementsIndex', { premises, apRows })
