@@ -6,6 +6,7 @@ context('SignIn', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.exec('npm run seed:premises')
   })
 
   it('ranks results by distance from target', () => {
