@@ -40,6 +40,31 @@ describe('ReferralApplicationForm', () => {
         expect(application.errors['other']).toEqual(['You must specify what your other reason is'])
       })
     })
+
+    describe('with an AP type', () => {
+      it('should return true with no errors if the params are valid', async () => {
+        const params = {
+          type: 'standard',
+        }
+
+        const application = new ReferralApplication('type-of-ap', params)
+        const valid = await application.validForCurrentStep()
+
+        expect(valid).toEqual(true)
+        expect(application.errorLength()).toEqual(0)
+      })
+
+      it('should return false with errors if the params are empty', async () => {
+        const params = {}
+        const application = new ReferralApplication('type-of-ap', params)
+
+        const valid = await application.validForCurrentStep()
+
+        expect(valid).toEqual(false)
+        expect(application.errorLength()).toEqual(1)
+        expect(application.errors['type']).toEqual(['You must select a type of AP'])
+      })
+    })
   })
 
   describe('nextStep', () => {

@@ -1,8 +1,11 @@
 import { plainToClass } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
+
 import ReferralReason from '../common/dto/referral-reason'
+import ApType from '../common/dto/ap-type'
 
 type ALLOWED_STEPS = 'referral-reason' | 'type-of-ap'
+type ALLOWED_DTOS = ReferralReason | ApType
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -16,9 +19,8 @@ export class ReferralApplication {
 
   async validForCurrentStep(): Promise<boolean> {
     const dto = this.dtoForStep()
-    const obj = plainToClass(dto, this.params)
 
-    await validate(obj).then(errors => {
+    await validate(dto).then(errors => {
       this.errors = this.convertErrors(errors)
     })
 
@@ -35,10 +37,10 @@ export class ReferralApplication {
     }[this.step]()
   }
 
-  private dtoForStep(): typeof ReferralReason {
+  private dtoForStep(): ALLOWED_DTOS {
     return {
-      'referral-reason': ReferralReason,
-      'type-of-ap': undefined,
+      'referral-reason': plainToClass(ReferralReason, this.params),
+      'type-of-ap': plainToClass(ApType, this.params),
     }[this.step]
   }
 
