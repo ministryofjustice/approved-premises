@@ -15,7 +15,7 @@ class MockStep extends Step {
   }
 
   nextStep() {
-    return 'foo'
+    return 'referral-reason' as const
   }
 
   dto() {
@@ -42,7 +42,7 @@ describe('ReferralApplicationForm', () => {
     const errorLength = application.errorLength()
 
     expect(valid).toBe(true)
-    expect(nextStep).toEqual('foo')
+    expect(nextStep).toEqual('referral-reason')
     expect(errorLength).toEqual(2)
 
     expect(application.step.errorLength).toEqual(2)
