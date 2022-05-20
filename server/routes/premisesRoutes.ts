@@ -35,7 +35,7 @@ export default function PremisesRoutes(router: Router): Router {
         { text: bedCounts.find(b => b.apCode === ap.apCode).bedCount },
       ]
     })
-    res.render('pages/premisesIndex', { apCount, apRows, bedCount, csrfToken: req.csrfToken() })
+    res.render('pages/premisesIndex', { apCount, apRows, bedCount })
   })
 
   return router

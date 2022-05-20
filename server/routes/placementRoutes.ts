@@ -10,7 +10,7 @@ export const placementsUrlPrefix = '/placements'
 
 export default function PlacementRoutes(router: Router): Router {
   get(router, '/geosearch/new', async (req, res, next) => {
-    res.render('pages/placementsIndex', { csrfToken: req.csrfToken() })
+    res.render('pages/placementsIndex')
   })
 
   post(router, '/geosearch', async (req, res, next) => {
@@ -23,14 +23,14 @@ export default function PlacementRoutes(router: Router): Router {
         { text: ap.town },
         { text: ap.localauthorityarea },
         { text: ap.postcode },
-        { text: ap.distance.toFixed(2) },
+        { text: ap.distance.toFixed(2), attributes: { 'data-distance': 'true' } },
       ]
     })
     res.render('pages/placementsIndex', { premises, apRows })
   })
 
   get(router, '/match/new', async (req, res, next) => {
-    res.render('match-placements/index', { csrfToken: req.csrfToken() })
+    res.render('match-placements/index')
   })
 
   post(router, '/match', async (req, res, next) => {

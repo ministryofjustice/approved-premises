@@ -7,7 +7,7 @@ import AppDataSource from '../dataSource'
 
 export default function BookingRoutes(router: Router): Router {
   get(router, '/bookings/new', async (req, res, next) => {
-    res.render('pages/bookingsNew', { csrfToken: req.csrfToken() })
+    res.render('pages/bookingsNew')
   })
 
   post(router, '/bookings', async (req, res, next) => {
