@@ -1,6 +1,8 @@
 import { IsNotEmpty } from 'class-validator'
 
-export default class ApType {
+import Dto from './dto'
+
+export default class ApType extends Dto {
   @IsNotEmpty({ message: 'You must select a type of AP' })
   type: 'standard' | 'pipe' | 'esap'
 }

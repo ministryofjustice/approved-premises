@@ -1,11 +1,4 @@
-import { plainToClass } from 'class-transformer'
-import { validate, ValidationError } from 'class-validator'
-
-import ReferralReason from '../common/dto/referral-reason'
-import ApType from '../common/dto/ap-type'
-
-type ALLOWED_STEPS = 'referral-reason' | 'type-of-ap' | 'enhanced-risk' | 'opd-pathway' | 'esap-reasons'
-type ALLOWED_DTOS = ReferralReason | ApType
+import { Step, stepList, AllowedStepNames } from './steps'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -13,60 +6,27 @@ interface ErrorMessages {
 
 export class ReferralApplication {
   errors: ErrorMessages
-  steps: {}
+  step: Step
 
-  constructor(private readonly step: ALLOWED_STEPS, private readonly params: any) {}
+  constructor(private readonly stepName: AllowedStepNames, private readonly params: any) {
+    this.step = this.getStep()
+  }
 
   async validForCurrentStep(): Promise<boolean> {
-    const dto = this.dtoForStep()
-
-    await validate(dto).then(errors => {
-      this.errors = this.convertErrors(errors)
-    })
-
-    return this.errorLength() === 0
+    return this.step.valid()
   }
 
   errorLength(): number {
-    return Object.keys(this.errors).length
+    return this.step.errorLength
   }
 
-  nextStep(): ALLOWED_STEPS {
-    return {
-      'referral-reason': () => (this.params.reason === 'no-reason' ? 'not-eligible' : 'type-of-ap'),
-      'type-of-ap': () => {
-        switch (this.params.type) {
-          case 'standard':
-            return 'enhanced-risk'
-          case 'pipe':
-            return 'opd-pathway'
-          case 'esap':
-            return 'esap-reasons'
-        }
-      },
-    }[this.step]()
+  nextStep() {
+    return this.step.nextStep()
   }
 
-  private dtoForStep(): ALLOWED_DTOS {
-    return {
-      'referral-reason': plainToClass(ReferralReason, this.params),
-      'type-of-ap': plainToClass(ApType, this.params),
-      'enhanced-risk': undefined,
-      'opd-pathway': undefined,
-      'esap-reasons': undefined,
-    }[this.step]
-  }
+  private getStep() {
+    const step = stepList[this.stepName]
 
-  private convertErrors(errorMessages: Array<ValidationError>) {
-    const errors = {}
-
-    errorMessages.forEach((err: ValidationError) => {
-      Object.keys(err.constraints).forEach(key => {
-        errors[err.property] = errors[err.property] || []
-        errors[err.property].push(err.constraints[key])
-      })
-    })
-
-    return errors
+    return new step(this.params)
   }
 }
