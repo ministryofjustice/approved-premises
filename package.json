@@ -93,6 +93,7 @@
   },
   "dependencies": {
     "@fast-csv/parse": "^4.3.6",
+    "@golevelup/ts-jest": "^0.3.3",
     "@ministryofjustice/frontend": "^1.2.0",
     "@opensearch-project/opensearch": "^1.1.0",
     "@types/jsdom": "^16.2.14",
