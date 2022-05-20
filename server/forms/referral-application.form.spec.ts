@@ -1,3 +1,6 @@
+import { createMock } from '@golevelup/ts-jest'
+import { Request } from 'express'
+
 import Dto from './dtos/dto'
 import Step from './steps/step'
 
@@ -39,7 +42,8 @@ import { ReferralApplication } from './referral-application.form'
 
 describe('ReferralApplicationForm', () => {
   it('returns the correct return values from the step', async () => {
-    const application = new ReferralApplication('referral-reason', {})
+    const request = createMock<Request>()
+    const application = new ReferralApplication('referral-reason', {}, request)
 
     const valid = await application.validForCurrentStep()
     const nextStep = application.nextStep()
@@ -52,6 +56,40 @@ describe('ReferralApplicationForm', () => {
     expect(application.step.errorLength).toEqual(2)
     expect(application.step.errors).toEqual({
       foo: ['bar'],
+    })
+  })
+
+  describe('persistData', () => {
+    it('persists data in the session', () => {
+      const request = createMock<Request>({
+        session: {
+          referralApplication: {
+            foo: 'bar',
+          },
+        },
+      })
+
+      const application = new ReferralApplication('referral-reason', { bar: 'baz' }, request)
+
+      application.persistData()
+
+      expect(application.request.session.referralApplication).toEqual({ foo: 'bar', bar: 'baz' })
+    })
+
+    it('overwrites old data already persisted in the session', () => {
+      const request = createMock<Request>({
+        session: {
+          referralApplication: {
+            foo: 'bar',
+          },
+        },
+      })
+
+      const application = new ReferralApplication('referral-reason', { foo: 'baz' }, request)
+
+      application.persistData()
+
+      expect(application.request.session.referralApplication).toEqual({ foo: 'baz' })
     })
   })
 })
