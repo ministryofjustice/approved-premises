@@ -1,6 +1,5 @@
-import { Request } from 'express'
-
-import { Step, stepList, AllowedStepNames } from './steps'
+import { Step, stepList } from './steps'
+import { ReferralApplicationRequest } from './interfaces'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -10,7 +9,7 @@ export class ReferralApplication {
   errors: ErrorMessages
   step: Step
 
-  constructor(private readonly stepName: AllowedStepNames, private readonly params: any, readonly request: Request) {
+  constructor(readonly request: ReferralApplicationRequest) {
     this.step = this.getStep()
   }
 
@@ -34,8 +33,8 @@ export class ReferralApplication {
   }
 
   private getStep() {
-    const step = stepList[this.stepName]
+    const step = stepList[this.request.params.step]
 
-    return new step(this.params)
+    return new step(this.request.body)
   }
 }

@@ -1,5 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
-import { Request } from 'express'
+import { ReferralApplicationRequest } from './interfaces'
 
 import Dto from './dtos/dto'
 import Step from './steps/step'
@@ -42,8 +42,13 @@ import { ReferralApplication } from './referral-application.form'
 
 describe('ReferralApplicationForm', () => {
   it('returns the correct return values from the step', async () => {
-    const request = createMock<Request>()
-    const application = new ReferralApplication('referral-reason', {}, request)
+    const request = createMock<ReferralApplicationRequest>({
+      params: {
+        step: 'referral-reason',
+      },
+      body: {},
+    })
+    const application = new ReferralApplication(request)
 
     const valid = await application.validForCurrentStep()
     const nextStep = application.nextStep()
@@ -61,35 +66,43 @@ describe('ReferralApplicationForm', () => {
 
   describe('persistData', () => {
     it('persists data in the session', () => {
-      const request = createMock<Request>({
+      const request = createMock<ReferralApplicationRequest>({
+        params: {
+          step: 'referral-reason',
+        },
+        body: { type: 'standard' },
         session: {
           referralApplication: {
-            foo: 'bar',
+            reason: 'likely',
           },
         },
       })
 
-      const application = new ReferralApplication('referral-reason', { bar: 'baz' }, request)
+      const application = new ReferralApplication(request)
 
       application.persistData()
 
-      expect(application.request.session.referralApplication).toEqual({ foo: 'bar', bar: 'baz' })
+      expect(application.request.session.referralApplication).toEqual({ type: 'standard', reason: 'likely' })
     })
 
     it('overwrites old data already persisted in the session', () => {
-      const request = createMock<Request>({
+      const request = createMock<ReferralApplicationRequest>({
+        params: {
+          step: 'referral-reason',
+        },
+        body: { type: 'pipe' },
         session: {
           referralApplication: {
-            foo: 'bar',
+            type: 'standard',
           },
         },
       })
 
-      const application = new ReferralApplication('referral-reason', { foo: 'baz' }, request)
+      const application = new ReferralApplication(request)
 
       application.persistData()
 
-      expect(application.request.session.referralApplication).toEqual({ foo: 'baz' })
+      expect(application.request.session.referralApplication).toEqual({ type: 'pipe' })
     })
   })
 })
