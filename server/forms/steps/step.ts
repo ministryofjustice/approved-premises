@@ -13,6 +13,7 @@ export default abstract class Step {
   constructor(public readonly params: any) {}
 
   abstract nextStep(): AllowedStepNames
+  abstract previousStep(): AllowedStepNames
   abstract dto(): Dto
 
   async valid(): Promise<boolean> {

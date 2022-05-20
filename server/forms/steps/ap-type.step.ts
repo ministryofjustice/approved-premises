@@ -16,6 +16,10 @@ export default class ApTypeStep extends Step {
     }
   }
 
+  previousStep() {
+    return 'referral-reason' as const
+  }
+
   dto(): ApType {
     return plainToInstance(ApType, this.params)
   }

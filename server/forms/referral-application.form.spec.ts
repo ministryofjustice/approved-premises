@@ -14,6 +14,10 @@ class MockStep extends Step {
     return true
   }
 
+  previousStep() {
+    return 'type-of-ap' as const
+  }
+
   nextStep() {
     return 'referral-reason' as const
   }

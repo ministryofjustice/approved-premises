@@ -57,4 +57,13 @@ describe('ReferralReason', () => {
       })
     })
   })
+
+  describe('previousStep', () => {
+    it('it should return undefined', () => {
+      const step = new ReferralReason({ reason: 'no-reason' })
+      const previousStep = step.previousStep()
+
+      expect(previousStep).toEqual(undefined)
+    })
+  })
 })

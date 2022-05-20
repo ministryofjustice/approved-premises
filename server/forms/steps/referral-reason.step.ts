@@ -9,6 +9,10 @@ export default class ReferralReasonStep extends Step {
     return this.params.reason === 'no-reason' ? 'not-eligible' : 'type-of-ap'
   }
 
+  previousStep(): undefined {
+    return undefined
+  }
+
   dto(): ReferralReason {
     return plainToInstance(ReferralReason, this.params)
   }

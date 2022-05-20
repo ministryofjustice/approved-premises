@@ -48,4 +48,13 @@ describe('ApTypeStep', () => {
       expect(nextStep).toEqual('esap-reasons')
     })
   })
+
+  describe('previousStep()', () => {
+    it('should return `referral-reason`', () => {
+      const step = new ApTypeStep({})
+      const previousStep = step.previousStep()
+
+      expect(previousStep).toEqual('referral-reason')
+    })
+  })
 })
