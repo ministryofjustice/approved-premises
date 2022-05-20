@@ -1,0 +1,18 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% if errors | length %}
+  {% set errorList = [] %}
+  {% for k,v in errors %}
+    {%
+      set errorList = (errorList.push({
+        text: v,
+        href: ("#" + k)
+      }), errorList)
+    %}
+  {% endfor %}
+
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: errorList
+  }) }}
+{% endif %}
