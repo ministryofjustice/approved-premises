@@ -2,9 +2,9 @@ import { Router } from 'express'
 
 import { get } from './index'
 
-export const referralApplicationUrlPrefix = '/referral_application'
+export const referralTasklistUrlPrefix = '/referral_tasklist'
 
-export default function ReferralApplicationRoutes(router: Router): Router {
+export default function ReferralTasklistRoutes(router: Router): Router {
   get(router, '/', async (req, res, next) => {
     const risks = {
       risks: {
@@ -24,7 +24,7 @@ export default function ReferralApplicationRoutes(router: Router): Router {
         },
       },
     }
-    res.render('referral_application/tasklist', risks)
+    res.render('referral_tasklist/tasklist', risks)
   })
 
   return router
