@@ -1,4 +1,5 @@
 import { plainToInstance } from 'class-transformer'
+import { ReferralApplicationBody } from '../interfaces'
 
 import ApType from '../dtos/ap-type'
 
@@ -22,5 +23,9 @@ export default class ApTypeStep extends Step {
 
   dto(): ApType {
     return plainToInstance(ApType, this.params)
+  }
+
+  allowedToAccess(sessionData: ReferralApplicationBody): boolean {
+    return sessionData.reason !== undefined
   }
 }

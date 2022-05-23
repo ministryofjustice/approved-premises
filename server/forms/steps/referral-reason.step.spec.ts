@@ -66,4 +66,13 @@ describe('ReferralReason', () => {
       expect(previousStep).toEqual(undefined)
     })
   })
+
+  describe('allowedToAccess', () => {
+    it('it should return true', () => {
+      const step = new ReferralReason({ reason: 'no-reason' })
+      const allowedToAccess = step.allowedToAccess()
+
+      expect(allowedToAccess).toEqual(true)
+    })
+  })
 })

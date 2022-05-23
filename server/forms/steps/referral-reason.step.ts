@@ -16,4 +16,8 @@ export default class ReferralReasonStep extends Step {
   dto(): ReferralReason {
     return plainToInstance(ReferralReason, this.params)
   }
+
+  allowedToAccess(): boolean {
+    return true
+  }
 }

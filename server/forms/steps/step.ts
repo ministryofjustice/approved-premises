@@ -1,6 +1,7 @@
-import { AllowedStepNames, Dto } from './index'
-
 import { validate, ValidationError } from 'class-validator'
+
+import { AllowedStepNames, Dto } from './index'
+import { ReferralApplicationBody } from '../interfaces'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -15,6 +16,7 @@ export default abstract class Step {
   abstract nextStep(): AllowedStepNames
   abstract previousStep(): AllowedStepNames
   abstract dto(): Dto
+  abstract allowedToAccess(sessionData: ReferralApplicationBody): boolean
 
   async valid(): Promise<boolean> {
     const dto = this.dto()

@@ -57,4 +57,20 @@ describe('ApTypeStep', () => {
       expect(previousStep).toEqual('referral-reason')
     })
   })
+
+  describe('allowedToAccess', () => {
+    it('it should return false when the reason is undefined', () => {
+      const step = new ApTypeStep({})
+      const allowedToAccess = step.allowedToAccess({})
+
+      expect(allowedToAccess).toEqual(false)
+    })
+
+    it('it should return true when the reason is defined', () => {
+      const step = new ApTypeStep({})
+      const allowedToAccess = step.allowedToAccess({ reason: 'likely' })
+
+      expect(allowedToAccess).toEqual(true)
+    })
+  })
 })
