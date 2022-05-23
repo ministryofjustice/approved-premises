@@ -1,15 +1,15 @@
 import { Step, stepList } from './steps'
 import { ReferralApplicationRequest } from './interfaces'
+import { OutOfSequenceError } from './errors'
 
 interface ErrorMessages {
   [key: string]: Array<string>
 }
-
-export class OutOfSequenceError extends Error {}
-
 export class ReferralApplication {
   errors: ErrorMessages
+
   step: Step
+
   stepName: string
 
   constructor(readonly request: ReferralApplicationRequest) {
@@ -41,8 +41,8 @@ export class ReferralApplication {
   }
 
   private getStep() {
-    const step = stepList[this.stepName]
+    const CurrentStep = stepList[this.stepName]
 
-    return new step(this.request.body)
+    return new CurrentStep(this.request.body)
   }
 }

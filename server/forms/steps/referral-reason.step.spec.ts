@@ -22,7 +22,7 @@ describe('ReferralReason', () => {
 
       expect(valid).toEqual(false)
       expect(step.errorLength).toEqual(1)
-      expect(step.errors['reason']).toEqual(['You must select a reason'])
+      expect(step.errors.reason).toEqual(['You must select a reason'])
     })
 
     it('should validate for the presence of `other` if the reason is `other`', async () => {
@@ -36,7 +36,7 @@ describe('ReferralReason', () => {
 
       expect(valid).toEqual(false)
       expect(step.errorLength).toEqual(1)
-      expect(step.errors['other']).toEqual(['You must specify what your other reason is'])
+      expect(step.errors.other).toEqual(['You must specify what your other reason is'])
     })
   })
 

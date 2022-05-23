@@ -3,6 +3,9 @@ import { ReferralApplicationRequest } from './interfaces'
 
 import Step from './steps/step'
 
+import { OutOfSequenceError } from './errors'
+import { ReferralApplication } from './referral-application.form'
+
 jest.mock('./steps/index', () => {
   return {
     stepList: {
@@ -27,8 +30,6 @@ jest.mock('./steps/index', () => {
   }
 })
 
-import { ReferralApplication, OutOfSequenceError } from './referral-application.form'
-
 describe('ReferralApplicationForm', () => {
   it('returns the correct return values from the step', async () => {
     const request = createMock<ReferralApplicationRequest>({
@@ -42,7 +43,7 @@ describe('ReferralApplicationForm', () => {
     const valid = await application.validForCurrentStep()
     const nextStep = application.nextStep()
     const errorLength = application.errorLength()
-    const stepName = application.stepName
+    const { stepName } = application
 
     expect(valid).toBe(true)
     expect(nextStep).toEqual('referral-reason')
@@ -63,9 +64,7 @@ describe('ReferralApplicationForm', () => {
       body: {},
     })
 
-    expect(() => {
-      new ReferralApplication(request)
-    }).toThrowError(OutOfSequenceError)
+    expect(() => new ReferralApplication(request)).toThrowError(OutOfSequenceError)
   })
 
   describe('persistData', () => {

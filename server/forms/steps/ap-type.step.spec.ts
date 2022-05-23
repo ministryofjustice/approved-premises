@@ -22,7 +22,7 @@ describe('ApTypeStep', () => {
 
       expect(valid).toEqual(false)
       expect(step.errorLength).toEqual(1)
-      expect(step.errors['type']).toEqual(['You must select a type of AP'])
+      expect(step.errors.type).toEqual(['You must select a type of AP'])
     })
   })
 
