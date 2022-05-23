@@ -42,10 +42,12 @@ describe('ReferralApplicationForm', () => {
     const valid = await application.validForCurrentStep()
     const nextStep = application.nextStep()
     const errorLength = application.errorLength()
+    const stepName = application.stepName
 
     expect(valid).toBe(true)
     expect(nextStep).toEqual('referral-reason')
     expect(errorLength).toEqual(2)
+    expect(stepName).toEqual('referral-reason')
 
     expect(application.step.errorLength).toEqual(2)
     expect(application.step.errors).toEqual({

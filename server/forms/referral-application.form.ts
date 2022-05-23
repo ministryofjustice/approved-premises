@@ -10,8 +10,10 @@ export class OutOfSequenceError extends Error {}
 export class ReferralApplication {
   errors: ErrorMessages
   step: Step
+  stepName: string
 
   constructor(readonly request: ReferralApplicationRequest) {
+    this.stepName = this.request.params.step
     this.step = this.getStep()
 
     if (this.step.allowedToAccess(this.request.session.referralApplication || {}) === false) {
@@ -39,7 +41,7 @@ export class ReferralApplication {
   }
 
   private getStep() {
-    const step = stepList[this.request.params.step]
+    const step = stepList[this.stepName]
 
     return new step(this.request.body)
   }
