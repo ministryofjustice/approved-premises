@@ -1,39 +1,23 @@
 import { createMock } from '@golevelup/ts-jest'
 import { ReferralApplicationRequest } from './interfaces'
 
-import Dto from './dtos/dto'
 import Step from './steps/step'
-
-class MockStep extends Step {
-  constructor(public readonly params: any) {
-    super(params)
-    this.errorLength = 2
-    this.errors = {
-      foo: ['bar'],
-    }
-  }
-
-  async valid() {
-    return true
-  }
-
-  previousStep() {
-    return 'type-of-ap' as const
-  }
-
-  nextStep() {
-    return 'referral-reason' as const
-  }
-
-  dto() {
-    return Dto
-  }
-}
 
 jest.mock('./steps/index', () => {
   return {
     stepList: {
-      'referral-reason': MockStep,
+      'referral-reason': jest.fn().mockImplementation(() => {
+        return createMock<Step>({
+          errorLength: 2,
+          errors: {
+            foo: ['bar'],
+          },
+          valid: async () => true,
+          previousStep: () => 'type-of-ap',
+          nextStep: () => 'referral-reason',
+          allowedToAccess: () => true,
+        })
+      }),
     },
   }
 })
