@@ -18,11 +18,16 @@ jest.mock('./steps/index', () => {
           allowedToAccess: () => true,
         })
       }),
+      'type-of-ap': jest.fn().mockImplementation(() => {
+        return createMock<Step>({
+          allowedToAccess: () => false,
+        })
+      }),
     },
   }
 })
 
-import { ReferralApplication } from './referral-application.form'
+import { ReferralApplication, OutOfSequenceError } from './referral-application.form'
 
 describe('ReferralApplicationForm', () => {
   it('returns the correct return values from the step', async () => {
@@ -46,6 +51,19 @@ describe('ReferralApplicationForm', () => {
     expect(application.step.errors).toEqual({
       foo: ['bar'],
     })
+  })
+
+  it('raises an error if the step is not allowed', () => {
+    const request = createMock<ReferralApplicationRequest>({
+      params: {
+        step: 'type-of-ap',
+      },
+      body: {},
+    })
+
+    expect(() => {
+      new ReferralApplication(request)
+    }).toThrowError(OutOfSequenceError)
   })
 
   describe('persistData', () => {

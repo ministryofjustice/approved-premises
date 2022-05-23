@@ -5,12 +5,18 @@ interface ErrorMessages {
   [key: string]: Array<string>
 }
 
+export class OutOfSequenceError extends Error {}
+
 export class ReferralApplication {
   errors: ErrorMessages
   step: Step
 
   constructor(readonly request: ReferralApplicationRequest) {
     this.step = this.getStep()
+
+    if (this.step.allowedToAccess(this.request.session.referralApplication || {}) === false) {
+      throw new OutOfSequenceError()
+    }
   }
 
   async validForCurrentStep(): Promise<boolean> {
