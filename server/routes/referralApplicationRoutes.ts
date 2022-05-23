@@ -1,12 +1,22 @@
 import { Router } from 'express'
-import { ReferralApplication } from '../forms/referral-application.form'
+import { ReferralApplication, OutOfSequenceError } from '../forms/referral-application.form'
 import { ReferralApplicationParams, ReferralApplicationBody } from '../forms/interfaces'
 
 export const referralApplicationPrefix = '/referral-application'
 
 export function ReferralApplicationRoutes(router: Router): Router {
   router.get<ReferralApplicationParams>('/new/:step', (req, res, next) => {
-    res.render(`referral-application/${req.params.step}`)
+    try {
+      const form = new ReferralApplication(req)
+      res.render(`referral-application/${form.stepName}`)
+    } catch (err) {
+      if (err instanceof OutOfSequenceError) {
+        res.status(400)
+        res.render('pages/error', { message: err.message })
+      } else {
+        throw err
+      }
+    }
   })
 
   router.post<ReferralApplicationParams, {}, ReferralApplicationBody>('/:step', async (req, res, next) => {
