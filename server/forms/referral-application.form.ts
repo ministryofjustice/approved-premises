@@ -28,7 +28,7 @@ export class ReferralApplication {
   persistData() {
     this.request.session.referralApplication = {
       ...this.request.session.referralApplication,
-      ...this.step.params,
+      ...this.request.body,
     }
   }
 
