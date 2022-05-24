@@ -6,7 +6,7 @@ import OpdPathway from '../dtos/opd-pathway'
 
 import type { AllowedStepNames } from '../steps'
 
-type AllowedSectionNames = 'confirm-need'
+export type AllowedSectionNames = 'confirm-need'
 
 export type ReferralApplicationParams = {
   step: AllowedStepNames
