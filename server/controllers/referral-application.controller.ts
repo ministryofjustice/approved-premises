@@ -28,6 +28,7 @@ export const ReferralApplicationController = {
       if (nextStep) {
         res.redirect(`/referral-application/new/${nextStep}`)
       } else {
+        form.complete()
         res.redirect('/referral_tasklist')
       }
     } else {
