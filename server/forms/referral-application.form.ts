@@ -14,8 +14,11 @@ export class ReferralApplication {
 
   stepName: string
 
+  sectionName: string
+
   constructor(readonly request: ReferralApplicationRequest) {
     this.stepName = this.request.params.step
+    this.sectionName = this.request.params.section
     this.step = this.getStep()
 
     if (this.step.allowedToAccess(this.request.session.referralApplication || {}) === false) {
@@ -35,10 +38,17 @@ export class ReferralApplication {
     return this.step.nextStep()
   }
 
-  complete() {
+  completeSection() {
+    let sections = this.request.session[ReferralApplication.sessionVarName].sections || {}
+
+    sections = {
+      ...sections,
+      [this.request.params.section]: { complete: true },
+    }
+
     this.request.session[ReferralApplication.sessionVarName] = {
       ...this.request.session[ReferralApplication.sessionVarName],
-      complete: true,
+      sections,
     }
   }
 

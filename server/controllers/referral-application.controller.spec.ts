@@ -50,12 +50,13 @@ describe('ReferralApplicationController', () => {
           validForCurrentStep: async () => true,
           nextStep: () => 'next-step',
           persistData: () => persistDataSpy(),
+          sectionName: 'confirm-need',
         }
       })
 
       await ReferralApplicationController.update(request, response)
 
-      expect(response.redirect).toHaveBeenCalledWith('/referral-application/new/next-step')
+      expect(response.redirect).toHaveBeenCalledWith('/referral-application/confirm-need/new/next-step')
       expect(persistDataSpy).toHaveBeenCalled()
     })
 
@@ -78,7 +79,7 @@ describe('ReferralApplicationController', () => {
         }
       })
 
-      request.params = { step: 'opd-pathway' }
+      request.params = { step: 'opd-pathway', section: 'confirm-need' }
 
       await ReferralApplicationController.update(request, response)
 
@@ -97,7 +98,7 @@ describe('ReferralApplicationController', () => {
           validForCurrentStep: async () => true,
           nextStep: (): undefined => undefined,
           persistData: () => persistDataSpy(),
-          complete: () => completeSpy(),
+          completeSection: () => completeSpy(),
         }
       })
 
