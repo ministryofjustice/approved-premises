@@ -2,6 +2,7 @@ import Step from './step'
 import ApTypeStep from './ap-type.step'
 import ReferralReasonStep from './referral-reason.step'
 import OpdPathwayStep from './opd-pathway.step'
+import NotEligibleStep from './not-eligible.step'
 import Dto from '../dtos/dto'
 
 const stepList = {
