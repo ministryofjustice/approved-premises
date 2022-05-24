@@ -6,6 +6,8 @@ interface ErrorMessages {
   [key: string]: Array<string>
 }
 export class ReferralApplication {
+  static sessionVarName = 'referralApplication'
+
   errors: ErrorMessages
 
   step: Step
@@ -34,15 +36,15 @@ export class ReferralApplication {
   }
 
   complete() {
-    this.request.session.referralApplication = {
-      ...this.request.session.referralApplication,
+    this.request.session[ReferralApplication.sessionVarName] = {
+      ...this.request.session[ReferralApplication.sessionVarName],
       complete: true,
     }
   }
 
   persistData() {
-    this.request.session.referralApplication = {
-      ...this.request.session.referralApplication,
+    this.request.session[ReferralApplication.sessionVarName] = {
+      ...this.request.session[ReferralApplication.sessionVarName],
       ...this.request.body,
     }
   }

@@ -11,7 +11,7 @@ jest.mock('../forms/referral-application.form')
 describe('ReferralApplicationController', () => {
   const request = createMock<ReferralApplicationRequest>({})
   const response = createMock<Response>({})
-  const mockForm = ReferralApplication as jest.Mock
+  const mockForm = ReferralApplication as unknown as jest.Mock
 
   afterEach(() => {
     jest.clearAllMocks()
