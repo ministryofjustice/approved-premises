@@ -1,3 +1,5 @@
+import type { ReferralApplicationBody } from '../forms/interfaces'
+
 export default {}
 
 declare module 'express-session' {
@@ -5,6 +7,7 @@ declare module 'express-session' {
   interface SessionData {
     returnTo: string
     nowInMinutes: number
+    referralApplication: ReferralApplicationBody
   }
 }
 

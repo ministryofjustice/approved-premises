@@ -1,0 +1,83 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "../components/error-messages/macro.njk" import errorMessages %}
+
+{% set pageTitle = applicationName + " - Referral Reason" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/referral-reason">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {{ errorMessages(errors) }}
+
+          {% set otherHtml %}
+            {{ govukInput({
+              id: "other",
+              name: "other",
+              type: "text",
+              classes: "govuk-!-width-one-third",
+              label: {
+                text: "Other Reason"
+              }
+            }) }}
+          {% endset -%}
+
+          {{ govukRadios({
+              idPrefix: "reason",
+              name: "reason",
+              fieldset: {
+                legend: {
+                  text: "What is the reason for the referral?",
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--l"
+                }
+              },
+              errorMessage: ({ text: errors.reason } if errors.reason | length) ,
+              items: [
+                {
+                  value: "likely",
+                  text: "likely",
+                  checked: (reason === "likely")
+                },
+                {
+                  value: "condition",
+                  text: "condition",
+                  checked: (reason === "condition")
+                },
+                {
+                  value: "exception",
+                  text: "exception",
+                  checked: (reason === "exception")
+                },
+                {
+                  value: "other",
+                  text: "other",
+                  checked: (reason === "other"),
+                  conditional: {
+                    html: otherHtml
+                  }
+                },
+                {
+                  divider: "or"
+                },
+                {
+                  value: "no-reason",
+                  text: "no-reason",
+                  checked: (reason === "no-reason")
+                }
+              ]
+            }) }}
+
+          {{ govukButton({
+            text: "Save and Continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

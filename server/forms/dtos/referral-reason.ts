@@ -1,0 +1,12 @@
+import { ValidateIf, IsNotEmpty } from 'class-validator'
+
+import Dto from './dto'
+
+export default class ReferralReason extends Dto {
+  @IsNotEmpty({ message: 'You must select a reason' })
+  reason: 'likely' | 'condition' | 'exception' | 'other' | 'no-reason'
+
+  @ValidateIf(o => o.reason === 'other')
+  @IsNotEmpty({ message: 'You must specify what your other reason is' })
+  other: string
+}

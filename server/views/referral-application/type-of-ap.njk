@@ -1,0 +1,66 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set pageTitle = applicationName + " - Type of AP" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/type-of-ap">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {% if errors | length %}
+            {% set errorList = [] %}
+            {% for k,v in errors %}
+              {%
+                set errorList = (errorList.push({
+                  text: v,
+                  href: ("#" + k)
+                }), errorList)
+              %}
+            {% endfor %}
+
+            {{ govukErrorSummary({
+              titleText: "There is a problem",
+              errorList: errorList
+            }) }}
+          {% endif %}
+
+          {{ govukRadios({
+              idPrefix: "type",
+              name: "type",
+              fieldset: {
+                legend: {
+                  text: "What type of AP does xxx require?",
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--l"
+                }
+              },
+              errorMessage: ({ text: errors.type } if errors.type | length) ,
+              items: [
+                {
+                  value: "standard",
+                  text: "standard"
+                },
+                {
+                  value: "pipe",
+                  text: "pipe"
+                },
+                {
+                  value: "esap",
+                  text: "esap"
+                }
+              ]
+            }) }}
+
+          {{ govukButton({
+            text: "Save and Continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}
