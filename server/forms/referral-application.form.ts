@@ -33,6 +33,13 @@ export class ReferralApplication {
     return this.step.nextStep()
   }
 
+  complete() {
+    this.request.session.referralApplication = {
+      ...this.request.session.referralApplication,
+      complete: true,
+    }
+  }
+
   persistData() {
     this.request.session.referralApplication = {
       ...this.request.session.referralApplication,

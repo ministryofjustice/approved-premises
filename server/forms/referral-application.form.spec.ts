@@ -108,4 +108,25 @@ describe('ReferralApplicationForm', () => {
       expect(application.request.session.referralApplication).toEqual({ type: 'pipe' })
     })
   })
+
+  describe('complete', () => {
+    it('marks a form as complete in the session', () => {
+      const request = createMock<ReferralApplicationRequest>({
+        params: {
+          step: 'referral-reason',
+        },
+        session: {
+          referralApplication: {
+            reason: 'likely',
+          },
+        },
+      })
+
+      const application = new ReferralApplication(request)
+
+      application.complete()
+
+      expect(application.request.session.referralApplication).toEqual({ reason: 'likely', complete: true })
+    })
+  })
 })
