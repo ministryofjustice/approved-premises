@@ -25,7 +25,11 @@ export const ReferralApplicationController = {
 
     if (valid) {
       form.persistData()
+      if (nextStep) {
         res.redirect(`/referral-application/new/${nextStep}`)
+      } else {
+        res.redirect('/referral_tasklist')
+      }
     } else {
       res.render(`referral-application/${req.params.step}`, { ...form.step.dto(), errors: form.step.errors })
     }

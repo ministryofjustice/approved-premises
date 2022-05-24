@@ -88,4 +88,21 @@ describe('ReferralApplicationController', () => {
       })
     })
 
+    it('should persist the data and redirect to the tasklist if valid and there is no next step', async () => {
+      const persistDataSpy = jest.fn()
+
+      mockForm.mockImplementation(() => {
+        return {
+          validForCurrentStep: async () => true,
+          nextStep: (): undefined => undefined,
+          persistData: () => persistDataSpy(),
+        }
+      })
+
+      await ReferralApplicationController.update(request, response)
+
+      expect(response.redirect).toHaveBeenCalledWith('/referral_tasklist')
+      expect(persistDataSpy).toHaveBeenCalled()
+    })
+  })
 })
