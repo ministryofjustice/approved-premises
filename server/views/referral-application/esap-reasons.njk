@@ -1,0 +1,86 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% from "../components/error-messages/macro.njk" import errorMessages %}
+
+{% set pageTitle = applicationName + " - Reasons Robert requires an enhanced security (ESAP) placement" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/ap-type/esap-reasons">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {{ errorMessages(errors) }}
+
+          <h1 class="govuk-heading-l">Reasons Robert requires an enhanced security (ESAP) placement</h1>
+
+          {{ govukCheckboxes({
+            idPrefix: "reasons",
+            name: "reasons[]",
+            fieldset: {
+              legend: {
+                text: "Select at least one of the following reasons.",
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            items: [
+              {
+                value: "secreting",
+                text: "History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology"
+              },
+              {
+                value: "cctv",
+                text: "History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision"
+              }
+            ]
+          }) }}
+
+          {{ govukCheckboxes({
+            idPrefix: "otherFactors",
+            name: "otherFactors[]",
+            fieldset: {
+              legend: {
+                text: "Do any of the following factors also apply?",
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            items: [
+              {
+                value: "neurodiverse",
+                text: "A diagnosis of autism or neurodiverse traits"
+              },
+              {
+                value: "complex-personality",
+                text: "A complex personality presentation which has created challenges in the prison and where an AP PIPE is deemed unsuitable"
+              },
+              {
+                value: "enhanced",
+                text: "A non-NSD case where enhanced national standards are required to manage the risks posed and thought to be beneficial to risk reduction"
+              },
+              {
+                value: "csu",
+                text: "Individual has spent time in a Care and Separation Unit in the last 24 months"
+              },
+              {
+                value: "unlock",
+                text: "Individual has required a 2/3 prison officer unlock in the last 12 months."
+              },
+              {
+                value: "corrupter",
+                text: "Individual has been identified as a known/suspected corrupter of staff"
+              }
+            ]
+          }) }}
+
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}
