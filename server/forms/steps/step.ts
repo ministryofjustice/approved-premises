@@ -1,6 +1,6 @@
 import { validate, ValidationError } from 'class-validator'
 
-import type { AllowedStepNames, Dto } from './index'
+import type { AllowedStepNames, AllowedSectionNames, Dto } from './index'
 import { ReferralApplicationBody } from '../interfaces'
 
 interface ErrorMessages {
@@ -11,6 +11,8 @@ export default abstract class Step {
   errors: ErrorMessages
 
   errorLength: number
+
+  abstract section: AllowedSectionNames
 
   constructor(public readonly body: any, public readonly sessionData: ReferralApplicationBody) {}
 

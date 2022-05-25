@@ -5,6 +5,8 @@ import OpdPathway from '../dtos/opd-pathway'
 import Step from './step'
 
 export default class OpdPathwayStep extends Step {
+  section = 'ap-type' as const
+
   nextStep(): undefined {
     return undefined
   }

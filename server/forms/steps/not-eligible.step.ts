@@ -1,6 +1,8 @@
 import Step from './step'
 
 export default class NotEligibleStep extends Step {
+  section = 'eligibility' as const
+
   nextStep(): undefined {
     return undefined
   }

@@ -1,6 +1,6 @@
 import { Step, stepList } from './steps'
 import { ReferralApplicationRequest } from './interfaces'
-import { OutOfSequenceError } from './errors'
+import { OutOfSequenceError, UnknownStepError } from './errors'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -29,6 +29,10 @@ export class ReferralApplication {
     if (this.step.allowedToAccess() === false) {
       throw new OutOfSequenceError()
     }
+
+    if (this.step.section !== this.sectionName) {
+      throw new UnknownStepError()
+    }
   }
 
   async validForCurrentStep(): Promise<boolean> {
@@ -55,9 +59,13 @@ export class ReferralApplication {
   }
 
   private getStep() {
-    const CurrentStep = stepList[this.stepName]
+    try {
+      const CurrentStep = stepList[this.stepName]
 
-    return new CurrentStep(this.request.body, this.sessionData)
+      return new CurrentStep(this.request.body, this.sessionData)
+    } catch (err) {
+      throw new UnknownStepError()
+    }
   }
 
   private setSectionStatus(status: string) {

@@ -5,6 +5,8 @@ import RoomSearches from '../dtos/room-searches'
 import Step from './step'
 
 export default class RoomSearchesStep extends Step {
+  section = 'ap-type' as const
+
   nextStep() {
     if (this.sessionData.reasons?.includes('cctv')) {
       return 'cctv' as const

@@ -5,9 +5,7 @@ import ReferralReason from '../dtos/referral-reason'
 import OpdPathway from '../dtos/opd-pathway'
 import EsapReasons from '../dtos/esap-reasons'
 
-import type { AllowedStepNames } from '../steps'
-
-export type AllowedSectionNames = 'eligibility' | 'ap-type'
+import type { AllowedStepNames, AllowedSectionNames } from '../steps'
 
 export type ReferralApplicationParams = {
   step: AllowedStepNames

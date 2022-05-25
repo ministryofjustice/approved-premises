@@ -21,6 +21,8 @@ const stepList = {
   cctv: CCTVStep,
 }
 
+type AllowedSectionNames = 'eligibility' | 'ap-type'
+
 type AllowedStepNames = keyof typeof stepList
 
-export { Step, Dto, stepList, AllowedStepNames }
+export { Step, Dto, stepList, AllowedStepNames, AllowedSectionNames }

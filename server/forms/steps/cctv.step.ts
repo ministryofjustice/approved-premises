@@ -5,6 +5,8 @@ import CCTV from '../dtos/cctv'
 import Step from './step'
 
 export default class CCTVStep extends Step {
+  section = 'ap-type' as const
+
   nextStep(): undefined {
     return undefined
   }

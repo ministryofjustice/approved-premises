@@ -3,7 +3,7 @@ import { ReferralApplicationRequest } from './interfaces'
 
 import Step from './steps/step'
 
-import { OutOfSequenceError } from './errors'
+import { OutOfSequenceError, UnknownStepError } from './errors'
 import { ReferralApplication } from './referral-application.form'
 
 jest.mock('./steps/index', () => {
@@ -11,6 +11,7 @@ jest.mock('./steps/index', () => {
     stepList: {
       'referral-reason': jest.fn().mockImplementation(() => {
         return createMock<Step>({
+          section: 'eligibility',
           errorLength: 2,
           errors: {
             foo: ['bar'],
@@ -34,6 +35,7 @@ describe('ReferralApplicationForm', () => {
   it('returns the correct return values from the step', async () => {
     const request = createMock<ReferralApplicationRequest>({
       params: {
+        section: 'eligibility',
         step: 'referral-reason',
       },
       body: {},
@@ -59,6 +61,7 @@ describe('ReferralApplicationForm', () => {
   it('raises an error if the step is not allowed', () => {
     const request = createMock<ReferralApplicationRequest>({
       params: {
+        section: 'eligibility',
         step: 'type-of-ap',
       },
       body: {},
@@ -67,10 +70,34 @@ describe('ReferralApplicationForm', () => {
     expect(() => new ReferralApplication(request)).toThrowError(OutOfSequenceError)
   })
 
+  it('raises an error if the section does not match the step', () => {
+    const request = createMock<ReferralApplicationRequest>({
+      params: {
+        section: 'ap-type',
+        step: 'referral-reason',
+      },
+      body: {},
+    })
+
+    expect(() => new ReferralApplication(request)).toThrowError(UnknownStepError)
+  })
+
+  it('raises an error if the step is not found', () => {
+    const request = createMock<ReferralApplicationRequest>({
+      params: {
+        step: 'not-eligible',
+      },
+      body: {},
+    })
+
+    expect(() => new ReferralApplication(request)).toThrowError(UnknownStepError)
+  })
+
   describe('persistData', () => {
     it('persists data in the session', () => {
       const request = createMock<ReferralApplicationRequest>({
         params: {
+          section: 'eligibility',
           step: 'referral-reason',
         },
         body: { type: 'standard' },
@@ -91,6 +118,7 @@ describe('ReferralApplicationForm', () => {
     it('overwrites old data already persisted in the session', () => {
       const request = createMock<ReferralApplicationRequest>({
         params: {
+          section: 'eligibility',
           step: 'referral-reason',
         },
         body: { type: 'pipe' },

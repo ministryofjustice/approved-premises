@@ -5,6 +5,8 @@ import EsapReasons from '../dtos/esap-reasons'
 import Step from './step'
 
 export default class EsapReasonsStep extends Step {
+  section = 'ap-type' as const
+
   nextStep() {
     if (this.body.reasons?.includes('secreting')) {
       return 'room-searches'

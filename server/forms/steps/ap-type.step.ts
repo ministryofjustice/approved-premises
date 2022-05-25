@@ -5,6 +5,8 @@ import ApType from '../dtos/ap-type'
 import Step from './step'
 
 export default class ApTypeStep extends Step {
+  section = 'ap-type' as const
+
   nextStep() {
     return {
       standard: undefined,
