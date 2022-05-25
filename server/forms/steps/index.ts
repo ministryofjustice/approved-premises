@@ -5,6 +5,7 @@ import OpdPathwayStep from './opd-pathway.step'
 import NotEligibleStep from './not-eligible.step'
 import EsapReasonsStep from './esap-reasons.step'
 import RoomSearches from './room-searches.step'
+import CCTVStep from './cctv.step'
 
 import Dto from '../dtos/dto'
 
@@ -17,7 +18,7 @@ const stepList = {
   'opd-pathway': OpdPathwayStep,
   'import-oasys-sections': ApTypeStep,
   'room-searches': RoomSearches,
-  cctv: ApTypeStep,
+  cctv: CCTVStep,
 }
 
 type AllowedStepNames = keyof typeof stepList
