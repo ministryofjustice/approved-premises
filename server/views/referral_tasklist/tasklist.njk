@@ -32,11 +32,23 @@
                   </li>
                   <li class="app-task-list__item">
                     <span class="app-task-list__task-name">
-                      <a href="/referral-application/confirm-need/new/referral-reason" aria-describedby="read-declaration-status">
-                        Confirm the need for an AP
+                      <a href="/referral-application/eligibility/new/referral-reason" aria-describedby="eligibility-status">
+                        Check if the person is eligible
                       </a>
                     </span>
-                    {% if confirmNeedStatus == 'complete' %}
+                    {% if eligibilityStatus == 'complete' %}
+                      <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
+                    {% else %}
+                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="read-declaration-status">Not started</strong>
+                    {% endif %}
+                  </li>
+                  <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                      <a href="/referral-application/ap-type/new/type-of-ap" aria-describedby="read-declaration-status">
+                        Select the type of AP Required
+                      </a>
+                    </span>
+                    {% if apTypeStatus == 'complete' %}
                       <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
                     {% else %}
                       <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="read-declaration-status">Not started</strong>

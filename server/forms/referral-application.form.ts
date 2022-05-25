@@ -17,6 +17,7 @@ export class ReferralApplication {
   sectionName: string
 
   constructor(readonly request: ReferralApplicationRequest) {
+    console.log(this.request.params)
     this.stepName = this.request.params.step
     this.sectionName = this.request.params.section
     this.step = this.getStep()

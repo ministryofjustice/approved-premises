@@ -28,9 +28,10 @@ export default function ReferralTasklistRoutes(router: Router): Router {
       },
     }
 
-    const confirmNeedStatus = getSectionStatus(req, ReferralApplication, 'confirm-need')
+    const eligibilityStatus = getSectionStatus(req, ReferralApplication, 'eligibility')
+    const apTypeStatus = getSectionStatus(req, ReferralApplication, 'ap-type')
 
-    res.render('referral_tasklist/tasklist', { risks, confirmNeedStatus })
+    res.render('referral_tasklist/tasklist', { risks, eligibilityStatus, apTypeStatus })
   })
 
   return router

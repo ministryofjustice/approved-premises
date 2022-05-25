@@ -14,7 +14,7 @@ export default abstract class Step {
 
   constructor(public readonly params: any) {}
 
-  abstract nextStep(): AllowedStepNames
+  abstract nextStep(): AllowedStepNames | undefined
 
   abstract previousStep(): AllowedStepNames
 

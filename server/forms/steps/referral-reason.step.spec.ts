@@ -42,11 +42,11 @@ describe('ReferralReason', () => {
 
   describe('nextStep', () => {
     describe('with a referral reason', () => {
-      it('it should return `type-of-ap` when there is not `no-reason`', () => {
+      it('it should return undefined when there is not `no-reason`', () => {
         const step = new ReferralReason({ reason: 'likely' })
         const nextStep = step.nextStep()
 
-        expect(nextStep).toEqual('type-of-ap')
+        expect(nextStep).toEqual(undefined)
       })
 
       it('it should return `not-eligible` when there is `no-reason`', () => {

@@ -10,13 +10,13 @@ describe('formIsComplete', () => {
       session: {
         referralApplication: {
           sections: {
-            'confirm-need': { status: 'complete' },
+            eligibility: { status: 'complete' },
           },
         },
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'confirm-need')).toEqual('complete')
+    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('complete')
   })
 
   it('returns the status when the session variable has a different status value', () => {
@@ -24,13 +24,13 @@ describe('formIsComplete', () => {
       session: {
         referralApplication: {
           sections: {
-            'confirm-need': { status: 'in_progress' },
+            eligibility: { status: 'in_progress' },
           },
         },
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'confirm-need')).toEqual('in_progress')
+    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('in_progress')
   })
 
   it('returns not_started when the session variable has no status value', () => {
@@ -40,7 +40,7 @@ describe('formIsComplete', () => {
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'confirm-need')).toEqual('not_started')
+    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('not_started')
   })
 
   it('returns not_started when there is no session variable', () => {
@@ -48,6 +48,6 @@ describe('formIsComplete', () => {
       session: {},
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'confirm-need')).toEqual('not_started')
+    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('not_started')
   })
 })

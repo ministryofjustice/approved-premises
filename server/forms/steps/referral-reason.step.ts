@@ -5,8 +5,8 @@ import ReferralReason from '../dtos/referral-reason'
 import Step from './step'
 
 export default class ReferralReasonStep extends Step {
-  nextStep() {
-    return this.params.reason === 'no-reason' ? 'not-eligible' : 'type-of-ap'
+  nextStep(): 'not-eligible' | undefined {
+    return this.params.reason === 'no-reason' ? 'not-eligible' : undefined
   }
 
   previousStep(): undefined {

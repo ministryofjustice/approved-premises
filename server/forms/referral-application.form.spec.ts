@@ -114,7 +114,7 @@ describe('ReferralApplicationForm', () => {
       const request = createMock<ReferralApplicationRequest>({
         params: {
           step: 'referral-reason',
-          section: 'confirm-need',
+          section: 'eligibility',
         },
         session: {
           referralApplication: {
@@ -129,7 +129,7 @@ describe('ReferralApplicationForm', () => {
 
       expect(application.request.session.referralApplication).toEqual({
         reason: 'likely',
-        sections: { 'confirm-need': { status: 'complete' } },
+        sections: { eligibility: { status: 'complete' } },
       })
     })
 
@@ -137,7 +137,7 @@ describe('ReferralApplicationForm', () => {
       const request = createMock<ReferralApplicationRequest>({
         params: {
           step: 'referral-reason',
-          section: 'confirm-need',
+          section: 'eligibility',
         },
         session: {
           referralApplication: {
@@ -155,7 +155,7 @@ describe('ReferralApplicationForm', () => {
 
       expect(application.request.session.referralApplication).toEqual({
         reason: 'likely',
-        sections: { 'confirm-need': { status: 'complete' }, other: { status: 'complete' } },
+        sections: { eligibility: { status: 'complete' }, other: { status: 'complete' } },
       })
     })
   })
