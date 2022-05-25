@@ -10,7 +10,7 @@ const stepList = {
   'type-of-ap': ApTypeStep,
   'enhanced-risk': ApTypeStep,
   'esap-reasons': ApTypeStep,
-  'not-eligible': ApTypeStep,
+  'not-eligible': NotEligibleStep,
   'opd-pathway': OpdPathwayStep,
   'import-oasys-sections': ApTypeStep,
 }
