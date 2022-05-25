@@ -4,6 +4,8 @@ import ReferralReasonStep from './referral-reason.step'
 import OpdPathwayStep from './opd-pathway.step'
 import NotEligibleStep from './not-eligible.step'
 import EsapReasonsStep from './esap-reasons.step'
+import RoomSearches from './room-searches.step'
+
 import Dto from '../dtos/dto'
 
 const stepList = {
@@ -14,7 +16,7 @@ const stepList = {
   'not-eligible': NotEligibleStep,
   'opd-pathway': OpdPathwayStep,
   'import-oasys-sections': ApTypeStep,
-  'room-searches': ApTypeStep,
+  'room-searches': RoomSearches,
   cctv: ApTypeStep,
 }
 
