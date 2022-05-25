@@ -1,39 +1,31 @@
 import { Router } from 'express'
-import { OutOfSequenceError } from '../forms/errors'
-import { ReferralApplication } from '../forms/referral-application.form'
-import { ReferralApplicationParams, ReferralApplicationBody } from '../forms/interfaces'
 
-export const referralApplicationPrefix = '/referral-application'
+import { get } from './index'
 
-export function ReferralApplicationRoutes(router: Router): Router {
-  router.get<ReferralApplicationParams>('/new/:step', (req, res, next) => {
-    try {
-      const form = new ReferralApplication(req)
-      res.render(`referral-application/${form.stepName}`)
-    } catch (err) {
-      if (err instanceof OutOfSequenceError) {
-        res.status(400)
-        res.render('pages/error', { message: err.message })
-      } else {
-        throw err
-      }
+export const referralApplicationUrlPrefix = '/referral_application'
+
+export default function ReferralApplicationRoutes(router: Router): Router {
+  get(router, '/', async (req, res, next) => {
+    const risks = {
+      risks: {
+        mappa: {
+          level: 'CAT 2/LEVEL 1',
+          isNominal: false,
+          lastUpdated: '10th October 2021',
+        },
+        flags: ['Hate Crime'],
+        roshRiskSummary: {
+          overallRisk: 'VERY_HIGH',
+          riskToChildren: 'LOW',
+          riskToPublic: 'VERY_HIGH',
+          riskToKnownAdult: 'MEDIUM',
+          riskToStaff: 'HIGH',
+          lastUpdated: '10th October 2021',
+        },
+      },
     }
+    res.render('referral_application/tasklist', risks)
   })
-
-  router.post<ReferralApplicationParams, Record<string, unknown>, ReferralApplicationBody>(
-    '/:step',
-    async (req, res, next) => {
-      const form = new ReferralApplication(req)
-      const valid = await form.validForCurrentStep()
-
-      if (valid) {
-        form.persistData()
-        res.redirect(`${referralApplicationPrefix}/new/${form.nextStep()}`)
-      } else {
-        res.render(`referral-application/${req.params.step}`, { ...form.step.dto(), errors: form.step.errors })
-      }
-    }
-  )
 
   return router
 }
