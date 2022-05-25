@@ -129,7 +129,7 @@ describe('ReferralApplicationForm', () => {
 
       expect(application.request.session.referralApplication).toEqual({
         reason: 'likely',
-        sections: { 'confirm-need': { complete: true } },
+        sections: { 'confirm-need': { status: 'complete' } },
       })
     })
 
@@ -143,7 +143,7 @@ describe('ReferralApplicationForm', () => {
           referralApplication: {
             reason: 'likely',
             sections: {
-              other: { complete: true },
+              other: { status: 'complete' },
             },
           },
         },
@@ -155,7 +155,7 @@ describe('ReferralApplicationForm', () => {
 
       expect(application.request.session.referralApplication).toEqual({
         reason: 'likely',
-        sections: { 'confirm-need': { complete: true }, other: { complete: true } },
+        sections: { 'confirm-need': { status: 'complete' }, other: { status: 'complete' } },
       })
     })
   })

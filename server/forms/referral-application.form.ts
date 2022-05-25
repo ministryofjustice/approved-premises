@@ -39,17 +39,7 @@ export class ReferralApplication {
   }
 
   completeSection() {
-    let sections = this.request.session[ReferralApplication.sessionVarName].sections || {}
-
-    sections = {
-      ...sections,
-      [this.request.params.section]: { complete: true },
-    }
-
-    this.request.session[ReferralApplication.sessionVarName] = {
-      ...this.request.session[ReferralApplication.sessionVarName],
-      sections,
-    }
+    this.setSectionStatus('complete')
   }
 
   persistData() {
@@ -63,5 +53,19 @@ export class ReferralApplication {
     const CurrentStep = stepList[this.stepName]
 
     return new CurrentStep(this.request.body)
+  }
+
+  private setSectionStatus(status: string) {
+    let sections = this.request.session[ReferralApplication.sessionVarName].sections || {}
+
+    sections = {
+      ...sections,
+      [this.request.params.section]: { status },
+    }
+
+    this.request.session[ReferralApplication.sessionVarName] = {
+      ...this.request.session[ReferralApplication.sessionVarName],
+      sections,
+    }
   }
 }

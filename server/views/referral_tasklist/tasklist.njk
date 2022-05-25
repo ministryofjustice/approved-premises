@@ -36,7 +36,7 @@
                         Confirm the need for an AP
                       </a>
                     </span>
-                    {% if referralApplicationIsComplete %}
+                    {% if confirmNeedStatus == 'complete' %}
                       <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
                     {% else %}
                       <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="read-declaration-status">Not started</strong>

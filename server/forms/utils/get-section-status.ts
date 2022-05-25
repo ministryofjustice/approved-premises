@@ -1,14 +1,14 @@
 import { Request } from 'express'
 
 import { ReferralApplication } from '../referral-application.form'
-import { AllowedSectionNames } from '../interfaces'
+import type { AllowedSectionNames } from '../steps'
 
-export function sectionIsComplete(
+export function getSectionStatus(
   request: Request,
   form: typeof ReferralApplication,
   section: AllowedSectionNames
-): boolean {
+): string {
   const sessionVar = request.session?.[form.sessionVarName]?.sections?.[section]
 
-  return sessionVar !== undefined && sessionVar.complete === true
+  return sessionVar?.status === undefined ? 'not_started' : sessionVar.status
 }

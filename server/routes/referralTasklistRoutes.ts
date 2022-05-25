@@ -3,7 +3,7 @@ import { Router } from 'express'
 import { get } from './index'
 
 import { ReferralApplication } from '../forms/referral-application.form'
-import { sectionIsComplete } from '../forms/utils/section-is-complete'
+import { getSectionStatus } from '../forms/utils/get-section-status'
 
 export const referralTasklistUrlPrefix = '/referral_tasklist'
 
@@ -28,9 +28,9 @@ export default function ReferralTasklistRoutes(router: Router): Router {
       },
     }
 
-    const referralApplicationIsComplete = sectionIsComplete(req, ReferralApplication, 'confirm-need')
+    const confirmNeedStatus = getSectionStatus(req, ReferralApplication, 'confirm-need')
 
-    res.render('referral_tasklist/tasklist', { risks, referralApplicationIsComplete })
+    res.render('referral_tasklist/tasklist', { risks, confirmNeedStatus })
   })
 
   return router
