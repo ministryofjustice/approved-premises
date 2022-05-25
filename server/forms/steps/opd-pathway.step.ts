@@ -6,8 +6,8 @@ import OpdPathway from '../dtos/opd-pathway'
 import Step from './step'
 
 export default class OpdPathwayStep extends Step {
-  nextStep() {
-    return 'import-oasys-sections' as const
+  nextStep(): undefined {
+    return undefined
   }
 
   previousStep() {

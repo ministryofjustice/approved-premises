@@ -70,11 +70,11 @@ describe('OpdPathwayStep', () => {
   })
 
   describe('nextStep', () => {
-    it('should return `import-oasys-sections` (or better: return to Tasklist)', () => {
+    it('should return undefined', () => {
       const step = new OpdPathwayStep({ is_opd_pathway_screened: true })
       const nextStep = step.nextStep()
 
-      expect(nextStep).toEqual('import-oasys-sections')
+      expect(nextStep).toEqual(undefined)
     })
   })
 
