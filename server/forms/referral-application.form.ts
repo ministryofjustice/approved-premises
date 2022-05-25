@@ -5,8 +5,11 @@ import { OutOfSequenceError } from './errors'
 interface ErrorMessages {
   [key: string]: Array<string>
 }
+
+export const sessionVarName = 'referralApplication'
+
 export class ReferralApplication {
-  static sessionVarName = 'referralApplication'
+  static sessionVarName = sessionVarName
 
   errors: ErrorMessages
 
@@ -16,13 +19,14 @@ export class ReferralApplication {
 
   sectionName: string
 
+  sessionData = this.request.session[ReferralApplication.sessionVarName]
+
   constructor(readonly request: ReferralApplicationRequest) {
-    console.log(this.request.params)
     this.stepName = this.request.params.step
     this.sectionName = this.request.params.section
     this.step = this.getStep()
 
-    if (this.step.allowedToAccess(this.request.session.referralApplication || {}) === false) {
+    if (this.step.allowedToAccess() === false) {
       throw new OutOfSequenceError()
     }
   }
@@ -53,7 +57,7 @@ export class ReferralApplication {
   private getStep() {
     const CurrentStep = stepList[this.stepName]
 
-    return new CurrentStep(this.request.body)
+    return new CurrentStep(this.request.body, this.sessionData)
   }
 
   private setSectionStatus(status: string) {

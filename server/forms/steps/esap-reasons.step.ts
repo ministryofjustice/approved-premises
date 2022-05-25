@@ -1,5 +1,4 @@
 import { plainToInstance } from 'class-transformer'
-import type { ReferralApplicationBody } from '../interfaces'
 
 import EsapReasons from '../dtos/esap-reasons'
 
@@ -7,10 +6,10 @@ import Step from './step'
 
 export default class EsapReasonsStep extends Step {
   nextStep() {
-    if (this.params.reasons?.includes('secreting')) {
+    if (this.body.reasons?.includes('secreting')) {
       return 'room-searches'
     }
-    if (this.params.reasons?.includes('cctv')) {
+    if (this.body.reasons?.includes('cctv')) {
       return 'cctv'
     }
     return undefined
@@ -21,10 +20,10 @@ export default class EsapReasonsStep extends Step {
   }
 
   dto(): EsapReasons {
-    return plainToInstance(EsapReasons, this.params)
+    return plainToInstance(EsapReasons, this.body)
   }
 
-  allowedToAccess(sessionData: ReferralApplicationBody): boolean {
-    return sessionData.type !== undefined && sessionData.type === 'esap'
+  allowedToAccess(): boolean {
+    return this.sessionData.type !== undefined && this.sessionData.type === 'esap'
   }
 }

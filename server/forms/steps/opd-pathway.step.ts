@@ -1,5 +1,4 @@
 import { plainToInstance } from 'class-transformer'
-import { ReferralApplicationBody } from '../interfaces'
 
 import OpdPathway from '../dtos/opd-pathway'
 
@@ -16,15 +15,15 @@ export default class OpdPathwayStep extends Step {
 
   dto(): OpdPathway {
     const lastOpdDate = [
-      this.params['last-opd-date-year'],
-      this.params['last-opd-date-month'],
-      this.params['last-opd-date-day'],
+      this.body['last-opd-date-year'],
+      this.body['last-opd-date-month'],
+      this.body['last-opd-date-day'],
     ].join('-')
 
-    return plainToInstance(OpdPathway, { lastOpdDate, ...this.params })
+    return plainToInstance(OpdPathway, { lastOpdDate, ...this.body })
   }
 
-  allowedToAccess(sessionData: ReferralApplicationBody): boolean {
-    return sessionData.type === 'pipe'
+  allowedToAccess(): boolean {
+    return this.sessionData.type === 'pipe'
   }
 }

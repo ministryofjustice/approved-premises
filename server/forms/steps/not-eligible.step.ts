@@ -1,5 +1,3 @@
-import type { ReferralApplicationBody } from '../interfaces'
-
 import Step from './step'
 
 export default class NotEligibleStep extends Step {
@@ -15,8 +13,8 @@ export default class NotEligibleStep extends Step {
     return undefined
   }
 
-  allowedToAccess(sessionData: ReferralApplicationBody): boolean {
-    return sessionData.reason !== undefined
+  allowedToAccess(): boolean {
+    return this.sessionData.reason !== undefined
   }
 
   async valid() {

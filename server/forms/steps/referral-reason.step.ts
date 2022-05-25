@@ -6,7 +6,7 @@ import Step from './step'
 
 export default class ReferralReasonStep extends Step {
   nextStep(): 'not-eligible' | undefined {
-    return this.params.reason === 'no-reason' ? 'not-eligible' : undefined
+    return this.body.reason === 'no-reason' ? 'not-eligible' : undefined
   }
 
   previousStep(): undefined {
@@ -14,7 +14,7 @@ export default class ReferralReasonStep extends Step {
   }
 
   dto(): ReferralReason {
-    return plainToInstance(ReferralReason, this.params)
+    return plainToInstance(ReferralReason, this.body)
   }
 
   allowedToAccess(): boolean {
