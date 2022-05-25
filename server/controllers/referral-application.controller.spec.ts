@@ -1,17 +1,21 @@
 import { createMock } from '@golevelup/ts-jest'
 import { Response } from 'express'
+import createError from 'http-errors'
 
 import { ReferralApplicationController } from './referral-application.controller'
 import { ReferralApplication } from '../forms/referral-application.form'
 import { ReferralApplicationRequest } from '../forms/interfaces'
-import { OutOfSequenceError } from '../forms/errors'
+import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
 
 jest.mock('../forms/referral-application.form')
+jest.mock('http-errors')
 
 describe('ReferralApplicationController', () => {
   const request = createMock<ReferralApplicationRequest>({})
   const response = createMock<Response>({})
+  const next = jest.fn()
   const mockForm = ReferralApplication as unknown as jest.Mock
+  const mockCreateError = createError
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -25,7 +29,7 @@ describe('ReferralApplicationController', () => {
         }
       })
 
-      ReferralApplicationController.show(request, response)
+      ReferralApplicationController.show(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('referral-application/some-step')
     })
@@ -35,9 +39,19 @@ describe('ReferralApplicationController', () => {
         throw new OutOfSequenceError()
       })
 
-      ReferralApplicationController.show(request, response)
+      ReferralApplicationController.show(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('pages/error', { message: '' })
+    })
+
+    it('should return a 404 if the step is not found', () => {
+      mockForm.mockImplementation(() => {
+        throw new UnknownStepError()
+      })
+
+      ReferralApplicationController.show(request, response, next)
+
+      expect(next).toHaveBeenCalledWith(mockCreateError(404, 'Not found'))
     })
   })
 

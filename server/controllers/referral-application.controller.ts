@@ -1,10 +1,12 @@
-import { Response } from 'express'
-import { OutOfSequenceError } from '../forms/errors'
+import { Response, NextFunction } from 'express'
+import createError from 'http-errors'
+
+import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
 import { ReferralApplication } from '../forms/referral-application.form'
 import { ReferralApplicationRequest } from '../forms/interfaces'
 
 export const ReferralApplicationController = {
-  show: (req: ReferralApplicationRequest, res: Response): void => {
+  show: (req: ReferralApplicationRequest, res: Response, next: NextFunction): void => {
     try {
       const form = new ReferralApplication(req)
       res.render(`referral-application/${form.stepName}`)
@@ -12,6 +14,8 @@ export const ReferralApplicationController = {
       if (err instanceof OutOfSequenceError) {
         res.status(400)
         res.render('pages/error', { message: err.message })
+      } else if (err instanceof UnknownStepError) {
+        next(createError(404, 'Not found'))
       } else {
         throw err
       }
