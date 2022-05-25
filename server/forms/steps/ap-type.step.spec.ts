@@ -27,11 +27,11 @@ describe('ApTypeStep', () => {
   })
 
   describe('nextStep', () => {
-    it('should return `enhanced-risk` for a type of `standard`', () => {
+    it('should return undefined for a type of `standard`', () => {
       const step = new ApTypeStep({ type: 'standard' })
       const nextStep = step.nextStep()
 
-      expect(nextStep).toEqual('enhanced-risk')
+      expect(nextStep).toEqual(undefined)
     })
 
     it('should return `opd-pathway` for a type of `pipe`', () => {

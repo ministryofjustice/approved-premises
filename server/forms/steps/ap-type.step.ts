@@ -8,7 +8,7 @@ import Step from './step'
 export default class ApTypeStep extends Step {
   nextStep() {
     return {
-      standard: 'enhanced-risk',
+      standard: undefined,
       pipe: 'opd-pathway',
       esap: 'esap-reasons',
     }[this.params.type]
