@@ -62,7 +62,7 @@ export class ReferralApplication {
     try {
       const CurrentStep = stepList[this.stepName]
 
-      return new CurrentStep(this.request.body, this.sessionData)
+      return new CurrentStep(this)
     } catch (err) {
       throw new UnknownStepError()
     }
