@@ -1,0 +1,74 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "../components/error-messages/macro.njk" import errorMessages %}
+
+{% set pageTitle = applicationName + " - OPD Pathway" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/ap-type/opd-pathway">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {{ errorMessages(errors) }}
+
+          {% set lastOpdDateHtml %}
+          {{ govukDateInput({
+            id: "last-opd-date",
+            namePrefix: "last-opd-date",
+            fieldset: {
+              legend: {
+                text: "When was Robert Brown's last consultation or formulation?"
+              }
+            }
+          }) }}
+          {% endset -%}
+
+          {{ govukRadios({
+              idPrefix: "is_opd_pathway_screened",
+              name: "is_opd_pathway_screened",
+              fieldset: {
+                legend: {
+                  text: "Has Robert Brown been screened into the OPD pathway?",
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--l"
+                }
+              },
+              errorMessage: ({ text: errors.is_opd_pathway_screened } if errors.is_opd_pathway_screened | length) ,
+              items: [
+                {
+                  value: "yes",
+                  text: "Yes",
+                  checked: (is_opd_pathway_screened === "yes"),
+                            conditional: {
+                  html: lastOpdDateHtml
+                }
+                },
+                {
+                  value: "condition",
+                  text: "No",
+                  checked: (is_opd_pathway_screened === "no")
+                }
+              ]
+            }) }}
+
+          {{ govukTextarea({
+            name: "pipe-additional-detail",
+            id: "pipe-additional-detail",
+            label: {
+              text: "Provide any additional details about why Robert Borwn needs a PIPE placement."
+            }
+          }) }}
+
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

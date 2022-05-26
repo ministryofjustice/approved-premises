@@ -1,17 +1,18 @@
 import { plainToInstance } from 'class-transformer'
-import type { ReferralApplicationBody } from '../interfaces'
 
 import ApType from '../dtos/ap-type'
 
 import Step from './step'
 
 export default class ApTypeStep extends Step {
+  section = 'ap-type' as const
+
   nextStep() {
     return {
-      standard: 'enhanced-risk',
-      pipe: 'opd-pathway',
-      esap: 'esap-reasons',
-    }[this.params.type]
+      standard: undefined,
+      pipe: 'opd-pathway' as const,
+      esap: 'esap-reasons' as const,
+    }[this.body.type]
   }
 
   previousStep() {
@@ -19,10 +20,10 @@ export default class ApTypeStep extends Step {
   }
 
   dto(): ApType {
-    return plainToInstance(ApType, this.params)
+    return plainToInstance(ApType, this.body)
   }
 
-  allowedToAccess(sessionData: ReferralApplicationBody): boolean {
-    return sessionData.reason !== undefined
+  allowedToAccess(): boolean {
+    return this.sessionData.reason !== undefined
   }
 }

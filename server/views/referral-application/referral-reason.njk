@@ -10,7 +10,7 @@
   <main class="app-container govuk-body">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
-        <form method="post" action="/referral-application/referral-reason">
+        <form method="post" action="/referral-application/eligibility/referral-reason">
           <input type="hidden" name="_csrf" value={{csrfToken}}>
 
           {{ errorMessages(errors) }}
@@ -30,6 +30,9 @@
           {{ govukRadios({
               idPrefix: "reason",
               name: "reason",
+              hint: {
+                html: "<p>An individual's Tier and nDelius risk registrations are used to decide if they are eligible to apply for an AP placement. Robert Brown either does not have a Tier or their Tier and registrations do not meet eligibility requirements.</p><p><a href='#'>Read about Tiering and eligibility</a></p>"
+              },
               fieldset: {
                 legend: {
                   text: "What is the reason for the referral?",
@@ -41,22 +44,22 @@
               items: [
                 {
                   value: "likely",
-                  text: "likely",
+                  text: "Robert Brown does not have a Tier yet, but is likely to be eligible",
                   checked: (reason === "likely")
                 },
                 {
                   value: "condition",
-                  text: "condition",
+                  text: "AP is a condition of residence in Robert Brown's community order",
                   checked: (reason === "condition")
                 },
                 {
                   value: "exception",
-                  text: "exception",
+                  text: "An exception has been agreed between the community and residential heads",
                   checked: (reason === "exception")
                 },
                 {
                   value: "other",
-                  text: "other",
+                  text: "Other (please specify)",
                   checked: (reason === "other"),
                   conditional: {
                     html: otherHtml
@@ -67,14 +70,14 @@
                 },
                 {
                   value: "no-reason",
-                  text: "no-reason",
+                  text: "I do not have an exceptional reason",
                   checked: (reason === "no-reason")
                 }
               ]
             }) }}
 
           {{ govukButton({
-            text: "Save and Continue"
+            text: "Save and continue"
           }) }}
         </form>
       </div>

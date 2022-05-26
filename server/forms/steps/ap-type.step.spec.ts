@@ -2,21 +2,21 @@ import ApTypeStep from './ap-type.step'
 
 describe('ApTypeStep', () => {
   describe('valid', () => {
-    it('should return true with no errors if the params are valid', async () => {
-      const params = {
+    it('should return true with no errors if the body are valid', async () => {
+      const body = {
         type: 'standard',
       }
 
-      const step = new ApTypeStep(params)
+      const step = new ApTypeStep(body, {})
       const valid = await step.valid()
 
       expect(valid).toEqual(true)
       expect(step.errorLength).toEqual(0)
     })
 
-    it('should return false with errors if the params are empty', async () => {
-      const params = {}
-      const step = new ApTypeStep(params)
+    it('should return false with errors if the body are empty', async () => {
+      const body = {}
+      const step = new ApTypeStep(body, {})
 
       const valid = await step.valid()
 
@@ -27,22 +27,22 @@ describe('ApTypeStep', () => {
   })
 
   describe('nextStep', () => {
-    it('should return `enhanced-risk` for a type of `standard`', () => {
-      const step = new ApTypeStep({ type: 'standard' })
+    it('should return undefined for a type of `standard`', () => {
+      const step = new ApTypeStep({ type: 'standard' }, {})
       const nextStep = step.nextStep()
 
-      expect(nextStep).toEqual('enhanced-risk')
+      expect(nextStep).toEqual(undefined)
     })
 
     it('should return `opd-pathway` for a type of `pipe`', () => {
-      const step = new ApTypeStep({ type: 'pipe' })
+      const step = new ApTypeStep({ type: 'pipe' }, {})
       const nextStep = step.nextStep()
 
       expect(nextStep).toEqual('opd-pathway')
     })
 
     it('should return `esap-reasons` for a type of `esap`', () => {
-      const step = new ApTypeStep({ type: 'esap' })
+      const step = new ApTypeStep({ type: 'esap' }, {})
       const nextStep = step.nextStep()
 
       expect(nextStep).toEqual('esap-reasons')
@@ -51,7 +51,7 @@ describe('ApTypeStep', () => {
 
   describe('previousStep()', () => {
     it('should return `referral-reason`', () => {
-      const step = new ApTypeStep({})
+      const step = new ApTypeStep({}, {})
       const previousStep = step.previousStep()
 
       expect(previousStep).toEqual('referral-reason')
@@ -60,15 +60,15 @@ describe('ApTypeStep', () => {
 
   describe('allowedToAccess', () => {
     it('it should return false when the reason is undefined', () => {
-      const step = new ApTypeStep({})
-      const allowedToAccess = step.allowedToAccess({})
+      const step = new ApTypeStep({}, {})
+      const allowedToAccess = step.allowedToAccess()
 
       expect(allowedToAccess).toEqual(false)
     })
 
     it('it should return true when the reason is defined', () => {
-      const step = new ApTypeStep({})
-      const allowedToAccess = step.allowedToAccess({ reason: 'likely' })
+      const step = new ApTypeStep({}, { reason: 'likely' })
+      const allowedToAccess = step.allowedToAccess()
 
       expect(allowedToAccess).toEqual(true)
     })

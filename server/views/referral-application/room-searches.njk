@@ -1,0 +1,127 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% from "../components/error-messages/macro.njk" import errorMessages %}
+
+{% set pageTitle = applicationName + " - Enhanced room searches using body worn technology" %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/ap-type/room-searches">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {{ errorMessages(errors) }}
+
+          <h1 class="govuk-heading-l">Enhanced room searches using body worn technology</h1>
+
+          {% set agencyHtml %}
+          {{ govukTextarea({
+            id: "agency",
+            name: "agency",
+            value: agency
+          }) }}
+          {% endset -%}
+
+          {{ govukCheckboxes({
+            idPrefix: "items",
+            name: "items[]",
+            fieldset: {
+              legend: {
+                text: "Which items does Robert have a history of secreting?",
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            errorMessage: ({ text: errors.items } if errors.items | length) ,
+            items: [
+              {
+                value: "radicalisation",
+                text: 'Literature and materials supporting radicalisation ideals',
+                checked: ((items or []).indexOf('radicalisation') > -1)
+              },
+              {
+                value: "hate-crime",
+                text: 'Offence related literature indicative of hate crimes or beliefs',
+                checked: ((items or []).indexOf('hate-crime') > -1)
+              },
+              {
+                value: "child-sexual-abuse",
+                text: 'Literature and/or items of relevance to child sexual abuse or exploitation',
+                checked: ((items or []).indexOf('child-sexual-abuse') > -1)
+              },
+              {
+                value: "drugs",
+                text: 'Drugs and drug paraphernalia indicative of dealing drugs',
+                checked: ((items or []).indexOf('drugs') > -1)
+              },
+              {
+                value: "weapons",
+                text: 'Weapons, actual or makeshift',
+                checked: ((items or []).indexOf('weapons') > -1)
+              },
+              {
+                value: "fire",
+                text: 'Fire-setting or explosive materials',
+                checked: ((items or []).indexOf('fire') > -1)
+              },
+              {
+                value: "electronics",
+                text: 'Electronic items of significance to the individuals offending profile',
+                checked: ((items or []).indexOf('electronics') > -1)
+              }
+            ]
+          }) }}
+
+          {{ govukRadios({
+              idPrefix: "agencyRequest",
+              name: "agencyRequest",
+              fieldset: {
+                legend: {
+                  text: "Have partnership agencies requested the sharing of intelligence captured via body worn technology?",
+                  classes: "govuk-fieldset__legend--m"
+                }
+              },
+              hint: {
+                text: "For example, DOS, JEXU or NSD."
+              },
+              errorMessage: ({ text: errors.agencyRequest } if errors.agencyRequest | length) ,
+              items: [
+                {
+                  value: "yes",
+                  text: "Yes",
+                  checked: (agencyRequest === "yes"),
+                            conditional: {
+                  html: agencyHtml
+                }
+                },
+                {
+                  value: "no",
+                  text: "No",
+                  checked: (agencyRequest === "no")
+                }
+              ]
+            }) }}
+
+            {{ govukTextarea({
+                name: "supportingInformation",
+                id: "supportingInformation",
+                value: supportingInformation,
+                label: {
+                  text: "Provide any supporting information about why Robert requires enhanced room searches.",
+                  classes: "govuk-label--m"
+                }
+            }) }}
+
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

@@ -1,7 +1,7 @@
 import { validate, ValidationError } from 'class-validator'
 
-import type { AllowedStepNames, Dto } from './index'
-import type { ReferralApplicationBody } from '../interfaces'
+import type { AllowedStepNames, AllowedSectionNames, Dto } from './index'
+import { ReferralApplicationBody } from '../interfaces'
 
 interface ErrorMessages {
   [key: string]: Array<string>
@@ -12,15 +12,17 @@ export default abstract class Step {
 
   errorLength: number
 
-  constructor(public readonly params: any) {}
+  abstract section: AllowedSectionNames
 
-  abstract nextStep(): AllowedStepNames
+  constructor(public readonly body: any, public readonly sessionData: ReferralApplicationBody) {}
+
+  abstract nextStep(): AllowedStepNames | undefined
 
   abstract previousStep(): AllowedStepNames
 
   abstract dto(): Dto
 
-  abstract allowedToAccess(sessionData: ReferralApplicationBody): boolean
+  abstract allowedToAccess(): boolean
 
   async valid(): Promise<boolean> {
     const dto = this.dto()

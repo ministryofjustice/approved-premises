@@ -6,6 +6,7 @@ import createError from 'http-errors'
 import indexRoutes from './routes'
 import bookingRoutes from './routes/bookingRoutes'
 import placementRoutes, { placementsUrlPrefix } from './routes/placementRoutes'
+import referralTasklistRoutes, { referralTasklistUrlPrefix } from './routes/referralTasklistRoutes'
 import { ReferralApplicationRoutes, referralApplicationPrefix } from './routes/referralApplicationRoutes'
 import riskRoutes from './routes/riskRoutes'
 import premisesRoutes from './routes/premisesRoutes'
@@ -47,6 +48,7 @@ export default function createApp(userService: UserService): express.Application
 
   app.use('/', riskRoutes(standardRouter(userService)))
   app.use('/', premisesRoutes(standardRouter(userService)))
+  app.use(referralTasklistUrlPrefix, referralTasklistRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
