@@ -13,7 +13,21 @@ export default abstract class Page {
     cy.get('h1').contains(this.title)
   }
 
+  saveAndContinue(): void {
+    cy.get('button').contains('Save and continue').click()
+  }
+
   signOut = (): PageElement => cy.get('[data-qa=signOut]')
 
   manageDetails = (): PageElement => cy.get('[data-qa=manageDetails]')
+
+  completeCheckBoxes(name: string, answers: Array<string>): void {
+    answers.forEach(answer => {
+      cy.get(`input[name="${name}[]"][value=${answer}]`).click()
+    })
+  }
+
+  completeRadio(name: string, answer: string): void {
+    cy.get(`input[name="${name}"][value=${answer}]`).click()
+  }
 }

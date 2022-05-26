@@ -37,9 +37,9 @@
                       </a>
                     </span>
                     {% if eligibilityStatus == 'complete' %}
-                      <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
+                      <strong class="govuk-tag app-task-list__tag" data-status-for="eligibility">Completed</strong>
                     {% else %}
-                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="read-declaration-status">Not started</strong>
+                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="eligibility">Not started</strong>
                     {% endif %}
                   </li>
                   <li class="app-task-list__item">
@@ -49,9 +49,9 @@
                       </a>
                     </span>
                     {% if apTypeStatus == 'complete' %}
-                      <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
+                      <strong class="govuk-tag app-task-list__tag" data-status-for="ap-type">Completed</strong>
                     {% else %}
-                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="read-declaration-status">Not started</strong>
+                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="ap-type">Not started</strong>
                     {% endif %}
                   </li>
                 </ul>
