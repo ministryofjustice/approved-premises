@@ -1,13 +1,22 @@
+import { createMock, DeepMocked } from '@golevelup/ts-jest'
+
 import ReferralReason from './referral-reason.step'
+import { ReferralApplication } from '../referral-application.form'
 
 describe('ReferralReason', () => {
+  let form: DeepMocked<ReferralApplication>
+
+  beforeEach(() => {
+    form = createMock<ReferralApplication>()
+  })
+
   describe('valid', () => {
     it('should return true with no errors if the params are valid', async () => {
-      const body = {
+      form.request.body = {
         reason: 'likely' as const,
       }
 
-      const step = new ReferralReason(body, {})
+      const step = new ReferralReason(form)
       const valid = await step.valid()
 
       expect(valid).toEqual(true)
@@ -15,8 +24,8 @@ describe('ReferralReason', () => {
     })
 
     it('should return false with errors if the params are empty', async () => {
-      const body = {}
-      const step = new ReferralReason(body, {})
+      form.request.body = {}
+      const step = new ReferralReason(form)
 
       const valid = await step.valid()
 
@@ -26,11 +35,11 @@ describe('ReferralReason', () => {
     })
 
     it('should validate for the presence of `other` if the reason is `other`', async () => {
-      const body = {
+      form.request.body = {
         reason: 'other' as const,
       }
 
-      const step = new ReferralReason(body, {})
+      const step = new ReferralReason(form)
 
       const valid = await step.valid()
 
@@ -43,14 +52,18 @@ describe('ReferralReason', () => {
   describe('nextStep', () => {
     describe('with a referral reason', () => {
       it('it should return undefined when there is not `no-reason`', () => {
-        const step = new ReferralReason({ reason: 'likely' }, {})
+        form.request.body = { reason: 'likely' }
+
+        const step = new ReferralReason(form)
         const nextStep = step.nextStep()
 
         expect(nextStep).toEqual(undefined)
       })
 
       it('it should return `not-eligible` when there is `no-reason`', () => {
-        const step = new ReferralReason({ reason: 'no-reason' }, {})
+        form.request.body = { reason: 'no-reason' }
+
+        const step = new ReferralReason(form)
         const nextStep = step.nextStep()
 
         expect(nextStep).toEqual('not-eligible')
@@ -60,7 +73,7 @@ describe('ReferralReason', () => {
 
   describe('previousStep', () => {
     it('it should return undefined', () => {
-      const step = new ReferralReason({ reason: 'no-reason' }, {})
+      const step = new ReferralReason(form)
       const previousStep = step.previousStep()
 
       expect(previousStep).toEqual(undefined)
@@ -69,7 +82,7 @@ describe('ReferralReason', () => {
 
   describe('allowedToAccess', () => {
     it('it should return true', () => {
-      const step = new ReferralReason({ reason: 'no-reason' }, {})
+      const step = new ReferralReason(form)
       const allowedToAccess = step.allowedToAccess()
 
       expect(allowedToAccess).toEqual(true)

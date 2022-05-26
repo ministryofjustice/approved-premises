@@ -1,13 +1,22 @@
+import { createMock, DeepMocked } from '@golevelup/ts-jest'
+
+import { ReferralApplication } from '../referral-application.form'
 import ApTypeStep from './ap-type.step'
 
 describe('ApTypeStep', () => {
+  let form: DeepMocked<ReferralApplication>
+
+  beforeEach(() => {
+    form = createMock<ReferralApplication>()
+  })
+
   describe('valid', () => {
     it('should return true with no errors if the body are valid', async () => {
-      const body = {
+      form.request.body = {
         type: 'standard',
       }
 
-      const step = new ApTypeStep(body, {})
+      const step = new ApTypeStep(form)
       const valid = await step.valid()
 
       expect(valid).toEqual(true)
@@ -15,8 +24,8 @@ describe('ApTypeStep', () => {
     })
 
     it('should return false with errors if the body are empty', async () => {
-      const body = {}
-      const step = new ApTypeStep(body, {})
+      form.request.body = {}
+      const step = new ApTypeStep(form)
 
       const valid = await step.valid()
 
@@ -28,21 +37,27 @@ describe('ApTypeStep', () => {
 
   describe('nextStep', () => {
     it('should return undefined for a type of `standard`', () => {
-      const step = new ApTypeStep({ type: 'standard' }, {})
+      form.request.body = { type: 'standard' }
+
+      const step = new ApTypeStep(form)
       const nextStep = step.nextStep()
 
       expect(nextStep).toEqual(undefined)
     })
 
     it('should return `opd-pathway` for a type of `pipe`', () => {
-      const step = new ApTypeStep({ type: 'pipe' }, {})
+      form.request.body = { type: 'pipe' }
+
+      const step = new ApTypeStep(form)
       const nextStep = step.nextStep()
 
       expect(nextStep).toEqual('opd-pathway')
     })
 
     it('should return `esap-reasons` for a type of `esap`', () => {
-      const step = new ApTypeStep({ type: 'esap' }, {})
+      form.request.body = { type: 'esap' }
+
+      const step = new ApTypeStep(form)
       const nextStep = step.nextStep()
 
       expect(nextStep).toEqual('esap-reasons')
@@ -51,7 +66,7 @@ describe('ApTypeStep', () => {
 
   describe('previousStep()', () => {
     it('should return `referral-reason`', () => {
-      const step = new ApTypeStep({}, {})
+      const step = new ApTypeStep(form)
       const previousStep = step.previousStep()
 
       expect(previousStep).toEqual('referral-reason')
@@ -60,14 +75,16 @@ describe('ApTypeStep', () => {
 
   describe('allowedToAccess', () => {
     it('it should return false when the reason is undefined', () => {
-      const step = new ApTypeStep({}, {})
+      const step = new ApTypeStep(form)
       const allowedToAccess = step.allowedToAccess()
 
       expect(allowedToAccess).toEqual(false)
     })
 
     it('it should return true when the reason is defined', () => {
-      const step = new ApTypeStep({}, { reason: 'likely' })
+      form.sessionData = { reason: 'likely' }
+
+      const step = new ApTypeStep(form)
       const allowedToAccess = step.allowedToAccess()
 
       expect(allowedToAccess).toEqual(true)

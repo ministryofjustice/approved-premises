@@ -17,5 +17,5 @@ export type ReferralApplicationBody = Partial<ApType & ReferralReason & OpdPathw
 export type ReferralApplicationRequest = Request<
   ReferralApplicationParams,
   Record<string, unknown>,
-  ReferralApplicationBody
+  Record<string, unknown>
 >
