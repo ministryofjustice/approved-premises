@@ -1,4 +1,5 @@
 import Step from './step'
+import Question from '../questions/question'
 
 export default class NotEligibleStep extends Step {
   section = 'eligibility' as const
@@ -25,5 +26,9 @@ export default class NotEligibleStep extends Step {
 
   async valid() {
     return true
+  }
+
+  questions() {
+    return [] as Array<Question>
   }
 }
