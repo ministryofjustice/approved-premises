@@ -1,8 +1,8 @@
 import nunjucks from 'nunjucks'
 import { readFile } from 'fs/promises'
 
-import type { ErrorMessages } from '../interfaces'
-import type { Step } from '../steps'
+import type { ErrorMessages } from './interfaces'
+import type { Step } from './steps'
 import { RadioOptions, CheckBoxOptions, ErrorMessage, TextAreaOptions } from './interfaces'
 
 interface QuestionData {
@@ -100,7 +100,7 @@ export default class Question {
   }
 
   private async readQuestionData(question: string): Promise<QuestionData> {
-    const file = await readFile(`${__dirname}/${question}.json`, 'utf8')
+    const file = await readFile(`${__dirname}/questions/${question}.json`, 'utf8')
     return JSON.parse(file)
   }
 

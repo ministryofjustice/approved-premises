@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import RoomSearches from '../dtos/room-searches'
 
 import Step from './step'
-import Question from '../questions/question'
+import Question from '../question'
 
 export default class RoomSearchesStep extends Step {
   section = 'ap-type' as const

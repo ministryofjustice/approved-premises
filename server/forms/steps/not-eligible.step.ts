@@ -1,5 +1,5 @@
 import Step from './step'
-import Question from '../questions/question'
+import Question from '../question'
 
 export default class NotEligibleStep extends Step {
   section = 'eligibility' as const

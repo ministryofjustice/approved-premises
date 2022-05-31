@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 
 import ReferralReason from '../dtos/referral-reason'
-import Question from '../questions/question'
+import Question from '../question'
 
 import Step from './step'
 

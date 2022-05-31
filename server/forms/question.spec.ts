@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 
 import Question from './question'
-import type ApTypeStep from '../steps/ap-type.step'
+import type ApTypeStep from './steps/ap-type.step'
 
 describe('Question', () => {
   describe('with radio buttons', () => {

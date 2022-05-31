@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 
 import ApType from '../dtos/ap-type'
-import Question from '../questions/question'
+import Question from '../question'
 
 import Step from './step'
 

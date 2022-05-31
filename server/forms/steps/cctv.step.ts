@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer'
 
 import CCTV from '../dtos/cctv'
 import Step from './step'
-import Question from '../questions/question'
+import Question from '../question'
 
 export default class CCTVStep extends Step {
   section = 'ap-type' as const

@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import EsapReasons from '../dtos/esap-reasons'
 
 import Step from './step'
-import Question from '../questions/question'
+import Question from '../question'
 
 export default class EsapReasonsStep extends Step {
   section = 'ap-type' as const
