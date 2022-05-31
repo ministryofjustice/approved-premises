@@ -6,6 +6,8 @@ export default class NotEligibleStep extends Step {
 
   title = 'Robert Brown is not eligible for an AP placement'
 
+  partial = 'not-eligible'
+
   showTitle = true
 
   nextStep(): undefined {
