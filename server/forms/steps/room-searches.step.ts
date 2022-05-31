@@ -7,6 +7,10 @@ import Step from './step'
 export default class RoomSearchesStep extends Step {
   section = 'ap-type' as const
 
+  showTitle = true
+
+  title = 'Enhanced room searches using body worn technology'
+
   nextStep() {
     if (this.sessionData.reasons?.includes('cctv')) {
       return 'cctv' as const

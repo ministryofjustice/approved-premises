@@ -17,10 +17,14 @@ export default abstract class Step {
 
   body: any
 
+  showTitle = false
+
   constructor(public readonly form: ReferralApplication) {
     this.sessionData = form.sessionData
     this.body = form.request.body
   }
+
+  abstract title: string
 
   abstract section: AllowedSectionNames
 

@@ -7,6 +7,8 @@ import Step from './step'
 export default class OpdPathwayStep extends Step {
   section = 'ap-type' as const
 
+  title = 'Has Robert Brown been screened into the OPD pathway?'
+
   nextStep(): undefined {
     return undefined
   }

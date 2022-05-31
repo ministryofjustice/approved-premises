@@ -7,6 +7,8 @@ import Step from './step'
 export default class ReferralReasonStep extends Step {
   section = 'eligibility' as const
 
+  title = 'What is the reason for the referral?'
+
   nextStep(): 'not-eligible' | undefined {
     return this.body.reason === 'no-reason' ? 'not-eligible' : undefined
   }

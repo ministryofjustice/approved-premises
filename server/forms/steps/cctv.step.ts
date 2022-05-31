@@ -7,6 +7,10 @@ import Step from './step'
 export default class CCTVStep extends Step {
   section = 'ap-type' as const
 
+  title = 'Enhanced CCTV provision'
+
+  showTitle = true
+
   nextStep(): undefined {
     return undefined
   }

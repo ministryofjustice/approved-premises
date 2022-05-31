@@ -7,6 +7,10 @@ import Step from './step'
 export default class EsapReasonsStep extends Step {
   section = 'ap-type' as const
 
+  title = 'Reasons Robert requires an enhanced security (ESAP) placement'
+
+  showTitle = true
+
   nextStep() {
     if (this.body.reasons?.includes('secreting')) {
       return 'room-searches'
