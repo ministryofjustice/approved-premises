@@ -47,7 +47,7 @@ describe('NotEligibleSep', () => {
     })
 
     it('it should return true when the reason is defined', () => {
-      form.sessionData = { reason: 'likely' }
+      form.sessionData = { referralReason: 'likely' }
 
       const step = new NotEligibleStep(form)
       const allowedToAccess = step.allowedToAccess()

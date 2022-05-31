@@ -1,0 +1,12 @@
+{
+  "widget": "govukInput",
+  "args": {
+    "id": "other",
+    "name": "other",
+    "type": "text",
+    "classes": "govuk-!-width-one-third",
+    "label": {
+      "text": "Other Reason"
+    }
+  }
+}

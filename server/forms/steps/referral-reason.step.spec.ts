@@ -13,7 +13,7 @@ describe('ReferralReason', () => {
   describe('valid', () => {
     it('should return true with no errors if the params are valid', async () => {
       form.request.body = {
-        reason: 'likely' as const,
+        referralReason: 'likely' as const,
       }
 
       const step = new ReferralReason(form)
@@ -31,12 +31,12 @@ describe('ReferralReason', () => {
 
       expect(valid).toEqual(false)
       expect(step.errorLength).toEqual(1)
-      expect(step.errors.reason).toEqual(['You must select a reason'])
+      expect(step.errors.referralReason).toEqual(['You must select a reason'])
     })
 
     it('should validate for the presence of `other` if the reason is `other`', async () => {
       form.request.body = {
-        reason: 'other' as const,
+        referralReason: 'other' as const,
       }
 
       const step = new ReferralReason(form)
@@ -52,7 +52,7 @@ describe('ReferralReason', () => {
   describe('nextStep', () => {
     describe('with a referral reason', () => {
       it('it should return undefined when there is not `no-reason`', () => {
-        form.request.body = { reason: 'likely' }
+        form.request.body = { referralReason: 'likely' }
 
         const step = new ReferralReason(form)
         const nextStep = step.nextStep()
@@ -61,7 +61,7 @@ describe('ReferralReason', () => {
       })
 
       it('it should return `not-eligible` when there is `no-reason`', () => {
-        form.request.body = { reason: 'no-reason' }
+        form.request.body = { referralReason: 'no-reason' }
 
         const step = new ReferralReason(form)
         const nextStep = step.nextStep()

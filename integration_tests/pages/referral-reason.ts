@@ -6,6 +6,6 @@ export default class ReferralReason extends Page {
   }
 
   public answerReason(answer: string) {
-    this.completeRadio('reason', answer)
+    this.completeRadio('referralReason', answer)
   }
 }

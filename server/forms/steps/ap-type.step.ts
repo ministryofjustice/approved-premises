@@ -26,6 +26,6 @@ export default class ApTypeStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData.reason !== undefined
+    return this.sessionData.referralReason !== undefined
   }
 }

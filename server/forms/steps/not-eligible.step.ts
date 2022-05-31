@@ -20,7 +20,7 @@ export default class NotEligibleStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData.reason !== undefined
+    return this.sessionData.referralReason !== undefined
   }
 
   async valid() {

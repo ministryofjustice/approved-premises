@@ -1,0 +1,43 @@
+{
+  "widget": "govukRadios",
+  "args": {
+    "idPrefix": "referralReason",
+    "name": "referralReason",
+    "hint": {
+      "html": "<p>An individual's Tier and nDelius risk registrations are used to decide if they are eligible to apply for an AP placement. Robert Brown either does not have a Tier or their Tier and registrations do not meet eligibility requirements.</p><p><a href='#'>Read about Tiering and eligibility</a></p>"
+    },
+    "fieldset": {
+      "legend": {
+        "text": "What is the reason for the referral?",
+        "isPageHeading": true,
+        "classes": "govuk-fieldset__legend--l"
+      }
+    },
+    "items": [
+      {
+        "value": "likely",
+        "text": "Robert Brown does not have a Tier yet, but is likely to be eligible"
+      },
+      {
+        "value": "condition",
+        "text": "AP is a condition of residence in Robert Brown's community order"
+      },
+      {
+        "value": "exception",
+        "text": "An exception has been agreed between the community and residential heads"
+      },
+      {
+        "value": "other",
+        "text": "Other (please specify)",
+        "conditionalQuestion": "other"
+      },
+      {
+        "divider": "or"
+      },
+      {
+        "value": "no-reason",
+        "text": "I do not have an exceptional reason"
+      }
+    ]
+  }
+}

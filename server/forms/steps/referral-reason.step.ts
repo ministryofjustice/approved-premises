@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 
 import ReferralReason from '../dtos/referral-reason'
+import Question from '../questions/question'
 
 import Step from './step'
 
@@ -10,7 +11,7 @@ export default class ReferralReasonStep extends Step {
   title = 'What is the reason for the referral?'
 
   nextStep(): 'not-eligible' | undefined {
-    return this.body.reason === 'no-reason' ? 'not-eligible' : undefined
+    return this.body.referralReason === 'no-reason' ? 'not-eligible' : undefined
   }
 
   previousStep(): undefined {
@@ -23,5 +24,9 @@ export default class ReferralReasonStep extends Step {
 
   allowedToAccess(): boolean {
     return true
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'referral-reason')]
   }
 }
