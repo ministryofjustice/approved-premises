@@ -3,6 +3,7 @@ import { validate, ValidationError } from 'class-validator'
 import type { ReferralApplicationBody, ErrorMessages } from '../interfaces'
 import type { AllowedStepNames, AllowedSectionNames, Dto } from './index'
 import type { ReferralApplication } from '../referral-application.form'
+import Question from '../questions/question'
 
 export default abstract class Step {
   errors: ErrorMessages
@@ -21,6 +22,8 @@ export default abstract class Step {
   }
 
   abstract title: string
+
+  abstract questions(): Array<Question>
 
   abstract section: AllowedSectionNames
 
