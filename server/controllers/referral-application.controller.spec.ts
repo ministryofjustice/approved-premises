@@ -6,6 +6,7 @@ import { ReferralApplicationController } from './referral-application.controller
 import { ReferralApplication } from '../forms/referral-application.form'
 import { ReferralApplicationRequest } from '../forms/interfaces'
 import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
+import Question from '../forms/questions/question'
 
 jest.mock('../forms/referral-application.form')
 jest.mock('http-errors')
@@ -22,34 +23,46 @@ describe('ReferralApplicationController', () => {
   })
 
   describe('show', () => {
-    it('should render a step', () => {
-      mockForm.mockImplementation(() => {
-        return {
-          stepName: 'some-step',
-        }
+    it('should render a step', async () => {
+      const questions = createMock<Question>({
+        present: async () => 'QUESTION_HTML',
       })
 
-      ReferralApplicationController.show(request, response, next)
+      const form = {
+        stepName: 'some-step',
+        step: {
+          questions: () => [questions],
+        },
+      }
 
-      expect(response.render).toHaveBeenCalledWith('referral-application/some-step')
+      mockForm.mockImplementation(() => {
+        return form
+      })
+
+      await ReferralApplicationController.show(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('referral-application/show', {
+        ...form,
+        questions: ['QUESTION_HTML'],
+      })
     })
 
-    it('should render an error if the step is out of sequence', () => {
+    it('should render an error if the step is out of sequence', async () => {
       mockForm.mockImplementation(() => {
         throw new OutOfSequenceError()
       })
 
-      ReferralApplicationController.show(request, response, next)
+      await ReferralApplicationController.show(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('pages/error', { message: '' })
     })
 
-    it('should return a 404 if the step is not found', () => {
+    it('should return a 404 if the step is not found', async () => {
       mockForm.mockImplementation(() => {
         throw new UnknownStepError()
       })
 
-      ReferralApplicationController.show(request, response, next)
+      await ReferralApplicationController.show(request, response, next)
 
       expect(next).toHaveBeenCalledWith(mockCreateError(404, 'Not found'))
     })
@@ -76,30 +89,36 @@ describe('ReferralApplicationController', () => {
 
     it('should render an error page if invalid', async () => {
       const persistDataSpy = jest.fn()
+      const questions = createMock<Question>({
+        present: async () => 'QUESTION_HTML',
+      })
+
+      const form = {
+        validForCurrentStep: async () => false,
+        persistData: () => persistDataSpy(),
+        nextStep: () => 'next-step',
+        step: {
+          errors: 'SOME_ERRORS',
+          dto: () => {
+            return {
+              foo: 'bar',
+            }
+          },
+          questions: () => [questions],
+        },
+      }
 
       mockForm.mockImplementation(() => {
-        return {
-          validForCurrentStep: async () => false,
-          persistData: () => persistDataSpy(),
-          nextStep: () => 'next-step',
-          step: {
-            errors: 'SOME_ERRORS',
-            dto: () => {
-              return {
-                foo: 'bar',
-              }
-            },
-          },
-        }
+        return form
       })
 
       request.params = { step: 'opd-pathway', section: 'eligibility' }
 
       await ReferralApplicationController.update(request, response)
 
-      expect(response.render).toHaveBeenCalledWith('referral-application/opd-pathway', {
-        foo: 'bar',
-        errors: 'SOME_ERRORS',
+      expect(response.render).toHaveBeenCalledWith('referral-application/show', {
+        ...form,
+        questions: ['QUESTION_HTML'],
       })
     })
 
