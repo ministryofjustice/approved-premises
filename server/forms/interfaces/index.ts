@@ -19,3 +19,7 @@ export type ReferralApplicationRequest = Request<
   Record<string, unknown>,
   Record<string, unknown>
 >
+
+export interface ErrorMessages {
+  [key: string]: Array<string>
+}

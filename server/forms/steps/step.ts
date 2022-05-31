@@ -1,12 +1,8 @@
 import { validate, ValidationError } from 'class-validator'
 
-import type { ReferralApplicationBody } from '../interfaces'
+import type { ReferralApplicationBody, ErrorMessages } from '../interfaces'
 import type { AllowedStepNames, AllowedSectionNames, Dto } from './index'
 import type { ReferralApplication } from '../referral-application.form'
-
-interface ErrorMessages {
-  [key: string]: Array<string>
-}
 
 export default abstract class Step {
   errors: ErrorMessages
