@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import RoomSearches from '../dtos/room-searches'
 
 import Step from './step'
+import Question from '../questions/question'
 
 export default class RoomSearchesStep extends Step {
   section = 'ap-type' as const
@@ -28,5 +29,9 @@ export default class RoomSearchesStep extends Step {
 
   allowedToAccess(): boolean {
     return this.sessionData?.esapReasons?.includes('secreting') || false
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'items'), new Question(this, 'room-searches-agency-request')]
   }
 }

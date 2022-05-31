@@ -1,0 +1,27 @@
+{
+  "widget": "govukRadios",
+  "args": {
+    "idPrefix": "agencyRequest",
+    "name": "agencyRequest",
+    "fieldset": {
+      "legend": {
+        "text": "Have partnership agencies requested the sharing of intelligence captured via body worn technology?",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "hint": {
+      "text": "For example, DOS, JEXU or NSD."
+    },
+    "items": [
+      {
+        "value": "yes",
+        "text": "Yes",
+        "conditionalQuestion": "room-search-agency"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ]
+  }
+}
