@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 
 import OpdPathway from '../dtos/opd-pathway'
+import Question from '../questions/question'
 
 import Step from './step'
 
@@ -19,9 +20,9 @@ export default class OpdPathwayStep extends Step {
 
   dto(): OpdPathway {
     const lastOpdDate = [
-      this.body['last-opd-date-year'],
-      this.body['last-opd-date-month'],
-      this.body['last-opd-date-day'],
+      this.body['lastOpdDate-year'],
+      this.body['lastOpdDate-month'],
+      this.body['lastOpdDate-day'],
     ].join('-')
 
     return plainToInstance(OpdPathway, { lastOpdDate, ...this.body })
@@ -29,5 +30,9 @@ export default class OpdPathwayStep extends Step {
 
   allowedToAccess(): boolean {
     return this.sessionData.type === 'pipe'
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'is-opd-pathway-screened'), new Question(this, 'pipe-additional-detail')]
   }
 }

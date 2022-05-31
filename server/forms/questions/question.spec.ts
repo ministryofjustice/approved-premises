@@ -41,6 +41,22 @@ describe('Question', () => {
       const html = await question.present()
       expect(html).toContain('<span class="govuk-visually-hidden">Error:</span> You must specify a type')
     })
+
+    describe('when there are conditional questions', () => {
+      it('adds a conditional question', async () => {
+        const step = createMock<ApTypeStep>()
+
+        const question = new Question(step, 'is-opd-pathway-screened')
+
+        const html = await question.present()
+
+        expect(html).toContain('Has Robert Brown been screened into the OPD pathway?')
+        expect(html).toContain('govuk-radios__conditional govuk-radios__conditional--hidden')
+        expect(html).toContain('When was Robert Brown&#39;s last consultation or formulation?')
+      })
+    })
+  })
+
   describe('with checkboxes', () => {
     it('renders a group of checkboxes', async () => {
       const step = createMock<ApTypeStep>()
