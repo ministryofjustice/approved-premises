@@ -1,0 +1,23 @@
+{
+  "widget": "govukCheckboxes",
+  "args": {
+    "idPrefix": "esapReasons",
+    "name": "esapReasons[]",
+    "fieldset": {
+      "legend": {
+        "text": "Select at least one of the following reasons.",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "items": [
+      {
+        "value": "secreting",
+        "text": "History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology"
+      },
+      {
+        "value": "cctv",
+        "text": "History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision"
+      }
+    ]
+  }
+}

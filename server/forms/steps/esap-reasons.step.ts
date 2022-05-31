@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import EsapReasons from '../dtos/esap-reasons'
 
 import Step from './step'
+import Question from '../questions/question'
 
 export default class EsapReasonsStep extends Step {
   section = 'ap-type' as const
@@ -12,10 +13,10 @@ export default class EsapReasonsStep extends Step {
   showTitle = true
 
   nextStep() {
-    if (this.body.reasons?.includes('secreting')) {
+    if (this.body.esapReasons?.includes('secreting')) {
       return 'room-searches'
     }
-    if (this.body.reasons?.includes('cctv')) {
+    if (this.body.esapReasons?.includes('cctv')) {
       return 'cctv'
     }
     return undefined
@@ -31,5 +32,9 @@ export default class EsapReasonsStep extends Step {
 
   allowedToAccess(): boolean {
     return this.sessionData.type !== undefined && this.sessionData.type === 'esap'
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'esap-reasons'), new Question(this, 'other-factors')]
   }
 }

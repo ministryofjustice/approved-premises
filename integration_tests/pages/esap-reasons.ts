@@ -6,7 +6,7 @@ export default class EsapReasons extends Page {
   }
 
   public chooseReasons(answers: Array<string>) {
-    this.completeCheckBoxes('reasons', answers)
+    this.completeCheckBoxes('esapReasons', answers)
   }
 
   public chooseFactors(answers: Array<string>) {

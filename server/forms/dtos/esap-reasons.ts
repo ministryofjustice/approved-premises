@@ -6,7 +6,7 @@ export type EsapReasonOptions = 'secreting' | 'cctv'
 
 export default class EsapReasons extends Dto {
   @IsNotEmpty({ message: 'You must select at least one reason' })
-  reasons: Array<EsapReasonOptions>
+  esapReasons: Array<EsapReasonOptions>
 
   otherFactors: 'neurodiverse' | 'complex-personality' | 'enhanced' | 'csu' | 'unlock' | 'corrupter'
 }

@@ -16,7 +16,7 @@ export default class CCTVStep extends Step {
   }
 
   previousStep() {
-    if (this.sessionData.reasons?.includes('secreting')) {
+    if (this.sessionData.esapReasons?.includes('secreting')) {
       return 'room-searches' as const
     }
     return 'esap-reasons' as const
@@ -27,6 +27,6 @@ export default class CCTVStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData?.reasons?.includes('cctv') || false
+    return this.sessionData?.esapReasons?.includes('cctv') || false
   }
 }

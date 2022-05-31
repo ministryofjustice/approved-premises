@@ -1,0 +1,39 @@
+{
+  "widget": "govukCheckboxes",
+  "args": {
+    "idPrefix": "otherFactors",
+    "name": "otherFactors[]",
+    "fieldset": {
+      "legend": {
+        "text": "Do any of the following factors also apply?",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "items": [
+      {
+        "value": "neurodiverse",
+        "text": "A diagnosis of autism or neurodiverse traits"
+      },
+      {
+        "value": "complex-personality",
+        "text": "A complex personality presentation which has created challenges in the prison and where an AP PIPE is deemed unsuitable"
+      },
+      {
+        "value": "enhanced",
+        "text": "A non-NSD case where enhanced national standards are required to manage the risks posed and thought to be beneficial to risk reduction"
+      },
+      {
+        "value": "csu",
+        "text": "Individual has spent time in a Care and Separation Unit in the last 24 months"
+      },
+      {
+        "value": "unlock",
+        "text": "Individual has required a 2/3 prison officer unlock in the last 12 months."
+      },
+      {
+        "value": "corrupter",
+        "text": "Individual has been identified as a known/suspected corrupter of staff"
+      }
+    ]
+  }
+}

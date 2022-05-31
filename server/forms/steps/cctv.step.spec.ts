@@ -74,7 +74,7 @@ describe('CCTVStep', () => {
 
   describe('previousStep', () => {
     it('should return `room-searches` if the reasons for an esap included `secreting`', () => {
-      form.sessionData = { reasons: ['secreting'] }
+      form.sessionData = { esapReasons: ['secreting'] }
 
       const step = new CCTVStep(form)
 
@@ -84,7 +84,7 @@ describe('CCTVStep', () => {
     })
 
     it('should return `room-searches` if the reasons for an esap did not include `secreting`', () => {
-      form.sessionData = { reasons: ['cctv'] }
+      form.sessionData = { esapReasons: ['cctv'] }
 
       const step = new CCTVStep(form)
 
@@ -96,7 +96,7 @@ describe('CCTVStep', () => {
 
   describe('allowedToAccess', () => {
     it('it should return true if the cctv question was previously selected', () => {
-      form.sessionData = { reasons: ['cctv'] }
+      form.sessionData = { esapReasons: ['cctv'] }
 
       const step = new CCTVStep(form)
       const allowedToAccess = step.allowedToAccess()
@@ -105,7 +105,7 @@ describe('CCTVStep', () => {
     })
 
     it('it should return false if the cctv question was not previously selected', () => {
-      form.sessionData = { reasons: ['secreting'] }
+      form.sessionData = { esapReasons: ['secreting'] }
 
       const step = new CCTVStep(form)
       const allowedToAccess = step.allowedToAccess()

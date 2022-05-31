@@ -13,7 +13,7 @@ describe('ApTypeStep', () => {
   describe('valid', () => {
     it('should return true with no errors if the body are valid', async () => {
       form.request.body = {
-        reasons: ['secreting'],
+        esapReasons: ['secreting'],
       }
 
       const step = new EsapReasonsStep(form)
@@ -25,7 +25,7 @@ describe('ApTypeStep', () => {
 
     it('should return true with no errors if the body are invalid', async () => {
       form.request.body = {
-        reasons: [] as Array<string>,
+        esapReasons: [] as Array<string>,
       }
 
       const step = new EsapReasonsStep(form)
@@ -43,14 +43,14 @@ describe('ApTypeStep', () => {
 
       expect(valid).toEqual(false)
       expect(step.errorLength).toEqual(1)
-      expect(step.errors.reasons).toEqual(['You must select at least one reason'])
+      expect(step.errors.esapReasons).toEqual(['You must select at least one reason'])
     })
   })
 
   describe('nextStep', () => {
     it('should return `room-searches` when `secreting` is in the reasons', () => {
       form.request.body = {
-        reasons: ['secreting'],
+        esapReasons: ['secreting'],
       }
 
       const step = new EsapReasonsStep(form)
@@ -61,7 +61,7 @@ describe('ApTypeStep', () => {
 
     it('should return `cctv` when `cctv` is in the reasons, but not `secreting`', () => {
       form.request.body = {
-        reasons: ['cctv'],
+        esapReasons: ['cctv'],
       }
 
       const step = new EsapReasonsStep(form)
@@ -72,7 +72,7 @@ describe('ApTypeStep', () => {
 
     it('should return `room-searches` when `cctv` and `secreting` are in the reasons', () => {
       form.request.body = {
-        reasons: ['cctv', 'secreting'],
+        esapReasons: ['cctv', 'secreting'],
       }
 
       const step = new EsapReasonsStep(form)

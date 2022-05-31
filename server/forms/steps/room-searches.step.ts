@@ -12,7 +12,7 @@ export default class RoomSearchesStep extends Step {
   title = 'Enhanced room searches using body worn technology'
 
   nextStep() {
-    if (this.sessionData.reasons?.includes('cctv')) {
+    if (this.sessionData.esapReasons?.includes('cctv')) {
       return 'cctv' as const
     }
     return undefined
@@ -27,6 +27,6 @@ export default class RoomSearchesStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData?.reasons?.includes('secreting') || false
+    return this.sessionData?.esapReasons?.includes('secreting') || false
   }
 }
