@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 
 import ApType from '../dtos/ap-type'
+import Question from '../questions/question'
 
 import Step from './step'
 
@@ -27,5 +28,9 @@ export default class ApTypeStep extends Step {
 
   allowedToAccess(): boolean {
     return this.sessionData.referralReason !== undefined
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'type')]
   }
 }
