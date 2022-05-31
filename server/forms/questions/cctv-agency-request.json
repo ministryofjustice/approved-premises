@@ -1,0 +1,27 @@
+{
+  "widget": "govukRadios",
+  "args": {
+    "idPrefix": "cctvAgencyRequest",
+    "name": "cctvAgencyRequest",
+    "fieldset": {
+      "legend": {
+        "text": "Have partnership agencies requested the sharing of intelligence captured via enhanced CCTV?",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "hint": {
+      "text": "For example, DOS, JEXU or NSD."
+    },
+    "items": [
+      {
+        "value": "yes",
+        "text": "Yes",
+        "conditionalQuestion": "cctv-agency"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ]
+  }
+}

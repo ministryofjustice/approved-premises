@@ -1,8 +1,8 @@
 import { plainToInstance } from 'class-transformer'
 
 import CCTV from '../dtos/cctv'
-
 import Step from './step'
+import Question from '../questions/question'
 
 export default class CCTVStep extends Step {
   section = 'ap-type' as const
@@ -28,5 +28,13 @@ export default class CCTVStep extends Step {
 
   allowedToAccess(): boolean {
     return this.sessionData?.esapReasons?.includes('cctv') || false
+  }
+
+  questions(): Array<Question> {
+    return [
+      new Question(this, 'cctv-reasons'),
+      new Question(this, 'cctv-agency-request'),
+      new Question(this, 'cctv-supporting-information'),
+    ]
   }
 }

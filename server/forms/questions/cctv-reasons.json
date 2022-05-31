@@ -1,0 +1,39 @@
+{
+  "widget": "govukCheckboxes",
+  "args": {
+    "idPrefix": "cctvReasons",
+    "name": "cctvReasons[]",
+    "fieldset": {
+      "legend": {
+        "text": "Which behaviours has Robert demonstrated that require enhanced CCTV provision to monitor?",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "items": [
+      {
+        "value": "appearance",
+        "text": "Changed their appearance or clothing to offend"
+      },
+      {
+        "value": "networks",
+        "text": "Built networks within offender groups"
+      },
+      {
+        "value": "assualt-staff",
+        "text": "Physically assaulted staff"
+      },
+      {
+        "value": "assualt-others",
+        "text": "Physically assaulted other people in prison"
+      },
+      {
+        "value": "threats-to-life",
+        "text": "Received credible threats to life"
+      },
+      {
+        "value": "community-threats",
+        "text": "Experienced threats from the local community or media intrusion that poses a risk to the individual, other residents or staff"
+      }
+    ]
+  }
+}
