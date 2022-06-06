@@ -1,0 +1,44 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% from "../components/error-messages/macro.njk" import errorMessages %}
+
+{% set pageTitle = applicationName + " - " + step.title %}
+
+{% block content %}
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <form method="post" action="/referral-application/{{ sectionName }}/{{ stepName }}">
+          <input type="hidden" name="_csrf" value={{csrfToken}}>
+
+          {{ errorMessages(step.errors) }}
+
+          {% if step.showTitle %}
+            <h1 class="govuk-heading-l">{{ step.title }}</h1>
+          {% endif %}
+
+          {% if step.partial | length %}
+            {% set path = './partials/' + step.partial + '.njk' %}
+            {% include path %}
+          {% endif %}
+
+
+          {% for question in questions %}
+            {{ question|safe }}
+          {% endfor %}
+
+          {{ govukButton({
+            text: "Save and continue"
+          }) }}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

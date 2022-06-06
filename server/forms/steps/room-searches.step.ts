@@ -3,12 +3,17 @@ import { plainToInstance } from 'class-transformer'
 import RoomSearches from '../dtos/room-searches'
 
 import Step from './step'
+import Question from '../question'
 
 export default class RoomSearchesStep extends Step {
   section = 'ap-type' as const
 
+  showTitle = true
+
+  title = 'Enhanced room searches using body worn technology'
+
   nextStep() {
-    if (this.sessionData.reasons?.includes('cctv')) {
+    if (this.sessionData.esapReasons?.includes('cctv')) {
       return 'cctv' as const
     }
     return undefined
@@ -23,6 +28,10 @@ export default class RoomSearchesStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData?.reasons?.includes('secreting') || false
+    return this.sessionData?.esapReasons?.includes('secreting') || false
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'items'), new Question(this, 'room-searches-agency-request')]
   }
 }

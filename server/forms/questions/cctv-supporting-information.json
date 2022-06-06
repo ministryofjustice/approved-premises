@@ -1,0 +1,12 @@
+{
+  "widget": "govukTextarea",
+  "args": {
+    "name": "cctvSupportingInformation",
+    "id": "cctvSupportingInformation",
+    "value": "",
+    "label": {
+      "text": "Provide any supporting information about why Robert requires enhanced CCTV provision.",
+      "classes": "govuk-label--m"
+    }
+  }
+}

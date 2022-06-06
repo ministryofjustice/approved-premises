@@ -1,0 +1,10 @@
+{
+  "widget": "govukTextarea",
+  "args": {
+    "name": "pipe-additional-detail",
+    "id": "pipe-additional-detail",
+    "label": {
+      "text": "Provide any additional details about why Robert Borwn needs a PIPE placement."
+    }
+  }
+}

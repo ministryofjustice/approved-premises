@@ -5,11 +5,16 @@ import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
 import { ReferralApplication } from '../forms/referral-application.form'
 import { ReferralApplicationRequest } from '../forms/interfaces'
 
+const getQuestions = async (form: ReferralApplication): Promise<Array<string>> => {
+  return Promise.all(form.step.questions().map(question => question.present()))
+}
+
 export const ReferralApplicationController = {
-  show: (req: ReferralApplicationRequest, res: Response, next: NextFunction): void => {
+  show: async (req: ReferralApplicationRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const form = new ReferralApplication(req)
-      res.render(`referral-application/${form.stepName}`)
+      const questions = await getQuestions(form)
+      res.render(`referral-application/show`, { ...form, questions })
     } catch (err) {
       if (err instanceof OutOfSequenceError) {
         res.status(400)
@@ -24,6 +29,7 @@ export const ReferralApplicationController = {
 
   update: async (req: ReferralApplicationRequest, res: Response): Promise<void> => {
     const form = new ReferralApplication(req)
+
     const valid = await form.validForCurrentStep()
     const nextStep = form.nextStep()
 
@@ -36,7 +42,9 @@ export const ReferralApplicationController = {
         res.redirect('/referral_tasklist')
       }
     } else {
-      res.render(`referral-application/${req.params.step}`, { ...form.step.dto(), errors: form.step.errors })
+      const questions = await getQuestions(form)
+
+      res.render(`referral-application/show`, { ...form, questions })
     }
   },
 }

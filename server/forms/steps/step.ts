@@ -1,12 +1,9 @@
 import { validate, ValidationError } from 'class-validator'
 
-import type { ReferralApplicationBody } from '../interfaces'
+import type { ReferralApplicationBody, ErrorMessages } from '../interfaces'
 import type { AllowedStepNames, AllowedSectionNames, Dto } from './index'
 import type { ReferralApplication } from '../referral-application.form'
-
-interface ErrorMessages {
-  [key: string]: Array<string>
-}
+import Question from '../question'
 
 export default abstract class Step {
   errors: ErrorMessages
@@ -17,10 +14,16 @@ export default abstract class Step {
 
   body: any
 
+  showTitle = false
+
   constructor(public readonly form: ReferralApplication) {
     this.sessionData = form.sessionData
     this.body = form.request.body
   }
+
+  abstract title: string
+
+  abstract questions(): Array<Question>
 
   abstract section: AllowedSectionNames
 

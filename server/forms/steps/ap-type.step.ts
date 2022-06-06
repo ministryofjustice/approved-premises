@@ -1,11 +1,14 @@
 import { plainToInstance } from 'class-transformer'
 
 import ApType from '../dtos/ap-type'
+import Question from '../question'
 
 import Step from './step'
 
 export default class ApTypeStep extends Step {
   section = 'ap-type' as const
+
+  title = 'What type of AP does Robert Smith require?'
 
   nextStep() {
     return {
@@ -24,6 +27,10 @@ export default class ApTypeStep extends Step {
   }
 
   allowedToAccess(): boolean {
-    return this.sessionData.reason !== undefined
+    return this.sessionData.referralReason !== undefined
+  }
+
+  questions(): Array<Question> {
+    return [new Question(this, 'type')]
   }
 }

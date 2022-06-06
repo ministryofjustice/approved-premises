@@ -1,0 +1,25 @@
+{
+  "widget": "govukRadios",
+  "args": {
+    "idPrefix": "is_opd_pathway_screened",
+    "name": "is_opd_pathway_screened",
+    "fieldset": {
+      "legend": {
+        "text": "Has Robert Brown been screened into the OPD pathway?",
+        "isPageHeading": true,
+        "classes": "govuk-fieldset__legend--l"
+      }
+    },
+    "items": [
+      {
+        "value": "yes",
+        "text": "Yes",
+        "conditionalQuestion": "last-opd-date"
+      },
+      {
+        "value": "condition",
+        "text": "No"
+      }
+    ]
+  }
+}

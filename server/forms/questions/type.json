@@ -1,0 +1,31 @@
+{
+  "widget": "govukRadios",
+  "args": {
+    "idPrefix": "type",
+    "name": "type",
+    "hint": {
+      "html": "<p><a href='#'>What are the different types of AP?</a></p>"
+    },
+    "fieldset": {
+      "legend": {
+        "text": "What type of AP does Robert Smith require?",
+        "isPageHeading": true,
+        "classes": "govuk-fieldset__legend--l"
+      }
+    },
+    "items": [
+      {
+        "value": "standard",
+        "text": "Standard"
+      },
+      {
+        "value": "pipe",
+        "text": "PIPE (psychologically informed planned environment)"
+      },
+      {
+        "value": "esap",
+        "text": "ESAP (enhanced security approved premises)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "widget": "govukCheckboxes",
+  "args": {
+    "idPrefix": "items",
+    "name": "items[]",
+    "fieldset": {
+      "legend": {
+        "text": "Which items does Robert have a history of secreting?",
+        "classes": "govuk-fieldset__legend--m"
+      }
+    },
+    "items": [
+      {
+        "value": "radicalisation",
+        "text": "Literature and materials supporting radicalisation ideals"
+      },
+      {
+        "value": "hate-crime",
+        "text": "Offence related literature indicative of hate crimes or beliefs"
+      },
+      {
+        "value": "child-sexual-abuse",
+        "text": "Literature and/or items of relevance to child sexual abuse or exploitation"
+      },
+      {
+        "value": "drugs",
+        "text": "Drugs and drug paraphernalia indicative of dealing drugs"
+      },
+      {
+        "value": "weapons",
+        "text": "Weapons, actual or makeshift"
+      },
+      {
+        "value": "fire",
+        "text": "Fire-setting or explosive materials"
+      },
+      {
+        "value": "electronics",
+        "text": "Electronic items of significance to the individuals offending profile"
+      }
+    ]
+  }
+}

@@ -1,10 +1,6 @@
 import { Step, stepList } from './steps'
-import { ReferralApplicationRequest } from './interfaces'
+import { ReferralApplicationRequest, ErrorMessages } from './interfaces'
 import { OutOfSequenceError, UnknownStepError } from './errors'
-
-interface ErrorMessages {
-  [key: string]: Array<string>
-}
 
 export const sessionVarName = 'referralApplication'
 

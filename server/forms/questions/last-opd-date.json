@@ -1,0 +1,12 @@
+{
+  "widget": "govukDateInput",
+  "args": {
+    "id": "lastOpdDate",
+    "namePrefix": "lastOpdDate",
+    "fieldset": {
+      "legend": {
+        "text": "When was Robert Brown's last consultation or formulation?"
+      }
+    }
+  }
+}
