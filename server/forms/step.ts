@@ -21,24 +21,24 @@ export default class Step {
 
   errorMessages: ErrorMessages
 
-  private constructor(private readonly step: StepDefinition) {}
+  private constructor(private readonly step: StepDefinition, readonly body: any) {}
 
-  public static async initialize(name: string): Promise<Step> {
+  public static async initialize(name: string, body: any): Promise<Step> {
     const json = await Step.readJson(name)
 
-    return new Step(json)
+    return new Step(json, body)
   }
 
-  public nextStep(data: any): string {
-    return this.applyRule(this.step.nextStep, data)
+  public nextStep(): string {
+    return this.applyRule(this.step.nextStep)
   }
 
-  public previousStep(data: any): string {
-    return this.applyRule(this.step.previousStep, data)
+  public previousStep(): string {
+    return this.applyRule(this.step.previousStep)
   }
 
-  public valid(data: any): boolean {
-    this.validate(data)
+  public valid(): boolean {
+    this.validate()
 
     return Object.keys(this.errorMessages).length === 0
   }
@@ -57,13 +57,13 @@ export default class Step {
     return rule
   }
 
-  private validate(data: any): void {
+  private validate(): void {
     const errors = {}
 
     Object.keys(this.step.validationRules).forEach(key => {
       const rules = this.step.validationRules[key]
       rules.forEach(rule => {
-        const result = this.applyRule(rule, data)
+        const result = this.applyRule(rule)
         if (typeof result === 'string') {
           errors[key] = errors[key] || []
           errors[key].push(result)
@@ -74,9 +74,9 @@ export default class Step {
     this.errorMessages = errors
   }
 
-  private applyRule(rule: RulesLogic | string, data: any) {
+  private applyRule(rule: RulesLogic | string) {
     if (typeof rule === 'object') {
-      return jsonLogic.apply(rule, data)
+      return jsonLogic.apply(rule, this.body)
     }
     return rule as string
   }

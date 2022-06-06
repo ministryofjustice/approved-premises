@@ -16,8 +16,6 @@ export default class Form {
 
   sessionData = this.request.session[Form.sessionVarName]
 
-  requestData = this.request.body
-
   private constructor(readonly step: Step, readonly request: Request) {
     if (this.step.allowedToAccess(this.sessionData) === false) {
       throw new OutOfSequenceError()
@@ -26,14 +24,10 @@ export default class Form {
     if (this.step.section !== this.request.params.section) {
       throw new UnknownStepError()
     }
-
-    this.validForCurrentStep = this.step.valid(this.requestData)
-    this.errors = this.step.errorMessages
-    this.nextStep = this.step.nextStep(this.requestData)
   }
 
   public static async initialize(request: Request): Promise<Form> {
-    const step = await Step.initialize(request.params.section)
+    const step = await Step.initialize(request.params.step, request.body)
 
     return new Form(step, request)
   }
