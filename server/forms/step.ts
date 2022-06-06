@@ -3,6 +3,7 @@ import jsonLogic, { RulesLogic } from 'json-logic-js'
 import moment from 'moment'
 
 import { StepDefinition, ErrorMessages } from './interfaces'
+import Question from './question'
 
 const isDateString = (value: any): boolean => {
   return moment(value, moment.ISO_8601).isValid()
@@ -18,6 +19,8 @@ export default class Step {
   title: string = this.step.title
 
   showTitle: boolean = this.step.showTitle
+
+  questions: Array<Question> = this.step.questions.map(question => new Question(this, question))
 
   errorMessages: ErrorMessages
 

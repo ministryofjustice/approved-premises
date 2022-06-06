@@ -7,6 +7,7 @@ import OpdPathway from '../dtos/opd-pathway'
 import EsapReasons from '../dtos/esap-reasons'
 
 import type { AllowedStepNames, AllowedSectionNames } from '../steps'
+import type Question from '../question'
 
 export type ReferralApplicationParams = {
   step: AllowedStepNames
@@ -30,6 +31,7 @@ export interface StepDefinition {
   previousStep: RulesLogic | string
   validationRules: { [key: string]: Array<RulesLogic> }
   allowedToAccess: RulesLogic | boolean
+  questions: Array<string>
 }
 
 export interface ErrorMessages {

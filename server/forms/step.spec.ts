@@ -1,6 +1,8 @@
 import fsPromises from 'fs/promises'
 
 import Step from './step'
+import Question from './question'
+
 import { StepDefinition } from './interfaces'
 
 const stepMock = {
@@ -227,6 +229,19 @@ describe('Step', () => {
 
       expect(step.allowedToAccess({})).toEqual(false)
       expect(step.allowedToAccess({ type: 'foo' })).toEqual(true)
+    })
+  })
+
+  describe('questions', () => {
+    it('should return an array of questions', async () => {
+      stepMock.questions = ['question1', 'question2']
+
+      step = await Step.initialize('step', {})
+
+      expect(step.questions.length).toEqual(2)
+
+      expect(step.questions[0]).toBeInstanceOf(Question)
+      expect(step.questions[1]).toBeInstanceOf(Question)
     })
   })
 })
