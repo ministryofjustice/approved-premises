@@ -1,7 +1,14 @@
 import { readFile } from 'fs/promises'
 import jsonLogic, { RulesLogic } from 'json-logic-js'
+import moment from 'moment'
 
-import { StepDefinition } from './interfaces'
+import { StepDefinition, ErrorMessages } from './interfaces'
+
+const isDateString = (value: any): boolean => {
+  return moment(value, moment.ISO_8601).isValid()
+}
+
+jsonLogic.add_operation('isDateString', isDateString)
 
 export default class Step {
   name: string = this.step.name
@@ -11,6 +18,8 @@ export default class Step {
   title: string = this.step.title
 
   showTitle: boolean = this.step.showTitle
+
+  errorMessages: ErrorMessages
 
   private constructor(private readonly step: StepDefinition) {}
 
@@ -26,6 +35,29 @@ export default class Step {
 
   public previousStep(data: any): string {
     return this.applyRule(this.step.previousStep, data)
+  }
+
+  public valid(data: any): boolean {
+    this.validate(data)
+
+    return Object.keys(this.errorMessages).length === 0
+  }
+
+  private validate(data: any): void {
+    const errors = {}
+
+    Object.keys(this.step.validationRules).forEach(key => {
+      const rules = this.step.validationRules[key]
+      rules.forEach(rule => {
+        const result = this.applyRule(rule, data)
+        if (typeof result === 'string') {
+          errors[key] = errors[key] || []
+          errors[key].push(result)
+        }
+      })
+    })
+
+    this.errorMessages = errors
   }
 
   private applyRule(rule: RulesLogic | string, data: any) {

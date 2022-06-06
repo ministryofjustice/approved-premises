@@ -91,4 +91,115 @@ describe('Step', () => {
       expect(result.previousStep({ type: 'othher' })).toEqual(null)
     })
   })
+
+  describe('valid', () => {
+    it('should validate the existence of a variable', async () => {
+      const step = {
+        validationRules: {
+          type: [
+            {
+              if: [{ var: ['type'] }, true, 'You must select a type of AP'],
+            },
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.valid({})).toEqual(false)
+      expect(result.errorMessages).toEqual({ type: 'You must select a type of AP' })
+
+      expect(result.valid({ type: 'standard' })).toEqual(true)
+      expect(result.errorMessages).toEqual({})
+    })
+
+    it('should validate if a variable is included in a list of variables', async () => {
+      const step = {
+        validationRules: {
+          type: [
+            {
+              if: [{ in: [{ var: 'type' }, ['standard', 'pipe', 'esap']] }, true, 'You must select a type of AP'],
+            },
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.valid({ type: 'no' })).toEqual(false)
+      expect(result.errorMessages).toEqual({ type: 'You must select a type of AP' })
+
+      expect(result.valid({ type: 'standard' })).toEqual(true)
+      expect(result.errorMessages).toEqual({})
+    })
+
+    it('should validate a date string', async () => {
+      const step = {
+        validationRules: {
+          date: [
+            {
+              if: [{ isDateString: [{ var: 'date' }] }, true, 'You must enter a valid date'],
+            },
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.valid({ date: '20-20-20' })).toEqual(false)
+      expect(result.errorMessages).toEqual({ date: 'You must enter a valid date' })
+
+      expect(result.valid({ date: '2022-01-01' })).toEqual(true)
+      expect(result.errorMessages).toEqual({})
+    })
+
+    it('should carry out conditional validations', async () => {
+      const step = {
+        validationRules: {
+          cctvAgency: [
+            {
+              if: [
+                {
+                  and: [
+                    {
+                      missing: 'cctvAgency',
+                    },
+                    {
+                      '===': [
+                        {
+                          var: 'cctvAgencyRequest',
+                        },
+                        'yes',
+                      ],
+                    },
+                  ],
+                },
+                'You must specify agencies',
+                true,
+              ],
+            },
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.valid({ cctvAgencyRequest: 'yes' })).toEqual(false)
+      expect(result.errorMessages).toEqual({ cctvAgency: 'You must specify agencies' })
+
+      expect(result.valid({ cctvAgencyRequest: 'yes', cctvAgency: '' })).toEqual(false)
+      expect(result.errorMessages).toEqual({ cctvAgency: 'You must specify agencies' })
+
+      expect(result.valid({ cctvAgencyRequest: 'no' })).toEqual(true)
+      expect(result.errorMessages).toEqual({})
+    })
+  })
 })
