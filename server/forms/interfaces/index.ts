@@ -20,6 +20,13 @@ export type ReferralApplicationRequest = Request<
   Record<string, unknown>
 >
 
+export interface StepDefinition {
+  name: string
+  section: AllowedSectionNames
+  title: string
+  showTitle: boolean
+}
+
 export interface ErrorMessages {
   [key: string]: Array<string>
 }
