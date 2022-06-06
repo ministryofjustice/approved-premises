@@ -27,6 +27,7 @@ export interface StepDefinition {
   title: string
   showTitle: boolean
   nextStep: RulesLogic | string
+  previousStep: RulesLogic | string
 }
 
 export interface ErrorMessages {

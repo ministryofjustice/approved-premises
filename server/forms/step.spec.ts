@@ -57,4 +57,38 @@ describe('Step', () => {
       expect(result.nextStep({ type: 'othher' })).toEqual(null)
     })
   })
+
+  describe('previousStep', () => {
+    it('returns the previous step when it is a simple string', async () => {
+      const step = { previousStep: 'prev' }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.previousStep({})).toEqual('prev')
+    })
+
+    it('applies rules if included', async () => {
+      const step = {
+        previousStep: {
+          if: [
+            { '===': [{ var: 'type' }, 'pipe'] },
+            'opd-pathway',
+            { '===': [{ var: 'type' }, 'esap'] },
+            'esap-reasons',
+            null,
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.previousStep({ type: 'pipe' })).toEqual('opd-pathway')
+      expect(result.previousStep({ type: 'esap' })).toEqual('esap-reasons')
+      expect(result.previousStep({ type: 'othher' })).toEqual(null)
+    })
+  })
 })

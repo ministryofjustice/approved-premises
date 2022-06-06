@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import jsonLogic from 'json-logic-js'
+import jsonLogic, { RulesLogic } from 'json-logic-js'
 
 import { StepDefinition } from './interfaces'
 
@@ -21,10 +21,18 @@ export default class Step {
   }
 
   public nextStep(data: any): string {
-    if (typeof this.step.nextStep === 'object') {
-      return jsonLogic.apply(this.step.nextStep, data)
+    return this.applyRule(this.step.nextStep, data)
+  }
+
+  public previousStep(data: any): string {
+    return this.applyRule(this.step.previousStep, data)
+  }
+
+  private applyRule(rule: RulesLogic | string, data: any) {
+    if (typeof rule === 'object') {
+      return jsonLogic.apply(rule, data)
     }
-    return this.step.nextStep as string
+    return rule as string
   }
 
   private static async readJson(name: string): Promise<StepDefinition> {
