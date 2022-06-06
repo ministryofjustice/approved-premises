@@ -29,6 +29,7 @@ export interface StepDefinition {
   nextStep: RulesLogic | string
   previousStep: RulesLogic | string
   validationRules: { [key: string]: Array<RulesLogic> }
+  allowedToAccess: RulesLogic | boolean
 }
 
 export interface ErrorMessages {

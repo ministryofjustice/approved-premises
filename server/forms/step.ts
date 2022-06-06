@@ -43,6 +43,20 @@ export default class Step {
     return Object.keys(this.errorMessages).length === 0
   }
 
+  public questions(): Array<Question> {
+    return this.step.questions.map(question => new Question(this, question))
+  }
+
+  public allowedToAccess(data: any) {
+    const rule = this.step.allowedToAccess
+
+    if (typeof rule === 'object') {
+      return jsonLogic.apply(rule, data)
+    }
+
+    return rule
+  }
+
   private validate(data: any): void {
     const errors = {}
 

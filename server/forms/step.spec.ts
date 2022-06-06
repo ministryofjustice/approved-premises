@@ -202,4 +202,31 @@ describe('Step', () => {
       expect(result.errorMessages).toEqual({})
     })
   })
+
+  describe('allowedToAccess', () => {
+    it('should return the boolean value if specified', async () => {
+      const step = {
+        allowedToAccess: true,
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.allowedToAccess({})).toEqual(true)
+    })
+
+    it('should apply a rule', async () => {
+      const step = {
+        allowedToAccess: { if: [{ var: 'type' }, true, false] },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.allowedToAccess({})).toEqual(false)
+      expect(result.allowedToAccess({ type: 'foo' })).toEqual(true)
+    })
+  })
 })
