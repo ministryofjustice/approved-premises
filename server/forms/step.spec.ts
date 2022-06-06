@@ -1,4 +1,5 @@
 import fsPromises from 'fs/promises'
+import { isRegExp } from 'util/types'
 import Step from './step'
 
 jest.mock('fs/promises')
@@ -20,6 +21,40 @@ describe('Step', () => {
       expect(result.section).toEqual('bar')
       expect(result.title).toEqual('title')
       expect(result.showTitle).toEqual(false)
+    })
+  })
+
+  describe('nextStep', () => {
+    it('returns the next step when it is a simple string', async () => {
+      const step = { nextStep: 'next' }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.nextStep({})).toEqual('next')
+    })
+
+    it('applies rules if included', async () => {
+      const step = {
+        nextStep: {
+          if: [
+            { '===': [{ var: 'type' }, 'pipe'] },
+            'opd-pathway',
+            { '===': [{ var: 'type' }, 'esap'] },
+            'esap-reasons',
+            null,
+          ],
+        },
+      }
+
+      jest.spyOn(fsPromises, 'readFile').mockImplementation(async () => JSON.stringify(step))
+
+      const result = await Step.initialize('step')
+
+      expect(result.nextStep({ type: 'pipe' })).toEqual('opd-pathway')
+      expect(result.nextStep({ type: 'esap' })).toEqual('esap-reasons')
+      expect(result.nextStep({ type: 'othher' })).toEqual(null)
     })
   })
 })
