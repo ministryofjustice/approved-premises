@@ -2,7 +2,7 @@ import nunjucks from 'nunjucks'
 import { readFile } from 'fs/promises'
 
 import type { ErrorMessages } from './interfaces'
-import type { Step } from './steps'
+import type Step from './step'
 import { RadioOptions, CheckBoxOptions, ErrorMessage, TextAreaOptions } from './interfaces'
 
 interface QuestionData {
@@ -19,7 +19,7 @@ export default class Question {
 
   constructor(private readonly step: Step, private readonly question: string) {
     this.body = step.body
-    this.errors = step.errors
+    this.errors = step.errorMessages
 
     nunjucks.configure([
       'node_modules/govuk-frontend/',

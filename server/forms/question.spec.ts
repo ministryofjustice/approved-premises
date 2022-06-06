@@ -1,12 +1,12 @@
 import { createMock } from '@golevelup/ts-jest'
 
 import Question from './question'
-import type ApTypeStep from './steps/ap-type.step'
+import type Step from './step'
 
 describe('Question', () => {
   describe('with radio buttons', () => {
     it('renders a group of radio buttons', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       const question = new Question(step, 'type')
 
@@ -16,7 +16,7 @@ describe('Question', () => {
     })
 
     it('prepopulates an option if already selected', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       step.body.type = 'standard'
 
@@ -30,9 +30,9 @@ describe('Question', () => {
     })
 
     it('adds the error messages to the group', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
-      step.errors = {
+      step.errorMessages = {
         type: ['You must specify a type'],
       }
 
@@ -44,7 +44,7 @@ describe('Question', () => {
 
     describe('when there are conditional questions', () => {
       it('adds a conditional question', async () => {
-        const step = createMock<ApTypeStep>()
+        const step = createMock<Step>()
 
         const question = new Question(step, 'is-opd-pathway-screened')
 
@@ -59,7 +59,7 @@ describe('Question', () => {
 
   describe('with checkboxes', () => {
     it('renders a group of checkboxes', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       const question = new Question(step, 'cctv-reasons')
 
@@ -71,7 +71,7 @@ describe('Question', () => {
     })
 
     it('prepopulates an option if already selected', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       step.body.cctvReasons = ['appearance', 'networks', 'community-threats']
 
@@ -93,9 +93,9 @@ describe('Question', () => {
     })
 
     it('adds the error messages to the group', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
-      step.errors = {
+      step.errorMessages = {
         cctvReasons: ['You must specify a reason'],
       }
 
@@ -108,7 +108,7 @@ describe('Question', () => {
 
   describe('with a textarea', () => {
     it('returns a textarea', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       const question = new Question(step, 'cctv-supporting-information')
 
@@ -118,7 +118,7 @@ describe('Question', () => {
     })
 
     it('prepopulates the question', async () => {
-      const step = createMock<ApTypeStep>()
+      const step = createMock<Step>()
 
       step.body.cctvSupportingInformation = 'text goes here'
 
