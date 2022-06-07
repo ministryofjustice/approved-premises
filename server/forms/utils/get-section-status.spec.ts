@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 
 import { getSectionStatus } from './get-section-status'
-import { ReferralApplication } from '../referral-application.form'
+import Form from '../form'
 
 describe('formIsComplete', () => {
   it('returns complete when the session variable has a status value of complete', () => {
@@ -16,7 +16,7 @@ describe('formIsComplete', () => {
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('complete')
+    expect(getSectionStatus(request, Form, 'eligibility')).toEqual('complete')
   })
 
   it('returns the status when the session variable has a different status value', () => {
@@ -30,7 +30,7 @@ describe('formIsComplete', () => {
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('in_progress')
+    expect(getSectionStatus(request, Form, 'eligibility')).toEqual('in_progress')
   })
 
   it('returns not_started when the session variable has no status value', () => {
@@ -40,7 +40,7 @@ describe('formIsComplete', () => {
       },
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('not_started')
+    expect(getSectionStatus(request, Form, 'eligibility')).toEqual('not_started')
   })
 
   it('returns not_started when there is no session variable', () => {
@@ -48,6 +48,6 @@ describe('formIsComplete', () => {
       session: {},
     })
 
-    expect(getSectionStatus(request, ReferralApplication, 'eligibility')).toEqual('not_started')
+    expect(getSectionStatus(request, Form, 'eligibility')).toEqual('not_started')
   })
 })
