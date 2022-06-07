@@ -3,19 +3,20 @@ import { Response } from 'express'
 import createError from 'http-errors'
 
 import { ReferralApplicationController } from './referral-application.controller'
-import { ReferralApplication } from '../forms/referral-application.form'
 import { ReferralApplicationRequest } from '../forms/interfaces'
 import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
-import Question from '../forms/question'
 
-jest.mock('../forms/referral-application.form')
+import Question from '../forms/question'
+import Form from '../forms/form'
+import Step from '../forms/step'
+
+jest.mock('../forms/form')
 jest.mock('http-errors')
 
 describe('ReferralApplicationController', () => {
   const request = createMock<ReferralApplicationRequest>({})
   const response = createMock<Response>({})
   const next = jest.fn()
-  const mockForm = ReferralApplication as unknown as jest.Mock
   const mockCreateError = createError
 
   afterEach(() => {
@@ -27,28 +28,24 @@ describe('ReferralApplicationController', () => {
       const questions = createMock<Question>({
         present: async () => 'QUESTION_HTML',
       })
-
-      const form = {
-        stepName: 'some-step',
-        step: {
+      const form = createMock<Form>({
+        step: createMock<Step>({
           questions: () => [questions],
-        },
-      }
-
-      mockForm.mockImplementation(() => {
-        return form
+        }),
       })
+
+      jest.spyOn(Form, 'initialize').mockResolvedValue(form)
 
       await ReferralApplicationController.show(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('referral-application/show', {
-        ...form,
         questions: ['QUESTION_HTML'],
+        ...form,
       })
     })
 
     it('should render an error if the step is out of sequence', async () => {
-      mockForm.mockImplementation(() => {
+      jest.spyOn(Form, 'initialize').mockImplementation(() => {
         throw new OutOfSequenceError()
       })
 
@@ -58,7 +55,7 @@ describe('ReferralApplicationController', () => {
     })
 
     it('should return a 404 if the step is not found', async () => {
-      mockForm.mockImplementation(() => {
+      jest.spyOn(Form, 'initialize').mockImplementation(() => {
         throw new UnknownStepError()
       })
 
@@ -72,14 +69,16 @@ describe('ReferralApplicationController', () => {
     it('should persist the data and render the next step if valid', async () => {
       const persistDataSpy = jest.fn()
 
-      mockForm.mockImplementation(() => {
-        return {
-          validForCurrentStep: async () => true,
+      jest.spyOn(Form, 'initialize').mockResolvedValue(
+        createMock<Form>({
+          validForCurrentStep: () => true,
           nextStep: () => 'next-step',
           persistData: () => persistDataSpy(),
-          sectionName: 'eligibility',
-        }
-      })
+          step: createMock<Step>({
+            section: 'eligibility',
+          }),
+        })
+      )
 
       await ReferralApplicationController.update(request, response)
 
@@ -92,25 +91,17 @@ describe('ReferralApplicationController', () => {
       const questions = createMock<Question>({
         present: async () => 'QUESTION_HTML',
       })
-
-      const form = {
-        validForCurrentStep: async () => false,
+      const form = createMock<Form>({
+        validForCurrentStep: () => false,
         persistData: () => persistDataSpy(),
         nextStep: () => 'next-step',
         step: {
-          errors: 'SOME_ERRORS',
-          dto: () => {
-            return {
-              foo: 'bar',
-            }
-          },
+          errorMessages: 'SOME_ERRORS' as any,
           questions: () => [questions],
         },
-      }
-
-      mockForm.mockImplementation(() => {
-        return form
       })
+
+      jest.spyOn(Form, 'initialize').mockResolvedValue(form)
 
       request.params = { step: 'opd-pathway', section: 'eligibility' }
 
@@ -126,14 +117,14 @@ describe('ReferralApplicationController', () => {
       const persistDataSpy = jest.fn()
       const completeSpy = jest.fn()
 
-      mockForm.mockImplementation(() => {
-        return {
-          validForCurrentStep: async () => true,
-          nextStep: (): undefined => undefined,
-          persistData: () => persistDataSpy(),
-          completeSection: () => completeSpy(),
-        }
+      const form = createMock<Form>({
+        validForCurrentStep: () => true,
+        nextStep: (): undefined => undefined,
+        persistData: () => persistDataSpy(),
+        completeSection: () => completeSpy(),
       })
+
+      jest.spyOn(Form, 'initialize').mockResolvedValue(form)
 
       await ReferralApplicationController.update(request, response)
 

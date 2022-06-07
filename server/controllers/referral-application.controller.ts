@@ -1,18 +1,17 @@
-import { Response, NextFunction } from 'express'
+import { Response, NextFunction, Request } from 'express'
 import createError from 'http-errors'
 
 import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
-import { ReferralApplication } from '../forms/referral-application.form'
-import { ReferralApplicationRequest } from '../forms/interfaces'
+import Form from '../forms/form'
 
-const getQuestions = async (form: ReferralApplication): Promise<Array<string>> => {
+const getQuestions = async (form: Form): Promise<Array<string>> => {
   return Promise.all(form.step.questions().map(question => question.present()))
 }
 
 export const ReferralApplicationController = {
-  show: async (req: ReferralApplicationRequest, res: Response, next: NextFunction): Promise<void> => {
+  show: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const form = new ReferralApplication(req)
+      const form = await Form.initialize(req)
       const questions = await getQuestions(form)
       res.render(`referral-application/show`, { ...form, questions })
     } catch (err) {
@@ -27,16 +26,17 @@ export const ReferralApplicationController = {
     }
   },
 
-  update: async (req: ReferralApplicationRequest, res: Response): Promise<void> => {
-    const form = new ReferralApplication(req)
+  update: async (req: Request, res: Response): Promise<void> => {
+    const form = await Form.initialize(req)
 
-    const valid = await form.validForCurrentStep()
-    const nextStep = form.nextStep()
+    const valid = form.validForCurrentStep()
 
     if (valid) {
       form.persistData()
+      const nextStep = form.nextStep()
+
       if (nextStep) {
-        res.redirect(`/referral-application/${form.sectionName}/new/${nextStep}`)
+        res.redirect(`/referral-application/${form.step.section}/new/${nextStep}`)
       } else {
         form.completeSection()
         res.redirect('/referral_tasklist')
