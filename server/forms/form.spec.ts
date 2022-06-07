@@ -8,7 +8,7 @@ const mockStep = {
   section: 'eligibility',
   allowedToAccess: jest.fn(() => true),
   valid: jest.fn(),
-  nextStep: () => 'referral-reason',
+  nextStep: jest.fn(),
   errorMessages: {
     foo: ['bar'],
   },
@@ -56,7 +56,7 @@ describe('Form', () => {
   })
 
   describe('validForCurrentStep', () => {
-    it('returns the valid state from the step and sets errors', async () => {
+    it('returns false and sets errors if the step is invalid', async () => {
       mockStep.valid.mockReturnValue(false)
       mockStep.errorMessages = {
         foo: ['bar'],
@@ -74,14 +74,13 @@ describe('Form', () => {
 
       const valid = form.validForCurrentStep()
 
-      const { nextStep, errors } = form
+      const { errors } = form
 
       expect(valid).toBe(false)
-      expect(nextStep).toEqual(undefined)
       expect(errors).toEqual(mockStep.errorMessages)
     })
 
-    it('sets the next step if the step is valid', async () => {
+    it('returns true and sets no errors if the step is valid', async () => {
       mockStep.valid.mockReturnValue(true)
 
       const request = createMock<Request>({
@@ -96,11 +95,30 @@ describe('Form', () => {
 
       const valid = form.validForCurrentStep()
 
-      const { nextStep, errors } = form
+      const { errors } = form
 
       expect(valid).toBe(true)
-      expect(nextStep).toEqual(mockStep.nextStep())
       expect(errors).toEqual(undefined)
+    })
+  })
+
+  describe('nextStep', () => {
+    it('returns the next step from the session', async () => {
+      mockStep.nextStep.mockReturnValue('some-step')
+
+      const request = createMock<Request>({
+        params: {
+          section: 'eligibility',
+          step: 'referral-reason',
+        },
+        body: {},
+      })
+
+      const form = await Form.initialize(request)
+
+      expect(form.nextStep()).toEqual('some-step')
+
+      expect(mockStep.nextStep).toHaveBeenCalledWith(request.session[Form.sessionVarName])
     })
   })
 

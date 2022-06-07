@@ -32,12 +32,12 @@ export default class Step {
     return new Step(json, body)
   }
 
-  public nextStep(): string {
-    return this.applyRule(this.step.nextStep)
+  public nextStep(data: any): string {
+    return this.applyRule(this.step.nextStep, data)
   }
 
-  public previousStep(): string {
-    return this.applyRule(this.step.previousStep)
+  public previousStep(data: any): string {
+    return this.applyRule(this.step.previousStep, data)
   }
 
   public valid(): boolean {
@@ -77,11 +77,11 @@ export default class Step {
     this.errorMessages = errors
   }
 
-  private applyRule(rule: RulesLogic | string) {
-    if (typeof rule === 'object') {
-      return jsonLogic.apply(rule, this.body)
+  private applyRule(rule: RulesLogic | string, data: any = this.body) {
+    if (typeof rule === 'string') {
+      return rule
     }
-    return rule as string
+    return jsonLogic.apply(rule, data)
   }
 
   private static async readJson(name: string): Promise<StepDefinition> {

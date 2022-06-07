@@ -12,8 +12,6 @@ export default class Form {
 
   errors: ErrorMessages
 
-  nextStep: string
-
   sessionData = this.request.session[Form.sessionVarName]
 
   private constructor(readonly step: Step, readonly request: Request) {
@@ -43,11 +41,13 @@ export default class Form {
     }
   }
 
+  nextStep(): string {
+    return this.step.nextStep(this.request.session[Form.sessionVarName])
+  }
+
   validForCurrentStep(): boolean {
     const valid = this.step.valid()
-    if (valid) {
-      this.nextStep = this.step.nextStep()
-    } else {
+    if (!valid) {
       this.errors = this.step.errorMessages
     }
     return valid

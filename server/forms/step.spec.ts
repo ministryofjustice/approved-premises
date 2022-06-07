@@ -46,7 +46,7 @@ describe('Step', () => {
 
       step = await Step.initialize('step', {})
 
-      expect(step.nextStep()).toEqual('next')
+      expect(step.nextStep({})).toEqual('next')
     })
 
     it('applies rules if included', async () => {
@@ -62,15 +62,9 @@ describe('Step', () => {
 
       step = await Step.initialize('step', { type: 'pipe' })
 
-      expect(step.nextStep()).toEqual('opd-pathway')
-
-      step = await Step.initialize('step', { type: 'esap' })
-
-      expect(step.nextStep()).toEqual('esap-reasons')
-
-      step = await Step.initialize('step', { type: 'other' })
-
-      expect(step.nextStep()).toEqual(null)
+      expect(step.nextStep({ type: 'pipe' })).toEqual('opd-pathway')
+      expect(step.nextStep({ type: 'esap' })).toEqual('esap-reasons')
+      expect(step.nextStep({ type: 'other' })).toEqual(null)
     })
   })
 
@@ -80,7 +74,7 @@ describe('Step', () => {
 
       const result = await Step.initialize('step', {})
 
-      expect(result.previousStep()).toEqual('prev')
+      expect(result.previousStep({})).toEqual('prev')
     })
 
     it('applies rules if included', async () => {
@@ -96,15 +90,9 @@ describe('Step', () => {
 
       step = await Step.initialize('step', { type: 'pipe' })
 
-      expect(step.previousStep()).toEqual('opd-pathway')
-
-      step = await Step.initialize('step', { type: 'esap' })
-
-      expect(step.previousStep()).toEqual('esap-reasons')
-
-      step = await Step.initialize('step', { type: 'othher' })
-
-      expect(step.previousStep()).toEqual(null)
+      expect(step.previousStep({ type: 'pipe' })).toEqual('opd-pathway')
+      expect(step.previousStep({ type: 'esap' })).toEqual('esap-reasons')
+      expect(step.previousStep({ type: 'othher' })).toEqual(null)
     })
   })
 
