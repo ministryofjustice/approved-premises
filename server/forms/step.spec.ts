@@ -157,6 +157,29 @@ describe('Step', () => {
       expect(step.errorMessages).toEqual({})
     })
 
+    it('should join and validate a date string', async () => {
+      stepMock.validationRules = {
+        date: [
+          {
+            if: [
+              { isDateString: [{ join: [[{ var: 'year' }, { var: 'month' }, { var: 'day' }], '-'] }] },
+              true,
+              'You must enter a valid date',
+            ],
+          },
+        ],
+      }
+
+      step = await Step.initialize('step', { year: '20', month: '20', day: '20' })
+      expect(step.valid()).toEqual(false)
+
+      expect(step.errorMessages).toEqual({ date: ['You must enter a valid date'] })
+
+      step = await Step.initialize('step', { year: '2022', month: '01', day: '01' })
+      expect(step.valid()).toEqual(true)
+      expect(step.errorMessages).toEqual({})
+    })
+
     it('should carry out conditional validations', async () => {
       stepMock.validationRules = {
         cctvAgency: [
