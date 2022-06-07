@@ -12,6 +12,7 @@ const stepMock = {
   nextStep: '',
   showTitle: false,
   questions: [] as Array<string>,
+  partial: 'partial',
 } as unknown as StepDefinition
 
 jest.mock('fs/promises', () => {
@@ -37,6 +38,7 @@ describe('Step', () => {
       expect(step.section).toEqual('bar')
       expect(step.title).toEqual('title')
       expect(step.showTitle).toEqual(false)
+      expect(step.partial).toEqual('partial')
     })
   })
 

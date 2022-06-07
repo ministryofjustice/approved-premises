@@ -25,6 +25,8 @@ export default class Step {
 
   showTitle: boolean = this.step.showTitle
 
+  partial: string = this.step.partial
+
   errorMessages: ErrorMessages
 
   private constructor(private readonly step: StepDefinition, readonly body: any) {}
