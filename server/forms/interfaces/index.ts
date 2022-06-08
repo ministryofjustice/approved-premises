@@ -20,7 +20,9 @@ export type ReferralApplicationParams = {
   section: AllowedSectionNames
 }
 
-export type ReferralApplicationBody = Partial<ApType & ReferralReason & OpdPathway & EsapReasons>
+export interface ReferralApplicationBody {
+  [propName: string]: string | Array<string>
+}
 
 export type ReferralApplicationRequest = Request<
   ReferralApplicationParams,
