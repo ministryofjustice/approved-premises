@@ -20,8 +20,6 @@ export default class Step {
 
   showTitle: boolean = this.step.showTitle
 
-  questions: Array<Question> = this.step.questions.map(question => new Question(this, question))
-
   errorMessages: ErrorMessages
 
   private constructor(private readonly step: StepDefinition, readonly body: any) {}

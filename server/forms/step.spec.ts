@@ -225,11 +225,12 @@ describe('Step', () => {
       stepMock.questions = ['question1', 'question2']
 
       step = await Step.initialize('step', {})
+      const questions = step.questions()
 
-      expect(step.questions.length).toEqual(2)
+      expect(questions.length).toEqual(2)
 
-      expect(step.questions[0]).toBeInstanceOf(Question)
-      expect(step.questions[1]).toBeInstanceOf(Question)
+      expect(questions[0]).toBeInstanceOf(Question)
+      expect(questions[1]).toBeInstanceOf(Question)
     })
   })
 })
