@@ -33,10 +33,10 @@ export interface StepDefinition {
   section: AllowedSectionNames
   title: string
   showTitle: boolean
-  nextStep: RulesLogic | string
-  previousStep: RulesLogic | string
+  nextStep: RulesLogic
+  previousStep: RulesLogic
   validationRules: { [key: string]: Array<RulesLogic> }
-  allowedToAccess: RulesLogic | boolean
+  allowedToAccess: RulesLogic
   questions: Array<string>
   partial?: string
 }
