@@ -2,7 +2,7 @@ import { Response, NextFunction, Request } from 'express'
 import createError from 'http-errors'
 
 import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
-import Form from '../forms/form'
+import { Form } from '../forms'
 
 const getQuestions = async (form: Form): Promise<Array<string>> => {
   return Promise.all(form.step.questions().map(question => question.present()))

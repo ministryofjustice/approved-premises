@@ -6,9 +6,7 @@ import { ReferralApplicationController } from './referral-application.controller
 import { ReferralApplicationRequest } from '../forms/interfaces'
 import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
 
-import Question from '../forms/question'
-import Form from '../forms/form'
-import Step from '../forms/step'
+import { Form, Question, Step } from '../forms'
 
 jest.mock('../forms/form')
 jest.mock('http-errors')

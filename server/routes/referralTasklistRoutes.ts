@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { get } from './index'
 
-import Form from '../forms/form'
+import { Form } from '../forms'
 import { getSectionStatus } from '../forms/utils/get-section-status'
 
 export const referralTasklistUrlPrefix = '/referral_tasklist'
