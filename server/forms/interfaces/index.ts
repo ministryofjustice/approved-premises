@@ -1,11 +1,19 @@
 import { Request } from 'express'
 
-import ApType from '../dtos/ap-type'
-import ReferralReason from '../dtos/referral-reason'
-import OpdPathway from '../dtos/opd-pathway'
-import EsapReasons from '../dtos/esap-reasons'
+import { RulesLogic } from 'json-logic-js'
 
-import type { AllowedStepNames, AllowedSectionNames } from '../steps'
+export type AllowedSectionNames = 'eligibility' | 'ap-type'
+
+export type AllowedStepNames =
+  | 'referral-reason'
+  | 'type-of-ap'
+  | 'enhanced-risk'
+  | 'esap-reasons'
+  | 'not-eligible'
+  | 'opd-pathway'
+  | 'import-oasys-sections'
+  | 'room-searches'
+  | 'cctv'
 
 export type ReferralApplicationParams = {
   step: AllowedStepNames
@@ -19,6 +27,19 @@ export type ReferralApplicationRequest = Request<
   Record<string, unknown>,
   Record<string, unknown>
 >
+
+export interface StepDefinition {
+  name: string
+  section: AllowedSectionNames
+  title: string
+  showTitle: boolean
+  nextStep: RulesLogic
+  previousStep: RulesLogic
+  validationRules: { [key: string]: Array<RulesLogic> }
+  allowedToAccess: RulesLogic
+  questions: Array<string>
+  partial?: string
+}
 
 export interface ErrorMessages {
   [key: string]: Array<string>

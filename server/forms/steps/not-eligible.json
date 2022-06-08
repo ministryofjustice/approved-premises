@@ -1,0 +1,14 @@
+{
+  "name": "not-eligible",
+  "section": "eligibility",
+  "title": "Robert Brown is not eligible for an AP placement",
+  "showTitle": true,
+  "nextStep": null,
+  "previousStep": "referral-reason",
+  "validationRules": { "if": [true, true, false] },
+  "allowedToAccess": {
+    "if": [{ "var": "referralReason" }, true, false]
+  },
+  "questions": [],
+  "partial": "not-eligible"
+}

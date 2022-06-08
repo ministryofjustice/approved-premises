@@ -1,0 +1,33 @@
+{
+  "name": "esap-reasons",
+  "section": "ap-type",
+  "title": "Reasons Robert requires an enhanced security (ESAP) placement",
+  "showTitle": true,
+  "nextStep": {
+    "if": [
+      { "in": ["secreting", { "var": "esapReasons" }] },
+      "room-searches",
+      { "in": ["cctv", { "var": "esapReasons" }] },
+      "cctv",
+      null
+    ]
+  },
+  "previousStep": "type-of-ap",
+  "validationRules": {
+    "esapReasons": [
+      {
+        "if": [{ "missing": "esapReasons" }, "You must select at least one reason", true]
+      }
+    ]
+  },
+  "allowedToAccess": {
+    "if": [
+      {
+        "===": [{ "var": "type" }, "esap"]
+      },
+      true,
+      false
+    ]
+  },
+  "questions": ["esap-reasons", "other-factors"]
+}

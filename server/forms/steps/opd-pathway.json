@@ -1,0 +1,58 @@
+{
+  "name": "opd-pathway",
+  "section": "ap-type",
+  "title": "Has Robert Brown been screened into the OPD pathway?",
+  "showTitle": false,
+  "nextStep": null,
+  "previousStep": "type-of-ap",
+  "validationRules": {
+    "is_opd_pathway_screened": [
+      {
+        "if": [
+          { "var": ["is_opd_pathway_screened"] },
+          true,
+          "You must indicate whether the person has been screened into the OPD pathway"
+        ]
+      }
+    ],
+    "lastOpdDate": [
+      {
+        "if": [
+          {
+            "===": [{ "var": "is_opd_pathway_screened" }, "no"]
+          },
+          true,
+          {
+            "and": [
+              {
+                "===": [{ "var": "is_opd_pathway_screened" }, "yes"]
+              },
+              {
+                "isDateString": [
+                  {
+                    "join": [
+                      [{ "var": "lastOpdDate-year" }, { "var": "lastOpdDate-month" }, { "var": "lastOpdDate-day" }],
+                      "-"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          true,
+          "You must provide the date of the last consultation or formulation"
+        ]
+      }
+    ]
+  },
+  "allowedToAccess": {
+    "if": [
+      {
+        "===": [{ "var": "type" }, "pipe"]
+      },
+      true,
+      false
+    ]
+  },
+  "questions": ["is-opd-pathway-screened", "pipe-additional-detail"]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "room-searches",
+  "section": "ap-type",
+  "title": "Enhanced room searches using body worn technology",
+  "showTitle": true,
+  "nextStep": {
+    "if": [{ "in": ["cctv", { "var": "esapReasons" }] }, "cctv", null]
+  },
+  "previousStep": "esap-reasons",
+  "validationRules": {
+    "items": [
+      {
+        "if": [
+          { "var": ["items"] },
+          true,
+          "You must select at least one item type that Robert has a history of secreting"
+        ]
+      }
+    ],
+    "agencyRequest": [
+      {
+        "if": [
+          { "var": ["agencyRequest"] },
+          true,
+          "You must specify if partnership agencies have requested the sharing of intelligence captured via body worn technology"
+        ]
+      }
+    ],
+    "agency": [
+      {
+        "if": [
+          {
+            "and": [
+              {
+                "missing": "agency"
+              },
+              {
+                "===": [
+                  {
+                    "var": "agencyRequest"
+                  },
+                  "yes"
+                ]
+              }
+            ]
+          },
+          "You must specify which partnership agencies have requested the sharing of intelligence",
+          true
+        ]
+      }
+    ]
+  },
+  "allowedToAccess": {
+    "if": [
+      {
+        "in": ["secreting", { "var": "esapReasons" }]
+      },
+      true,
+      false
+    ]
+  },
+  "questions": ["items", "room-searches-agency-request"]
+}
