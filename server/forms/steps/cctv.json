@@ -1,0 +1,63 @@
+{
+  "name": "cctv",
+  "section": "ap-type",
+  "title": "Enhanced CCTV provision",
+  "showTitle": true,
+  "nextStep": null,
+  "previousStep": {
+    "if": [{ "in": [{ "var": "esapReasons" }, "secreting"] }, "room-searches", "esap-reasons"]
+  },
+  "validationRules": {
+    "cctvReasons": [
+      {
+        "if": [
+          { "var": ["cctvReasons"] },
+          true,
+          "You must select which behaviours has Robert demonstrated that require enhanced CCTV provision to monitor"
+        ]
+      }
+    ],
+    "cctvAgencyRequest": [
+      {
+        "if": [
+          { "var": ["cctvAgencyRequest"] },
+          true,
+          "You must specify if partnership agencies have requested the sharing of intelligence captured via enhanced CCTV"
+        ]
+      }
+    ],
+    "cctvAgency": [
+      {
+        "if": [
+          {
+            "and": [
+              {
+                "missing": "cctvAgency"
+              },
+              {
+                "===": [
+                  {
+                    "var": "cctvAgencyRequest"
+                  },
+                  "yes"
+                ]
+              }
+            ]
+          },
+          "You must specify which partnership agencies have requested the sharing of intelligence",
+          true
+        ]
+      }
+    ]
+  },
+  "allowedToAccess": {
+    "if": [
+      {
+        "in": ["cctv", { "var": "esapReasons" }]
+      },
+      true,
+      false
+    ]
+  },
+  "questions": ["cctv-reasons", "cctv-agency-request", "cctv-supporting-information"]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "referral-reason",
+  "section": "eligibility",
+  "title": "What is the reason for the referral?",
+  "showTitle": false,
+  "nextStep": {
+    "if": [{ "===": [{ "var": "referralReason" }, "no-reason"] }, "not-eligible", null]
+  },
+  "previousStep": null,
+  "validationRules": {
+    "referralReason": [
+      {
+        "if": [
+          { "in": [{ "var": "referralReason" }, ["likely", "condition", "exception", "other", "no-reason"]] },
+          true,
+          "You must select a reason"
+        ]
+      }
+    ],
+    "other": [
+      {
+        "if": [
+          {
+            "and": [
+              {
+                "missing": "other"
+              },
+              {
+                "===": [
+                  {
+                    "var": "referralReason"
+                  },
+                  "other"
+                ]
+              }
+            ]
+          },
+          "You must specify what your other reason is",
+          true
+        ]
+      }
+    ]
+  },
+  "allowedToAccess": true,
+  "questions": ["referral-reason"]
+}

@@ -6,8 +6,18 @@ import ReferralReason from '../dtos/referral-reason'
 import OpdPathway from '../dtos/opd-pathway'
 import EsapReasons from '../dtos/esap-reasons'
 
-import type { AllowedStepNames, AllowedSectionNames } from '../steps'
-import type Question from '../question'
+export type AllowedSectionNames = 'eligibility' | 'ap-type'
+
+export type AllowedStepNames =
+  | 'referral-reason'
+  | 'type-of-ap'
+  | 'enhanced-risk'
+  | 'esap-reasons'
+  | 'not-eligible'
+  | 'opd-pathway'
+  | 'import-oasys-sections'
+  | 'room-searches'
+  | 'cctv'
 
 export type ReferralApplicationParams = {
   step: AllowedStepNames
@@ -32,6 +42,7 @@ export interface StepDefinition {
   validationRules: { [key: string]: Array<RulesLogic> }
   allowedToAccess: RulesLogic | boolean
   questions: Array<string>
+  partial?: string
 }
 
 export interface ErrorMessages {

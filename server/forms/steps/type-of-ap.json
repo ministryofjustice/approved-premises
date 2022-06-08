@@ -1,0 +1,27 @@
+{
+  "name": "type-of-ap",
+  "section": "ap-type",
+  "title": "What type of AP does Robert Smith require?",
+  "showTitle": false,
+  "nextStep": {
+    "if": [
+      { "===": [{ "var": "type" }, "pipe"] },
+      "opd-pathway",
+      { "===": [{ "var": "type" }, "esap"] },
+      "esap-reasons",
+      null
+    ]
+  },
+  "previousStep": "referral-reason",
+  "validationRules": {
+    "type": [
+      {
+        "if": [{ "in": [{ "var": "type" }, ["standard", "pipe", "esap"]] }, true, "You must select a type of AP"]
+      }
+    ]
+  },
+  "allowedToAccess": {
+    "if": [{ "var": "referralReason" }, true, false]
+  },
+  "questions": ["type"]
+}
