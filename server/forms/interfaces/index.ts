@@ -1,10 +1,6 @@
 import { Request } from 'express'
 
 import { RulesLogic } from 'json-logic-js'
-import ApType from '../dtos/ap-type'
-import ReferralReason from '../dtos/referral-reason'
-import OpdPathway from '../dtos/opd-pathway'
-import EsapReasons from '../dtos/esap-reasons'
 
 export type AllowedSectionNames = 'eligibility' | 'ap-type'
 
