@@ -1,20 +1,8 @@
 import { readFile } from 'fs/promises'
-import jsonLogic, { RulesLogic } from 'json-logic-js'
-import moment from 'moment'
 
+import { jsonLogic, RulesLogic } from './utils/jsonlogic'
 import { StepDefinition, ErrorMessages } from './interfaces'
 import Question from './question'
-
-const isDateString = (value: any): boolean => {
-  return moment(value, moment.ISO_8601).isValid()
-}
-
-const join = (values: Array<any>, seperator: string): string => {
-  return values.join(seperator)
-}
-
-jsonLogic.add_operation('isDateString', isDateString)
-jsonLogic.add_operation('join', join)
 
 export default class Step {
   name: string = this.step.name
