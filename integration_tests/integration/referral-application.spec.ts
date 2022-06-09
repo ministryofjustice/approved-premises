@@ -29,6 +29,18 @@ context('SignIn', () => {
     page.checkStatus('eligibility', 'Completed')
   })
 
+  it('does not allow me to choose an AP type before I have checked eligibility', () => {
+    // Given I am on the referral tasklist
+    const page = ReferralApplicationTasklist.visit()
+
+    // And I have not checked the person's eligibility
+    // Then the AP type task should be marked as cannot start yet
+    page.checkStatus('ap-type', 'Cannot start yet')
+
+    // And I should not be able to click on the link to start the task
+    page.linkForSectionShouldNotExist('ap-type')
+  })
+
   it('allows me to select a type of AP', () => {
     // Given I have checked the person's eligiblity
     const page = ReferralApplicationTasklist.visit()
@@ -64,7 +76,7 @@ context('SignIn', () => {
     Page.verifyOnPage(ReferralApplicationTasklist)
 
     // And my task should be marked as completed
-    page.checkStatus('eligibility', 'Completed')
+    page.checkStatus('ap-type', 'Completed')
   })
 
   const checkEligibility = (page: ReferralApplicationTasklist) => {

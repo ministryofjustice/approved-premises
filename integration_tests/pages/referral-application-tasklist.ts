@@ -17,4 +17,8 @@ export default class ReferralApplicationTasklist extends Page {
   checkStatus(section: string, status: string): void {
     cy.get(`strong[data-status-for="${section}"]`).should('contain', status)
   }
+
+  linkForSectionShouldNotExist(section: string): void {
+    cy.get(`li[data-task="${section}] a`).should('not.exist')
+  }
 }

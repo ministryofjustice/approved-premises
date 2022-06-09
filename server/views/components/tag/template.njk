@@ -1,0 +1,8 @@
+{% switch eligibilityStatus %}
+	{% case 'complete' %}
+		<strong class="govuk-tag app-task-list__tag" data-status-for="{{ step }}">Completed</strong>
+	{% case 'not_started' %}
+		<strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="{{ step }}">Not started</strong>
+	{% case 'cannot_start' %}
+		<strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="{{ step }}">Cannot start yet</strong>
+{% endswitch %}
