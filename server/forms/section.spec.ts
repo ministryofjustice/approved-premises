@@ -98,7 +98,7 @@ describe('Section', () => {
 
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
-      expect(section.status()).toEqual('complete')
+      expect(await section.status()).toEqual('complete')
     })
 
     it('returns the status when the session variable has a different status value', async () => {
@@ -114,7 +114,7 @@ describe('Section', () => {
 
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
-      expect(section.status()).toEqual('in_progress')
+      expect(await section.status()).toEqual('in_progress')
     })
 
     it('returns not_started when the session variable has no status value', async () => {
@@ -126,7 +126,7 @@ describe('Section', () => {
 
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
-      expect(section.status()).toEqual('not_started')
+      expect(await section.status()).toEqual('not_started')
     })
 
     it('returns not_started when there is no session variable', async () => {
@@ -136,7 +136,28 @@ describe('Section', () => {
 
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
-      expect(section.status()).toEqual('not_started')
+      expect(await section.status()).toEqual('not_started')
+    })
+
+    it('returns cannot_start when the previous section has not been completed', async () => {
+      sectionDataMock.previousSection = 'ap-type'
+
+      const otherSection = {
+        name: 'ap-type',
+        previousSection: null,
+        nextSection: 'eligibility',
+      } as unknown as SectionData
+
+      const request = createMock<Request>({
+        session: {},
+      })
+
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(sectionDataMock))
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(otherSection))
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      expect(await section.status()).toEqual('cannot_start')
     })
   })
 })

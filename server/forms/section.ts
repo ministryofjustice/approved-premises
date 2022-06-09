@@ -32,10 +32,22 @@ export default class Section {
     this.setSectionStatus('complete')
   }
 
-  public status(): string {
+  public async status(): Promise<string> {
     const sessionVar = this.request.session?.[this.sessionVarName]?.sections?.[this.name]
 
-    return sessionVar?.status === undefined ? 'not_started' : sessionVar.status
+    if (sessionVar?.status === undefined) {
+      if (this.previousSection) {
+        const previousSection = await Section.initialize(this.previousSection, this.request, this.sessionVarName)
+        const previousStatus = await previousSection.status()
+
+        if (['not_started' || 'cannot_start'].includes(previousStatus)) {
+          return 'cannot_start'
+        }
+      }
+
+      return 'not_started'
+    }
+    return sessionVar.status
   }
 
   private setSectionStatus(status: string): void {

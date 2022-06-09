@@ -21,8 +21,13 @@ export const ReferralTasklistController = {
       },
     }
 
-    const eligibilityStatus = (await Section.initialize('eligibility', req, Form.sessionVarName)).status()
-    const apTypeStatus = (await Section.initialize('ap-type', req, Form.sessionVarName)).status()
+    const sections = await Promise.all([
+      await Section.initialize('eligibility', req, Form.sessionVarName),
+      await Section.initialize('ap-type', req, Form.sessionVarName),
+    ])
+
+    const eligibilityStatus = await sections[0].status()
+    const apTypeStatus = await sections[1].status()
 
     res.render('referral_tasklist/tasklist', { risks, eligibilityStatus, apTypeStatus })
   },
