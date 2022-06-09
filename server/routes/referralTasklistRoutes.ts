@@ -2,8 +2,7 @@ import { Router } from 'express'
 
 import { get } from './index'
 
-import { Form } from '../forms'
-import { getSectionStatus } from '../forms/utils/get-section-status'
+import { Section, Form } from '../forms'
 
 export const referralTasklistUrlPrefix = '/referral_tasklist'
 
@@ -26,8 +25,8 @@ export default function ReferralTasklistRoutes(router: Router): Router {
       },
     }
 
-    const eligibilityStatus = getSectionStatus(req, Form, 'eligibility')
-    const apTypeStatus = getSectionStatus(req, Form, 'ap-type')
+    const eligibilityStatus = new Section('eligibility', req, Form.sessionVarName).status()
+    const apTypeStatus = new Section('ap-type', req, Form.sessionVarName).status()
 
     res.render('referral_tasklist/tasklist', { risks, eligibilityStatus, apTypeStatus })
   })

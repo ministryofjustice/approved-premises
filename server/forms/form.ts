@@ -3,7 +3,7 @@ import { Request } from 'express'
 import Step from './step'
 import Section from './section'
 
-import { ErrorMessages } from './interfaces'
+import { ErrorMessages, AllowedSectionNames } from './interfaces'
 import { OutOfSequenceError, UnknownStepError } from './errors'
 
 const sessionVarName = 'referralApplication'
@@ -27,7 +27,7 @@ export default class Form {
 
   public static async initialize(request: Request): Promise<Form> {
     const step = await Step.initialize(request.params.step, request.body)
-    const section = new Section(request, Form.sessionVarName)
+    const section = new Section(request.params.section as AllowedSectionNames, request, Form.sessionVarName)
 
     return new Form(step, section, request)
   }

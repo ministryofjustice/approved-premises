@@ -1,12 +1,22 @@
 import { Request } from 'express'
 
-export default class Section {
-  name: string = this.request.params.section
+import type { AllowedSectionNames } from './interfaces'
 
-  constructor(readonly request: Request, private readonly sessionVarName: string) {}
+export default class Section {
+  constructor(
+    readonly name: AllowedSectionNames,
+    private readonly request: Request,
+    private readonly sessionVarName: string
+  ) {}
 
   public complete(): void {
     this.setSectionStatus('complete')
+  }
+
+  public status(): string {
+    const sessionVar = this.request.session?.[this.sessionVarName]?.sections?.[this.name]
+
+    return sessionVar?.status === undefined ? 'not_started' : sessionVar.status
   }
 
   private setSectionStatus(status: string): void {
