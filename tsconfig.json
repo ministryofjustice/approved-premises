@@ -20,5 +20,5 @@
     "typeRoots": ["./server/@types", "./node_modules/@types"]
   },
   "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist"],
-  "include": ["**/*.js", "**/*.ts", "server/forms/questions/*.json", "server/forms/steps/*.json"]
+  "include": ["**/*.js", "**/*.ts", "server/forms/questions/*.json", "server/forms/steps/*.json", "server/forms/sections/*.json"]
 }

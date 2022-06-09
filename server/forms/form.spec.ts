@@ -1,28 +1,38 @@
-import { createMock } from '@golevelup/ts-jest'
+import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
 
 import { OutOfSequenceError, UnknownStepError } from './errors'
+
 import Form from './form'
+import Section from './section'
+import Step from './step'
 
-const mockStep = {
-  section: 'eligibility',
-  allowedToAccess: jest.fn(() => true),
-  valid: jest.fn(),
-  nextStep: jest.fn(),
-  errorMessages: {
-    foo: ['bar'],
-  },
-}
-
-jest.mock('./step', () => {
-  return {
-    initialize: () => mockStep,
-  }
-})
+jest.mock('./step')
+jest.mock('./section')
 
 describe('Form', () => {
+  let mockStep: DeepMocked<Step>
+  let mockSection: DeepMocked<Section>
+
   beforeEach(() => {
     jest.resetAllMocks()
+
+    mockStep = createMock<Step>({
+      section: 'eligibility',
+      allowedToAccess: jest.fn(),
+      valid: jest.fn(),
+      nextStep: jest.fn(),
+      errorMessages: {
+        foo: ['bar'],
+      },
+    })
+
+    mockSection = createMock<Section>({
+      name: 'eligibility',
+    })
+
+    jest.spyOn(Step, 'initialize').mockResolvedValue(mockStep)
+    jest.spyOn(Section, 'initialize').mockResolvedValue(mockSection)
   })
 
   it('raises an error if the step is not allowed', async () => {
@@ -33,24 +43,8 @@ describe('Form', () => {
   })
 
   it('raises an error if the section does not match the step', async () => {
-    const request = createMock<Request>({
-      params: {
-        section: 'ap-type',
-        step: 'referral-reason',
-      },
-      body: {},
-    })
-
-    expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
-  })
-
-  it('raises an error if the step is not found', async () => {
-    const request = createMock<Request>({
-      params: {
-        step: 'not-eligible',
-      },
-      body: {},
-    })
+    const request = createMock<Request>({})
+    mockSection.name = 'ap-type'
 
     expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
   })
@@ -184,36 +178,7 @@ describe('Form', () => {
 
       form.completeSection()
 
-      expect(form.request.session.referralApplication).toEqual({
-        reason: 'likely',
-        sections: { eligibility: { status: 'complete' } },
-      })
-    })
-
-    it('adds a section to existing sections', async () => {
-      const request = createMock<Request>({
-        params: {
-          step: 'referral-reason',
-          section: 'eligibility',
-        },
-        session: {
-          referralApplication: {
-            reason: 'likely',
-            sections: {
-              other: { status: 'complete' },
-            },
-          },
-        },
-      })
-
-      const form = await Form.initialize(request)
-
-      form.completeSection()
-
-      expect(form.request.session.referralApplication).toEqual({
-        reason: 'likely',
-        sections: { eligibility: { status: 'complete' }, other: { status: 'complete' } },
-      })
+      expect(mockSection.complete).toHaveBeenCalled()
     })
   })
 })

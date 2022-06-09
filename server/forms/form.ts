@@ -27,7 +27,11 @@ export default class Form {
 
   public static async initialize(request: Request): Promise<Form> {
     const step = await Step.initialize(request.params.step, request.body)
-    const section = new Section(request.params.section as AllowedSectionNames, request, Form.sessionVarName)
+    const section = await Section.initialize(
+      request.params.section as AllowedSectionNames,
+      request,
+      Form.sessionVarName
+    )
 
     return new Form(step, section, request)
   }
