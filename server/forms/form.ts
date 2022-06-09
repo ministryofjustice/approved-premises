@@ -1,8 +1,9 @@
 import { Request } from 'express'
 
 import Step from './step'
+import Section from './section'
 
-import { ErrorMessages } from './interfaces'
+import { ErrorMessages, AllowedSectionNames } from './interfaces'
 import { OutOfSequenceError, UnknownStepError } from './errors'
 
 const sessionVarName = 'referralApplication'
@@ -14,24 +15,29 @@ export default class Form {
 
   sessionData = this.request.session[Form.sessionVarName]
 
-  private constructor(readonly step: Step, readonly request: Request) {
+  private constructor(readonly step: Step, readonly section: Section, readonly request: Request) {
     if (this.step.allowedToAccess(this.sessionData) === false) {
       throw new OutOfSequenceError()
     }
 
-    if (this.step.section !== this.request.params.section) {
+    if (this.step.section !== this.section.name) {
       throw new UnknownStepError()
     }
   }
 
   public static async initialize(request: Request): Promise<Form> {
     const step = await Step.initialize(request.params.step, request.body)
+    const section = await Section.initialize(
+      request.params.section as AllowedSectionNames,
+      request,
+      Form.sessionVarName
+    )
 
-    return new Form(step, request)
+    return new Form(step, section, request)
   }
 
   completeSection() {
-    this.setSectionStatus('complete')
+    this.section.complete()
   }
 
   persistData() {
@@ -51,19 +57,5 @@ export default class Form {
       this.errors = this.step.errorMessages
     }
     return valid
-  }
-
-  private setSectionStatus(status: string) {
-    let sections = this.request.session[Form.sessionVarName].sections || {}
-
-    sections = {
-      ...sections,
-      [this.request.params.section]: { status },
-    }
-
-    this.request.session[Form.sessionVarName] = {
-      ...this.request.session[Form.sessionVarName],
-      sections,
-    }
   }
 }

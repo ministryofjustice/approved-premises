@@ -1,104 +1,99 @@
 {% extends "../partials/layout.njk" %}
 {% from "components/widgets/macro.njk" import widgets %}
+{% from "components/tag/macro.njk" import tag %}
 
 {% set pageTitle = applicationName + " - Apply for an approved premises (AP) placement" %}
 
 {% block content %}
 
-  <main class="app-container govuk-body">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        <h1>Apply for an approved premises (AP) placement</h1>
-        <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
-        <p class="govuk-body govuk-!-margin-bottom-7">You've completed 1 out of 4 steps</p>
-      </div>
+	<main class="app-container govuk-body">
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-full">
+				<h1>Apply for an approved premises (AP) placement</h1>
+				<h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
+				<p class="govuk-body govuk-!-margin-bottom-7">You've completed 1 out of 4 steps</p>
+			</div>
 
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-          <div class="govuk-grid-column-two-thirds">
-            <ol class="app-task-list">
-              <li>
-                <h2 class="app-task-list__section">
-                  <span class="app-task-list__section-number">1. </span> Before you continue
-                </h2>
-                <ul class="app-task-list__items">
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      <a href="#" aria-describedby="eligibility-status">
-                        Check OASys is up to date
-                      </a>
-                    </span>
-                    <strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
-                  </li>
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      <a href="/referral-application/eligibility/new/referral-reason" aria-describedby="eligibility-status">
-                        Check if the person is eligible
-                      </a>
-                    </span>
-                    {% if eligibilityStatus == 'complete' %}
-                      <strong class="govuk-tag app-task-list__tag" data-status-for="eligibility">Completed</strong>
-                    {% else %}
-                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="eligibility">Not started</strong>
-                    {% endif %}
-                  </li>
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      <a href="/referral-application/ap-type/new/type-of-ap" aria-describedby="read-declaration-status">
-                        Select the type of AP Required
-                      </a>
-                    </span>
-                    {% if apTypeStatus == 'complete' %}
-                      <strong class="govuk-tag app-task-list__tag" data-status-for="ap-type">Completed</strong>
-                    {% else %}
-                      <strong class="govuk-tag govuk-tag--grey app-task-list__tag" data-status-for="ap-type">Not started</strong>
-                    {% endif %}
-                  </li>
-                </ul>
-              </li>
+			<div class="govuk-grid-row">
+				<div class="govuk-grid-column-full">
+					<div class="govuk-grid-column-two-thirds">
+						<ol class="app-task-list">
+							<li>
+								<h2 class="app-task-list__section">
+									<span class="app-task-list__section-number">1.
+									</span>
+									Before you continue
+								</h2>
+								<ul class="app-task-list__items">
+									<li class="app-task-list__item">
+										<span class="app-task-list__task-name">
+											<a href="#" aria-describedby="eligibility-status">
+												Check OASys is up to date
+											</a>
+										</span>
+										<strong class="govuk-tag app-task-list__tag" id="eligibility-status">Completed</strong>
+									</li>
+									<li class="app-task-list__item" data-task="eligibility">
+										<span class="app-task-list__task-name">
+											<a href="/referral-application/eligibility/new/referral-reason" aria-describedby="eligibility-status">
+												Check if the person is eligible
+											</a>
+										</span>
+										{{ tag(eligibilityStatus, 'eligibility') }}
+									</li>
+									<li class="app-task-list__item" data-task="ap-type">
+										<span class="app-task-list__task-name">
+											{% if apTypeStatus == 'cannot_start' %}
+												Select the type of AP Required
+											{% else %}
+												<a href="/referral-application/ap-type/new/type-of-ap" aria-describedby="read-declaration-status">Select the type of AP Required</a>
+											{% endif %}
+										</span>
+										{{ tag(apTypeStatus, 'ap-type') }}
+									</li>
+								</li>
+							</li>
+						</li>
+					</ul>
+				</li>
 
-              <li>
-                <h2 class="app-task-list__section">
-                  <span class="app-task-list__section-number">2. </span> Risk and need factors
-                </h2>
-                <ul class="app-task-list__items">
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      Choose sections of OASys to import
-                    </span>
-                    <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="financial-evidence-status">Cannot start yet</strong>
-                  </li>
-                </ul>
-              </li>
+				<li>
+					<h2 class="app-task-list__section">
+						<span class="app-task-list__section-number">2.
+						</span>
+						Risk and need factors
+					</h2>
+					<ul class="app-task-list__items">
+						<li class="app-task-list__item">
+							<span class="app-task-list__task-name">
+								Choose sections of OASys to import
+							</span>
+							<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="financial-evidence-status">Cannot start yet</strong>
+						</li>
+					</ul>
+				</li>
 
-              <li>
-                <h2 class="app-task-list__section">
-                  <span class="app-task-list__section-number">3. </span> Apply
-                </h2>
-                <ul class="app-task-list__items">
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      Submit application
-                    </span>
-                    <strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="submit-pay-status">Cannot start yet</strong>
-                  </li>
-                </ul>
-              </li>
-            </ol>
-          </div>
-
-
-
-          <div class="govuk-grid-column-one-third">
-            {{ widgets(risks) }}
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </main>
-
-{% endblock %}
+				<li>
+					<h2 class="app-task-list__section">
+						<span class="app-task-list__section-number">3.
+						</span>
+						Apply
+					</h2>
+					<ul class="app-task-list__items">
+						<li class="app-task-list__item">
+							<span class="app-task-list__task-name">
+								Submit application
+							</span>
+							<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="submit-pay-status">Cannot start yet</strong>
+						</li>
+					</ul>
+				</li>
+			</ol>
+		</div>
 
 
+		<div class="govuk-grid-column-one-third">
+			{{ widgets(risks) }}
+		</div>
+	</div>
+</div></div></main>{% endblock %}
