@@ -1,11 +1,18 @@
 {% extends "../partials/layout.njk" %}
 {% from "components/widgets/macro.njk" import widgets %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% set mainClasses = "app-container govuk-body" %}
 
 {% set pageTitle = applicationName + " - Import OASys sections" %}
 
 {% block content %}
-
-  <main class="app-container govuk-body">
+  {{ govukBackLink({
+      text: "Back",
+      href: "/"
+    }) }}
+  <form>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <legend>
@@ -25,7 +32,41 @@
         <p class="govuk-body govuk-!-margin-bottom-9">Select any sections that include additional detail that's relevant to the risk an AP will help mitigate or the needs an AP can meet.</p>
       </div>
 
+      <div class="govuk-grid-column-three-quarters">
+        {{govukTable({
+            caption: "Needs linked to risk of serious harm (automatically imported)",
+            captionClasses: "govuk-table__caption--m govuk-!-margin-left-0 govuk-!-margin-right-0",
+            classes: "govuk-!-margin-bottom-8",
+            firstCellIsHeader: false,
+            head: tableHeadings,
+            rows: seriousHarmTableRows
+          }) }}
 
+        {{ govukTable({
+            caption: "Needs linked to reoffending",
+            captionClasses: "govuk-table__caption--m",
+            classes: "govuk-!-margin-bottom-8",
+            firstCellIsHeader: true,
+            head: tableHeadings,
+            rows: needsLinkedToReoffendingTableRows
+          }) }}
+
+        {{ govukTable({
+            caption: "Needs not linked to risk of serious harm or reoffending",
+            captionClasses: "govuk-table__caption--m",
+            classes: "govuk-!-margin-bottom-8",
+            firstCellIsHeader: true,
+            head: tableHeadings,
+            rows: needsNotLinkedToSeriousHarmOrReoffendingTableRow
+          }) }}
+
+      </div>
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukButton({
+            text: "Save and continue",
+            classes: "govuk-!-margin-top-5" 
+          }) }}
+      </div>
+    </div>
+  </form>
 {% endblock %}
-
-
