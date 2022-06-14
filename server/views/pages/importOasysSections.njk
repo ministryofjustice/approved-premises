@@ -1,35 +1,30 @@
 {% extends "../partials/layout.njk" %}
 {% from "components/widgets/macro.njk" import widgets %}
 
-{% set pageTitle = applicationName + " - Risk summary" %}
+{% set pageTitle = applicationName + " - Import OASys sections" %}
 
 {% block content %}
 
   <main class="app-container govuk-body">
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        <h1>Which of the following OASys sections do you want to import?</h1>
-
-      </div>
-
-    </div>
-
-    <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <p>We'll automatically import: </p>
+        <legend>
+          <h1>
+              Which of the following sections of OASys do you want to import?
+            </h1>
+        </legend>
+      </div>
+      <div class="govuk-grid-column-two-thirds">
+        <p>We'll automatically import:</p>
         <ul>
           <li>offence details</li>
           <li>RoSH summary</li>
-          <li>any MAPPA or hate-based information.</li>
+          <li>any MAPPA or hate-based information</li>
+          <li>linked to RoSH</li>
         </ul>
-        <p>Select any sections that include additional detail that's relevant to the risk an AP will help mitigate or the needs an AP can meet.</p>
+        <p class="govuk-body govuk-!-margin-bottom-9">Select any sections that include additional detail that's relevant to the risk an AP will help mitigate or the needs an AP can meet.</p>
       </div>
 
-      <div class="govuk-grid-column-one-third">
-          {{ widgets(risks) }}
-      </div>
-    </div>
-  </main>
 
 {% endblock %}
 
