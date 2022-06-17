@@ -32,7 +32,7 @@ export const ReferralApplicationController = {
     const valid = form.validForCurrentStep()
 
     if (valid) {
-      form.persistData()
+      await form.persistData()
       const nextStep = form.nextStep()
 
       if (nextStep) {

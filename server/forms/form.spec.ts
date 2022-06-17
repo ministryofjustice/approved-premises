@@ -1,5 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
+import { pathExists, outputFile } from 'fs-extra'
+import path from 'path'
 
 import { OutOfSequenceError, UnknownStepError } from './errors'
 
@@ -119,6 +121,7 @@ describe('Form', () => {
 
   describe('persistData', () => {
     it('persists data in the session', async () => {
+      const username = 'Test-User'
       const request = createMock<Request>({
         params: {
           section: 'eligibility',
@@ -130,6 +133,7 @@ describe('Form', () => {
             reason: 'likely',
           },
         },
+        sessionID: username,
       })
 
       const form = await Form.initialize(request)
@@ -137,6 +141,11 @@ describe('Form', () => {
       form.persistData()
 
       expect(form.request.session.referralApplication).toEqual({ type: 'standard', reason: 'likely' })
+      expect(outputFile).toHaveBeenCalledWith(
+        path.join(__dirname, 'helpers', `${username}.json`),
+        JSON.stringify(request.session.referralApplication),
+        'utf-8'
+      )
     })
 
     it('overwrites old data already persisted in the session', async () => {
