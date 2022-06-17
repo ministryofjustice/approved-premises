@@ -1,11 +1,11 @@
 import { Request } from 'express'
-import path from 'path'
 
 import Step from './step'
 import Section from './section'
 
 import { ErrorMessages, AllowedSectionNames } from './interfaces'
 import { OutOfSequenceError, UnknownStepError } from './errors'
+import { retrieveSavedSession } from './helpers/retrieveSavedSession'
 import { saveSession } from './helpers/saveSession'
 
 const sessionVarName = 'referralApplication'
@@ -28,10 +28,14 @@ export default class Form {
   }
 
   public static async initialize(request: Request): Promise<Form> {
-    const step = await Step.initialize(request.params.step, request.body)
+    const requestWithSavedSession = Object.keys(request.body).length
+      ? request
+      : ((await retrieveSavedSession(request, sessionVarName)) as Request)
+
+    const step = await Step.initialize(request.params.step, requestWithSavedSession.body)
     const section = await Section.initialize(
       request.params.section as AllowedSectionNames,
-      request,
+      requestWithSavedSession,
       Form.sessionVarName
     )
 

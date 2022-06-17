@@ -1,6 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
 import { pathExists, outputFile } from 'fs-extra'
+import { readFile } from 'fs/promises'
 import path from 'path'
 
 import { OutOfSequenceError, UnknownStepError } from './errors'
@@ -8,6 +9,9 @@ import { OutOfSequenceError, UnknownStepError } from './errors'
 import Form from './form'
 import Section from './section'
 import Step from './step'
+
+jest.mock('fs/promises')
+jest.mock('fs-extra')
 
 jest.mock('./step')
 jest.mock('./section')
@@ -51,7 +55,31 @@ describe('Form', () => {
 
       expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
     })
+    it('when called with a request with an empty body then it attempts to read the session from file', async () => {
+      const pathExistsMock = (pathExists as jest.Mock).mockResolvedValue(true)
+      const readFileMock = (readFile as jest.Mock).mockResolvedValue('{}')
+      const username = 'test_user'
+
+      const request = createMock<Request>({ body: {}, user: { username } })
+      await Form.initialize(request)
+
+      expect(pathExistsMock).toHaveBeenCalledWith(path.join(__dirname, 'helpers', `${username}.json`))
+      expect(readFileMock).toHaveBeenCalledWith(path.join(__dirname, 'helpers', `${username}.json`), 'utf-8')
+    })
+
+    it("when called with a request with a populated body then it returns the body and doesn't attempt to read from session json", async () => {
+      const pathExistsMock = (pathExists as jest.Mock).mockResolvedValue(true)
+      const readFileMock = (readFile as jest.Mock).mockResolvedValue('{}')
+      const username = 'test_user'
+
+      const request = createMock<Request>({ body: { type: 'standard' } as any, user: { username } })
+
+      await Form.initialize(request)
+      expect(pathExistsMock).not.toHaveBeenCalled()
+      expect(readFileMock).not.toHaveBeenCalled()
+    })
   })
+
   describe('validForCurrentStep', () => {
     it('returns false and sets errors if the step is invalid', async () => {
       mockStep.valid.mockReturnValue(false)
@@ -121,7 +149,7 @@ describe('Form', () => {
 
   describe('persistData', () => {
     it('persists data in the session', async () => {
-      const username = 'Test-User'
+      const username = 'test_user'
       const request = createMock<Request>({
         params: {
           section: 'eligibility',
@@ -133,7 +161,7 @@ describe('Form', () => {
             reason: 'likely',
           },
         },
-        sessionID: username,
+        user: { username },
       })
 
       const form = await Form.initialize(request)
