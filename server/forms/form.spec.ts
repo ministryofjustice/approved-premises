@@ -35,20 +35,21 @@ describe('Form', () => {
     jest.spyOn(Section, 'initialize').mockResolvedValue(mockSection)
   })
 
-  it('raises an error if the step is not allowed', async () => {
-    const request = createMock<Request>({})
-    mockStep.allowedToAccess.mockImplementation(() => false)
+  describe('initialize', () => {
+    it('raises an error if the step is not allowed', async () => {
+      const request = createMock<Request>({})
+      mockStep.allowedToAccess.mockImplementation(() => false)
 
-    expect(async () => Form.initialize(request)).rejects.toThrowError(OutOfSequenceError)
+      expect(async () => Form.initialize(request)).rejects.toThrowError(OutOfSequenceError)
+    })
+
+    it('raises an error if the section does not match the step', async () => {
+      const request = createMock<Request>({})
+      mockSection.name = 'ap-type'
+
+      expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
+    })
   })
-
-  it('raises an error if the section does not match the step', async () => {
-    const request = createMock<Request>({})
-    mockSection.name = 'ap-type'
-
-    expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
-  })
-
   describe('validForCurrentStep', () => {
     it('returns false and sets errors if the step is invalid', async () => {
       mockStep.valid.mockReturnValue(false)
