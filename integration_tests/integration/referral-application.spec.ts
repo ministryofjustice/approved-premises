@@ -15,6 +15,10 @@ context('SignIn', () => {
     cy.signIn()
   })
 
+  afterEach(() => {
+    cy.task('deleteSessionFile')
+  })
+
   it('allows me to check eligibility', () => {
     // Given I am on the referral tasklist
     const page = ReferralApplicationTasklist.visit()
@@ -108,9 +112,8 @@ context('SignIn', () => {
     // When I go back to the tasklist and the previously answered section
     // Then my previous answers aren't visible
     ReferralApplicationTasklist.visit()
-    page.checkStatus('ap-type', 'Cannot start yet')
-    page.startSection('Check if the person is eligible')
-    cy.get(`input[name="referralReason"][value=likely]`).should('not.be.checked')
+    page.checkStatus('eligibility', 'Completed')
+    page.checkStatus('ap-type', 'Completed')
   })
 })
 
