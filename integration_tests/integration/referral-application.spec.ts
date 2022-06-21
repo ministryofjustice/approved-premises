@@ -79,12 +79,46 @@ context('SignIn', () => {
     page.checkStatus('ap-type', 'Completed')
   })
 
-  const checkEligibility = (page: ReferralApplicationTasklist) => {
+  it('Answers are saved in the session ', () => {
+    // Given I complete the questionaire
+    const page = ReferralApplicationTasklist.visit()
+    checkEligibility(page)
+    page.startSection('Select the type of AP Required')
+    const typeOfAp = Page.verifyOnPage(TypeOfAP)
+    typeOfAp.answerType('esap')
+    typeOfAp.saveAndContinue()
+    const esapReasons = Page.verifyOnPage(EsapReasons)
+    esapReasons.chooseReasons(['secreting', 'cctv'])
+    esapReasons.saveAndContinue()
+    const roomSearches = Page.verifyOnPage(RoomSearches)
+    roomSearches.answerItems(['weapons', 'drugs'])
+    roomSearches.answerAgencyRequest('no')
+    roomSearches.saveAndContinue()
+    const cctv = Page.verifyOnPage(CCTV)
+    cctv.answerCctvReasons(['assualt-staff'])
+    cctv.answerCctvAgencyRequest('no')
+    cctv.saveAndContinue()
+
+    Page.verifyOnPage(ReferralApplicationTasklist)
+
+    // When the session is cleared
+    page.signOut().click()
+    cy.signIn()
+
+    // When I go back to the tasklist and the previously answered section
+    // Then my previous answers aren't visible
+    ReferralApplicationTasklist.visit()
+    page.checkStatus('ap-type', 'Cannot start yet')
     page.startSection('Check if the person is eligible')
-
-    const checkEligibilityPage = Page.verifyOnPage(ReferralReason)
-
-    checkEligibilityPage.answerReason('likely')
-    checkEligibilityPage.saveAndContinue()
-  }
+    cy.get(`input[name="referralReason"][value=likely]`).should('not.be.checked')
+  })
 })
+
+const checkEligibility = (page: ReferralApplicationTasklist) => {
+  page.startSection('Check if the person is eligible')
+
+  const checkEligibilityPage = Page.verifyOnPage(ReferralReason)
+
+  checkEligibilityPage.answerReason('likely')
+  checkEligibilityPage.saveAndContinue()
+}

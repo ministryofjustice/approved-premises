@@ -30,4 +30,8 @@ export default abstract class Page {
   completeRadio(name: string, answer: string): void {
     cy.get(`input[name="${name}"][value=${answer}]`).click()
   }
+
+  checkInputsChecked(name: string, value: string): void {
+    cy.get(`input[name="${name}"][value=${value}]`).should('be.checked')
+  }
 }
