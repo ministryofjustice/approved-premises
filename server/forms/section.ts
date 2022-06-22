@@ -47,6 +47,10 @@ export default class Section {
     return Step.initialize(stepName, this.request.body)
   }
 
+  public async allSteps(): Promise<Step[]> {
+    return Promise.all(this.steps.map(step => this.getStep(step)))
+  }
+
   public async status(): Promise<string> {
     const sessionVar = this.request.session?.[this.sessionVarName]?.sections?.[this.name]
 

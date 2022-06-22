@@ -215,4 +215,23 @@ describe('Section', () => {
       expect(stepSpy).not.toHaveBeenCalled()
     })
   })
+
+  describe('allSteps', () => {
+    it('should return all steps', async () => {
+      sectionDataMock.steps = ['referral-reason', 'not-eligible']
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(sectionDataMock))
+
+      const request = createMock<Request>({})
+      const stepSpy = jest.spyOn(Step, 'initialize')
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      const allSteps = await section.allSteps()
+
+      expect(allSteps.length).toEqual(2)
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', request)
+      expect(stepSpy).toHaveBeenCalledWith('not-eligible', request)
+    })
+  })
 })
