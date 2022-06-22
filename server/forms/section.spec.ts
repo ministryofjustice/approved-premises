@@ -4,6 +4,8 @@ import fsPromises from 'fs/promises'
 import { pathExists, outputFile } from 'fs-extra'
 
 import Section, { SectionData } from './section'
+import Step from './step'
+import { UnknownStepError } from './errors'
 
 const sectionDataMock = {
   name: 'eligibility',
@@ -176,6 +178,41 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('cannot_start')
+    })
+  })
+
+  describe('getStep', () => {
+    let stepSpy: any
+
+    beforeEach(() => {
+      sectionDataMock.steps = ['referral-reason', 'not-eligible']
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(sectionDataMock))
+
+      stepSpy = jest.spyOn(Step, 'initialize')
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks()
+    })
+
+    it('should return a step object when it exists in a section', async () => {
+      const request = createMock<Request>({})
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', request)
+    })
+
+    it('should raise an error when the section does not exist', async () => {
+      const request = createMock<Request>({})
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      expect(async () => section.getStep('cctv')).rejects.toThrowError(UnknownStepError)
+
+      expect(stepSpy).not.toHaveBeenCalled()
     })
   })
 })

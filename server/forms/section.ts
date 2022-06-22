@@ -3,6 +3,9 @@ import { readFile } from 'fs/promises'
 
 import { retrieveSavedSession } from './helpers/retrieveSavedSession'
 import type { AllowedSectionNames, AllowedStepNames } from './interfaces'
+import { UnknownStepError } from './errors'
+
+import Step from './step'
 
 export interface SectionData {
   name: string
@@ -34,6 +37,14 @@ export default class Section {
 
   public complete(): void {
     this.setSectionStatus('complete')
+  }
+
+  public async getStep(stepName: AllowedStepNames): Promise<Step> {
+    if (!this.steps.includes(stepName)) {
+      throw new UnknownStepError()
+    }
+
+    return Step.initialize(stepName, this.request.body)
   }
 
   public async status(): Promise<string> {
