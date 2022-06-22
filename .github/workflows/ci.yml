@@ -14,6 +14,8 @@ env:
   API_CLIENT_SECRET: clientsecret
   OPENSEARCH_URL: http://localhost:9200/
   OPENSEARCH_INDEX_NAME: bed_availability_test
+  DATABASE_SEED_FILE: ./data/ap_beds.csv
+  GEOLOCATION_SEED_FILE: ./data/ap_geolocations.csv
 
 jobs:
   test:
@@ -38,6 +40,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'npm'
+
+      - name: Load seed data
+        env:
+          APBEDS_DATA: ${{ secrets.APBEDS_DATA }}
+          APGEOLOCATION_DATA: ${{ secrets.APGEOLOCATION_DATA }}
+        run: |
+          mkdir -p data
+          echo $APBEDS_DATA | base64 -d | gzip -d > data/ap_beds.csv
+          echo $APGEOLOCATION_DATA | base64 -d | gzip -d > data/ap_geolocations.csv
 
       - name: Installing dependencies
         run: npm install
