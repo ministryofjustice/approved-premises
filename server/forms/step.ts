@@ -53,6 +53,31 @@ export default class Step {
     return rule
   }
 
+  public async answers() {
+    const questions = await this.questions()
+    return questions
+      .map(question => {
+        return {
+          key: {
+            text: question.key(),
+          },
+          value: {
+            html: question.value(),
+          },
+          actions: {
+            items: [
+              {
+                href: `/referral-application/${this.section}/new/${this.name}`,
+                text: 'Change',
+                visuallyHiddenText: question.key(),
+              },
+            ],
+          },
+        }
+      })
+      .filter(item => item.value.html)
+  }
+
   private validate(): void {
     const errors = {}
 
