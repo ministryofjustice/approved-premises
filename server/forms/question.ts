@@ -94,6 +94,14 @@ export default class Question {
     )
   }
 
+  public key(): string {
+    if ('label' in this.args) {
+      return this.args.label.text
+    }
+
+    return this.args.fieldset.legend.text
+  }
+
   public value(): string {
     const fieldValue = this.body[this.fieldName]
 

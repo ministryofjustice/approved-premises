@@ -81,6 +81,18 @@ describe('Question', () => {
         expect(value).toEqual(undefined)
       })
     })
+
+    describe('key', () => {
+      it('returns the question text', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'type')
+
+        const key = question.key()
+
+        expect(key).toEqual('What type of AP does Robert Smith require?')
+      })
+    })
   })
 
   describe('with checkboxes', () => {
@@ -158,6 +170,18 @@ describe('Question', () => {
         expect(value).toEqual(undefined)
       })
     })
+
+    describe('key', () => {
+      it('returns the question text', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'cctv-reasons')
+
+        const key = question.key()
+
+        expect(key).toEqual('Which behaviours has Robert demonstrated that require enhanced CCTV provision to monitor?')
+      })
+    })
   })
 
   describe('with a textarea', () => {
@@ -206,6 +230,18 @@ describe('Question', () => {
         const value = question.value()
 
         expect(value).toEqual(undefined)
+      })
+    })
+
+    describe('key', () => {
+      it('returns the question text', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'cctv-supporting-information')
+
+        const key = question.key()
+
+        expect(key).toEqual('Provide any supporting information about why Robert requires enhanced CCTV provision.')
       })
     })
   })
