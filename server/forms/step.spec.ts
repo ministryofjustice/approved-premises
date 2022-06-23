@@ -21,6 +21,8 @@ jest.mock('fs/promises', () => {
   }
 })
 
+jest.mock('./question')
+
 describe('Step', () => {
   let step: Step
 
@@ -249,13 +251,16 @@ describe('Step', () => {
     it('should return an array of questions', async () => {
       stepMock.questions = ['question1', 'question2']
 
+      const questionSpy = jest.spyOn(Question, 'initialize')
+
       step = await Step.initialize('step', {})
-      const questions = step.questions()
+      const questions = await step.questions()
 
       expect(questions.length).toEqual(2)
 
-      expect(questions[0]).toBeInstanceOf(Question)
-      expect(questions[1]).toBeInstanceOf(Question)
+      expect(questionSpy).toHaveBeenCalledTimes(2)
+      expect(questionSpy).toHaveBeenCalledWith(step, stepMock.questions[0])
+      expect(questionSpy).toHaveBeenCalledWith(step, stepMock.questions[1])
     })
   })
 })

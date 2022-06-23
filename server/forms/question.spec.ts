@@ -8,7 +8,7 @@ describe('Question', () => {
     it('renders a group of radio buttons', async () => {
       const step = createMock<Step>()
 
-      const question = new Question(step, 'type')
+      const question = await Question.initialize(step, 'type')
 
       const html = await question.present()
 
@@ -20,7 +20,7 @@ describe('Question', () => {
 
       step.body.type = 'standard'
 
-      const question = new Question(step, 'type')
+      const question = await Question.initialize(step, 'type')
 
       const html = await question.present()
 
@@ -36,7 +36,7 @@ describe('Question', () => {
         type: ['You must specify a type'],
       }
 
-      const question = new Question(step, 'type')
+      const question = await Question.initialize(step, 'type')
 
       const html = await question.present()
       expect(html).toContain('<span class="govuk-visually-hidden">Error:</span> You must specify a type')
@@ -46,7 +46,7 @@ describe('Question', () => {
       it('adds a conditional question', async () => {
         const step = createMock<Step>()
 
-        const question = new Question(step, 'is-opd-pathway-screened')
+        const question = await Question.initialize(step, 'is-opd-pathway-screened')
 
         const html = await question.present()
 
@@ -61,7 +61,7 @@ describe('Question', () => {
     it('renders a group of checkboxes', async () => {
       const step = createMock<Step>()
 
-      const question = new Question(step, 'cctv-reasons')
+      const question = await Question.initialize(step, 'cctv-reasons')
 
       const html = await question.present()
 
@@ -75,7 +75,7 @@ describe('Question', () => {
 
       step.body.cctvReasons = ['appearance', 'networks', 'community-threats']
 
-      const question = new Question(step, 'cctv-reasons')
+      const question = await Question.initialize(step, 'cctv-reasons')
 
       const html = await question.present()
 
@@ -99,7 +99,7 @@ describe('Question', () => {
         cctvReasons: ['You must specify a reason'],
       }
 
-      const question = new Question(step, 'cctv-reasons')
+      const question = await Question.initialize(step, 'cctv-reasons')
 
       const html = await question.present()
       expect(html).toContain('<span class="govuk-visually-hidden">Error:</span> You must specify a reason')
@@ -110,7 +110,7 @@ describe('Question', () => {
     it('returns a textarea', async () => {
       const step = createMock<Step>()
 
-      const question = new Question(step, 'cctv-supporting-information')
+      const question = await Question.initialize(step, 'cctv-supporting-information')
 
       const html = await question.present()
 
@@ -122,7 +122,7 @@ describe('Question', () => {
 
       step.body.cctvSupportingInformation = 'text goes here'
 
-      const question = new Question(step, 'cctv-supporting-information')
+      const question = await Question.initialize(step, 'cctv-supporting-information')
 
       const html = await question.present()
 

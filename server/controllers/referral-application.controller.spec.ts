@@ -28,7 +28,7 @@ describe('ReferralApplicationController', () => {
       })
       const form = createMock<Form>({
         step: createMock<Step>({
-          questions: () => [questions],
+          questions: async () => [questions],
         }),
       })
 

@@ -5,21 +5,33 @@ import type { ErrorMessages } from './interfaces'
 import type Step from './step'
 import { RadioOptions, CheckBoxOptions, ErrorMessage, TextAreaOptions } from './interfaces'
 
+type QuestionWidget = 'govukRadios' | 'govukCheckboxes' | 'govukTextarea'
+type QuestionArgs = RadioOptions | CheckBoxOptions | TextAreaOptions
 interface QuestionData {
-  widget: 'govukRadios' | 'govukCheckboxes' | 'govukTextarea'
-  args: RadioOptions | CheckBoxOptions | TextAreaOptions
+  widget: QuestionWidget
+  args: QuestionArgs
 }
 
 export default class Question {
-  widget: 'govukRadios' | 'govukCheckboxes' | 'govukTextarea'
-
   body: any
 
   errors: ErrorMessages
 
-  constructor(private readonly step: Step, private readonly question: string) {
+  fieldName: string
+
+  private constructor(
+    private readonly step: Step,
+    private readonly widget: QuestionWidget,
+    private readonly args: QuestionArgs
+  ) {
     this.body = step.body
     this.errors = step.errorMessages
+
+    if ('idPrefix' in this.args) {
+      this.fieldName = this.args.idPrefix
+    } else if ('id' in this.args) {
+      this.fieldName = this.args.id
+    }
 
     nunjucks.configure([
       'node_modules/govuk-frontend/',
@@ -29,33 +41,29 @@ export default class Question {
     ])
   }
 
+  static async initialize(step: Step, question: string): Promise<Question> {
+    const { widget, args } = (await Question.readQuestionData(question)) as QuestionData
+
+    return new Question(step, widget, args)
+  }
+
   async present(): Promise<string> {
-    const { widget, args } = (await this.readQuestionData(this.question)) as QuestionData
+    this.args.errorMessage = this.errorMessage(this.fieldName)
 
-    let fieldName: string
-
-    if ('idPrefix' in args) {
-      fieldName = args.idPrefix
-    } else if ('id' in args) {
-      fieldName = args.id
-    }
-
-    args.errorMessage = this.errorMessage(fieldName)
-
-    if ('items' in args) {
-      args.items = await Promise.all(
-        args.items.map(async i => {
+    if ('items' in this.args) {
+      this.args.items = await Promise.all(
+        this.args.items.map(async i => {
           let item = i
 
           if ('value' in i) {
             item = {
               ...item,
-              checked: this.isChecked(fieldName, i.value),
+              checked: this.isChecked(this.fieldName, i.value),
             }
           }
 
           if ('conditionalQuestion' in i) {
-            const question = new Question(this.step, i.conditionalQuestion)
+            const question = await Question.initialize(this.step, i.conditionalQuestion)
             item = {
               ...item,
               conditional: {
@@ -68,8 +76,8 @@ export default class Question {
       )
     }
 
-    if ('id' in args) {
-      args.value = this.body[fieldName]
+    if ('id' in this.args) {
+      this.args.value = this.body[this.fieldName]
     }
 
     return nunjucks.renderString(
@@ -77,11 +85,11 @@ export default class Question {
       ${this.imports()}
 
       {{
-        ${widget}(args)
+        ${this.widget}(args)
       }}
     `,
       {
-        args,
+        args: this.args,
       }
     )
   }
@@ -99,7 +107,7 @@ export default class Question {
     return this.errors?.[key]?.length > 0 ? { text: this.errors[key].join(',') } : undefined
   }
 
-  private async readQuestionData(question: string): Promise<QuestionData> {
+  private static async readQuestionData(question: string): Promise<QuestionData> {
     const file = await readFile(`${__dirname}/questions/${question}.json`, 'utf8')
     return JSON.parse(file)
   }

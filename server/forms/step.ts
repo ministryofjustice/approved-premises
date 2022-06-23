@@ -39,8 +39,8 @@ export default class Step {
     return Object.keys(this.errorMessages).length === 0
   }
 
-  public questions(): Array<Question> {
-    return this.step.questions.map(question => new Question(this, question))
+  public async questions(): Promise<Array<Question>> {
+    return Promise.all(this.step.questions.map(async question => Question.initialize(this, question)))
   }
 
   public allowedToAccess(data: any) {

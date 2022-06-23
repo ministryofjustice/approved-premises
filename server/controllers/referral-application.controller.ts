@@ -5,7 +5,8 @@ import { OutOfSequenceError, UnknownStepError } from '../forms/errors'
 import { Form } from '../forms'
 
 const getQuestions = async (form: Form): Promise<Array<string>> => {
-  return Promise.all(form.step.questions().map(question => question.present()))
+  const questions = await form.step.questions()
+  return Promise.all(questions.map(question => question.present()))
 }
 
 export const ReferralApplicationController = {
