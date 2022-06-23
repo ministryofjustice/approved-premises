@@ -94,6 +94,26 @@ export default class Question {
     )
   }
 
+  public value(): string {
+    const fieldValue = this.body[this.fieldName]
+
+    if ('items' in this.args) {
+      // If this question is a checkbox group with multiple answers
+      if (Array.isArray(fieldValue)) {
+        const items = this.args.items.filter(i => 'value' in i && fieldValue.includes(i.value))
+        return items.map(i => 'text' in i && i.text).join('<br>')
+      }
+
+      // If this question is a group of radio buttons
+      const item = this.args.items.find(i => 'value' in i && i.value === fieldValue)
+      if (item && 'text' in item) {
+        return item.text
+      }
+    }
+
+    return fieldValue
+  }
+
   private isChecked(key: string, value: string): boolean {
     const fieldValue = this.body[key]
 
