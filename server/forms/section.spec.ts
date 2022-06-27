@@ -196,13 +196,46 @@ describe('Section', () => {
     })
 
     it('should return a step object when it exists in a section', async () => {
-      const request = createMock<Request>({})
+      const body = { foo: 'bar' } as any
+      const request = createMock<Request>({
+        body,
+      })
 
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       await section.getStep('referral-reason')
 
-      expect(stepSpy).toHaveBeenCalledWith('referral-reason', request)
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', body)
+    })
+
+    it('should send the session data as the body when the request body does not exist', async () => {
+      const body = {} as any
+      const session = { referralApplication: { foo: 'bar' } } as any
+      const request = createMock<Request>({
+        body,
+        session,
+      })
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', session.referralApplication)
+    })
+
+    it('should send an empty object as the body when the request body does not exist', async () => {
+      const body = {} as any
+      const session = {} as any
+      const request = createMock<Request>({
+        body,
+        session,
+      })
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', {})
     })
 
     it('should raise an error when the section does not exist', async () => {

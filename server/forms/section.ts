@@ -44,7 +44,10 @@ export default class Section {
       throw new UnknownStepError()
     }
 
-    return Step.initialize(stepName, this.request.body)
+    const body =
+      Object.keys(this.request.body).length > 0 ? this.request.body : this.request.session[this.sessionVarName] || {}
+
+    return Step.initialize(stepName, body)
   }
 
   public async allSteps(): Promise<Step[]> {
