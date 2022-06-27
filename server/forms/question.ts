@@ -1,12 +1,21 @@
 import nunjucks from 'nunjucks'
+import moment from 'moment'
 import { readFile } from 'fs/promises'
 
 import type { ErrorMessages } from './interfaces'
 import type Step from './step'
-import { RadioOptions, CheckBoxOptions, ErrorMessage, TextAreaOptions } from './interfaces'
+import {
+  RadioOptions,
+  CheckBoxOptions,
+  ErrorMessage,
+  TextAreaOptions,
+  DateInputOptions,
+  DateInputItems,
+  RadioOrCheckBoxItems,
+} from './interfaces'
 
-type QuestionWidget = 'govukRadios' | 'govukCheckboxes' | 'govukTextarea'
-type QuestionArgs = RadioOptions | CheckBoxOptions | TextAreaOptions
+type QuestionWidget = 'govukRadios' | 'govukCheckboxes' | 'govukTextarea' | 'govukDateInput'
+type QuestionArgs = RadioOptions | CheckBoxOptions | TextAreaOptions | DateInputOptions
 interface QuestionData {
   widget: QuestionWidget
   args: QuestionArgs
@@ -48,36 +57,19 @@ export default class Question {
   }
 
   async present(): Promise<string> {
-    this.args.errorMessage = this.errorMessage(this.fieldName)
+    let args
+    const errorMessage = this.errorMessage(this.fieldName)
 
-    if ('items' in this.args) {
-      this.args.items = await Promise.all(
-        this.args.items.map(async i => {
-          let item = i
-
-          if ('value' in i) {
-            item = {
-              ...item,
-              checked: this.isChecked(this.fieldName, i.value),
-            }
-          }
-
-          if ('conditionalQuestion' in i) {
-            const question = await Question.initialize(this.step, i.conditionalQuestion)
-            item = {
-              ...item,
-              conditional: {
-                html: await question.present(),
-              },
-            }
-          }
-          return item
-        })
-      )
+    if (this.widget === 'govukRadios' || this.widget === 'govukCheckboxes') {
+      args = await this.setCheckBoxOrRadioGroupValues()
+    } else if (this.widget === 'govukTextarea') {
+      args = this.setTextAreaValue()
+    } else if (this.widget === 'govukDateInput') {
+      args = this.setDateInputValues(errorMessage)
     }
 
-    if ('id' in this.args) {
-      this.args.value = this.body[this.fieldName]
+    if (errorMessage) {
+      args.errorMessage = errorMessage
     }
 
     return nunjucks.renderString(
@@ -89,7 +81,7 @@ export default class Question {
       }}
     `,
       {
-        args: this.args,
+        args,
       }
     )
   }
@@ -103,23 +95,120 @@ export default class Question {
   }
 
   public value(): string {
-    const fieldValue = this.body[this.fieldName]
-
-    if ('items' in this.args) {
-      // If this question is a checkbox group with multiple answers
-      if (Array.isArray(fieldValue)) {
-        const items = this.args.items.filter(i => 'value' in i && fieldValue.includes(i.value))
-        return items.map(i => 'text' in i && i.text).join('<br>')
-      }
-
-      // If this question is a group of radio buttons
-      const item = this.args.items.find(i => 'value' in i && i.value === fieldValue)
-      if (item && 'text' in item) {
-        return item.text
-      }
+    if (this.widget === 'govukRadios' || this.widget === 'govukCheckboxes') {
+      return this.getCheckBoxOrRadioButtonAnswers()
+    }
+    if (this.widget === 'govukDateInput') {
+      return this.getDateInputAnswer()
     }
 
-    return fieldValue
+    return this.body[this.fieldName]
+  }
+
+  private getDateInputAnswer(): string {
+    const [day, month, year] = [
+      this.body[`${this.fieldName}-day`],
+      this.body[`${this.fieldName}-month`],
+      this.body[`${this.fieldName}-year`],
+    ] as Array<number>
+
+    if (day && month && year) {
+      const date = new Date(year, month - 1, day)
+
+      return moment(date).format('D MMMM YYYY')
+    }
+
+    return undefined
+  }
+
+  private getCheckBoxOrRadioButtonAnswers() {
+    const fieldValue = this.body[this.fieldName]
+
+    const args = this.widget === 'govukRadios' ? (this.args as RadioOptions) : (this.args as CheckBoxOptions)
+    const items = args.items as RadioOrCheckBoxItems
+
+    return Array.isArray(fieldValue)
+      ? this.getCheckBoxAnswers(items, fieldValue)
+      : this.getRadioButtonAnswer(items, fieldValue)
+  }
+
+  private getCheckBoxAnswers(items: RadioOrCheckBoxItems, fieldValues: Array<string>): string {
+    const selectedItems = items.filter(i => 'value' in i && fieldValues.includes(i.value))
+    return selectedItems.map(i => 'text' in i && i.text).join('<br>')
+  }
+
+  private getRadioButtonAnswer(items: RadioOrCheckBoxItems, fieldValue: string): string {
+    const selectedItem = items.find(i => 'value' in i && i.value === fieldValue)
+    return selectedItem && 'text' in selectedItem ? selectedItem.text : undefined
+  }
+
+  private async setCheckBoxOrRadioGroupValues(): Promise<RadioOptions | CheckBoxOptions> {
+    const args = this.widget === 'govukRadios' ? (this.args as RadioOptions) : (this.args as CheckBoxOptions)
+
+    args.items = (await Promise.all(
+      args.items.map(async i => {
+        let item = i
+
+        if ('value' in i) {
+          item = {
+            ...item,
+            checked: this.isChecked(this.fieldName, i.value),
+          }
+        }
+
+        if ('conditionalQuestion' in i) {
+          const question = await Question.initialize(this.step, i.conditionalQuestion)
+          item = {
+            ...item,
+            conditional: {
+              html: await question.present(),
+            },
+          }
+        }
+        return item
+      })
+    )) as RadioOrCheckBoxItems
+
+    return args
+  }
+
+  private setTextAreaValue(): TextAreaOptions {
+    const args = this.args as TextAreaOptions
+    args.value = this.body[this.fieldName]
+
+    return args
+  }
+
+  private setDateInputValues(errorMessage: ErrorMessage): DateInputOptions {
+    const args = this.args as DateInputOptions
+
+    const [day, month, year] = [
+      this.body[`${this.fieldName}-day`],
+      this.body[`${this.fieldName}-month`],
+      this.body[`${this.fieldName}-year`],
+    ]
+
+    const errorClass = errorMessage ? 'govuk-input--error' : ''
+
+    args.items = [
+      {
+        classes: `govuk-input--width-2 ${errorClass}`,
+        name: 'day',
+        value: day,
+      },
+      {
+        classes: `govuk-input--width-2 ${errorClass}`,
+        name: 'month',
+        value: month,
+      },
+      {
+        classes: `govuk-input--width-4 ${errorClass}`,
+        name: 'year',
+        value: year,
+      },
+    ] as DateInputItems
+
+    return args
   }
 
   private isChecked(key: string, value: string): boolean {

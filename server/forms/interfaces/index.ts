@@ -47,13 +47,15 @@ export interface ErrorMessages {
   [key: string]: Array<string>
 }
 
+export type RadioOrCheckBoxItems = Array<InputItem | Divider>
+
 export type RadioOptions = {
   idPrefix?: string
   name: string
   hint?: { html: string } | { text: string }
   fieldset?: FieldSetOptions
   errorMessage?: ErrorMessage
-  items?: Array<InputItem | Divider>
+  items?: RadioOrCheckBoxItems
 }
 
 export type TextAreaOptions = {
@@ -65,6 +67,17 @@ export type TextAreaOptions = {
 }
 
 export type CheckBoxOptions = RadioOptions
+
+export type DateInputItems = Array<DateInputItem>
+
+export type DateInputOptions = {
+  idPrefix?: string
+  name: string
+  hint?: { html: string } | { text: string }
+  fieldset?: FieldSetOptions
+  errorMessage?: ErrorMessage
+  items?: DateInputItems
+}
 
 export interface Label {
   text: string
@@ -83,6 +96,12 @@ export interface LegendOptions {
   text?: string
   isPageHeading?: boolean
   classes?: string
+}
+
+export interface DateInputItem {
+  classes?: string
+  name: string
+  value?: string
 }
 
 export interface InputItem {

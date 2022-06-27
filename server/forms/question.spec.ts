@@ -184,6 +184,96 @@ describe('Question', () => {
     })
   })
 
+  describe('with a date input', () => {
+    describe('present', () => {
+      it('returns a date input', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const html = await question.present()
+
+        expect(html).toContain('When was Robert Brown&#39;s last consultation or formulation?')
+      })
+
+      it('prepopulates the question', async () => {
+        const step = createMock<Step>()
+
+        step.body['lastOpdDate-day'] = 22
+        step.body['lastOpdDate-month'] = 12
+        step.body['lastOpdDate-year'] = 2022
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const html = await question.present()
+
+        expect(html).toContain('name="lastOpdDate-day" type="text" value="22"')
+        expect(html).toContain('name="lastOpdDate-month" type="text" value="12"')
+        expect(html).toContain('name="lastOpdDate-year" type="text" value="2022"')
+      })
+
+      it('adds the error messages', async () => {
+        const step = createMock<Step>()
+
+        step.errorMessages = {
+          lastOpdDate: ['You must enter a valid date'],
+        }
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const html = await question.present()
+        expect(html).toContain('<span class="govuk-visually-hidden">Error:</span> You must enter a valid date')
+        expect(html).toContain(
+          '<input class="govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error" id="lastOpdDate-day" name="lastOpdDate-day" type="text" pattern="[0-9]*" inputmode="numeric">'
+        )
+        expect(html).toContain(
+          '<input class="govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error" id="lastOpdDate-month" name="lastOpdDate-month" type="text" pattern="[0-9]*" inputmode="numeric">'
+        )
+        expect(html).toContain(
+          '<input class="govuk-input govuk-date-input__input govuk-input--width-4 govuk-input--error" id="lastOpdDate-year" name="lastOpdDate-year" type="text" pattern="[0-9]*" inputmode="numeric">'
+        )
+      })
+    })
+
+    describe('value', () => {
+      it('returns the response data', async () => {
+        const step = createMock<Step>()
+
+        step.body['lastOpdDate-day'] = 22
+        step.body['lastOpdDate-month'] = 12
+        step.body['lastOpdDate-year'] = 2022
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const value = question.value()
+
+        expect(value).toEqual('22 December 2022')
+      })
+
+      it('returns a blank response when there is no data', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const value = question.value()
+
+        expect(value).toEqual(undefined)
+      })
+    })
+
+    describe('key', () => {
+      it('returns the question text', async () => {
+        const step = createMock<Step>()
+
+        const question = await Question.initialize(step, 'last-opd-date')
+
+        const key = question.key()
+
+        expect(key).toEqual("When was Robert Brown's last consultation or formulation?")
+      })
+    })
+  })
+
   describe('with a textarea', () => {
     describe('present', () => {
       it('returns a textarea', async () => {
