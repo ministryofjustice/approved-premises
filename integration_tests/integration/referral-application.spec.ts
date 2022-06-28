@@ -6,6 +6,7 @@ import TypeOfAP from '../pages/type-of-ap'
 import EsapReasons from '../pages/esap-reasons'
 import RoomSearches from '../pages/room-searches'
 import CCTV from '../pages/cctv'
+import CheckYourAnswers from '../pages/check-your-answers'
 
 context('SignIn', () => {
   beforeEach(() => {
@@ -76,6 +77,10 @@ context('SignIn', () => {
     cctv.answerCctvAgencyRequest('no')
     cctv.saveAndContinue()
 
+    const checkYourAnswers = Page.verifyOnPage(CheckYourAnswers)
+
+    checkYourAnswers.saveAndContinue()
+
     // And I should be returned to the tasklist
     Page.verifyOnPage(ReferralApplicationTasklist)
 
@@ -103,6 +108,9 @@ context('SignIn', () => {
     cctv.answerCctvAgencyRequest('no')
     cctv.saveAndContinue()
 
+    const checkYourAnswers = Page.verifyOnPage(CheckYourAnswers)
+    checkYourAnswers.saveAndContinue()
+
     Page.verifyOnPage(ReferralApplicationTasklist)
 
     // When the session is cleared
@@ -124,4 +132,8 @@ const checkEligibility = (page: ReferralApplicationTasklist) => {
 
   checkEligibilityPage.answerReason('likely')
   checkEligibilityPage.saveAndContinue()
+
+  const checkYourAnswers = Page.verifyOnPage(CheckYourAnswers)
+
+  checkYourAnswers.saveAndContinue()
 }

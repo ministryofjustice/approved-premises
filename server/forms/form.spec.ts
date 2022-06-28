@@ -130,7 +130,7 @@ describe('Form', () => {
   })
 
   describe('nextStep', () => {
-    it('returns the next step from the session', async () => {
+    it('returns the next step from the step', async () => {
       mockStep.nextStep.mockReturnValue('some-step')
 
       const request = createMock<Request>({
@@ -144,6 +144,24 @@ describe('Form', () => {
       const form = await Form.initialize(request)
 
       expect(form.nextStep()).toEqual('some-step')
+
+      expect(mockStep.nextStep).toHaveBeenCalledWith(request.session[Form.sessionVarName])
+    })
+
+    it('returns check_your_answers if there is no next step', async () => {
+      mockStep.nextStep.mockReturnValue(undefined)
+
+      const request = createMock<Request>({
+        params: {
+          section: 'eligibility',
+          step: 'referral-reason',
+        },
+        body: {},
+      })
+
+      const form = await Form.initialize(request)
+
+      expect(form.nextStep()).toEqual('check_your_answers')
 
       expect(mockStep.nextStep).toHaveBeenCalledWith(request.session[Form.sessionVarName])
     })

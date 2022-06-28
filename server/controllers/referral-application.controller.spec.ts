@@ -110,25 +110,5 @@ describe('ReferralApplicationController', () => {
         questions: ['QUESTION_HTML'],
       })
     })
-
-    it('should persist and complete the form and redirect to the tasklist if valid and there is no next step', async () => {
-      const persistDataSpy = jest.fn()
-      const completeSpy = jest.fn()
-
-      const form = createMock<Form>({
-        validForCurrentStep: () => true,
-        nextStep: (): undefined => undefined,
-        persistData: () => persistDataSpy(),
-        completeSection: () => completeSpy(),
-      })
-
-      jest.spyOn(Form, 'initialize').mockResolvedValue(form)
-
-      await ReferralApplicationController.update(request, response)
-
-      expect(response.redirect).toHaveBeenCalledWith('/referral_tasklist')
-      expect(persistDataSpy).toHaveBeenCalled()
-      expect(completeSpy).toHaveBeenCalled()
-    })
   })
 })

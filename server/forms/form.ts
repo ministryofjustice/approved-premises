@@ -53,7 +53,7 @@ export default class Form {
   }
 
   nextStep(): string {
-    return this.step.nextStep(this.request.session[Form.sessionVarName])
+    return this.step.nextStep(this.request.session[Form.sessionVarName]) || 'check_your_answers'
   }
 
   validForCurrentStep(): boolean {

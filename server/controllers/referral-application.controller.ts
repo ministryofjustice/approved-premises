@@ -36,12 +36,7 @@ export const ReferralApplicationController = {
       await form.persistData()
       const nextStep = form.nextStep()
 
-      if (nextStep) {
-        res.redirect(`/referral-application/${form.step.section}/new/${nextStep}`)
-      } else {
-        form.completeSection()
-        res.redirect('/referral_tasklist')
-      }
+      res.redirect(`/referral-application/${form.step.section}/new/${nextStep}`)
     } else {
       const questions = await getQuestions(form)
 
