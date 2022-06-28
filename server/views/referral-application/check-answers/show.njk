@@ -1,0 +1,33 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - " + step.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-two-thirds-from-desktop">
+			<h1 class="govuk-heading-l">Check your answers</h1>
+
+			{% for step in steps %}
+				<h2 class="govuk-heading-m">{{ step.title }}</h2>
+
+				{{
+						govukSummaryList({
+							classes: 'govuk-!-margin-bottom-9',
+        			rows: step.rows
+						})
+					}}
+			{% endfor %}
+
+			<form method="post" action="/referral-application/{{ name }}/check_your_answers">
+				<input type="hidden" name="_csrf" value={{csrfToken}}>
+
+				{{ govukButton({
+            text: "Save and continue"
+          }) }}
+			</form>
+		</div>
+	</div>
+{% endblock %}
