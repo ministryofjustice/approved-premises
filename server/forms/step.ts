@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises'
 
 import { jsonLogic, RulesLogic } from './utils/jsonlogic'
-import { StepDefinition, ErrorMessages } from './interfaces'
+import { StepDefinition, ErrorMessages, SummaryListItem } from './interfaces'
 import Question from './question'
 
 export default class Step {
@@ -53,7 +53,7 @@ export default class Step {
     return rule
   }
 
-  public async answers() {
+  public async answers(): Promise<Array<SummaryListItem>> {
     const questions = await this.questions()
     return questions
       .map(question => {
