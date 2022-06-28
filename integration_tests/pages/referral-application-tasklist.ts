@@ -21,4 +21,12 @@ export default class ReferralApplicationTasklist extends Page {
   linkForSectionShouldNotExist(section: string): void {
     cy.get(`li[data-task="${section}] a`).should('not.exist')
   }
+
+  clickSubmissionCheckbox(): void {
+    cy.get('#submit-confirmation').click()
+  }
+
+  submit(): void {
+    cy.get('button').should('contain', 'Submit').click()
+  }
 }

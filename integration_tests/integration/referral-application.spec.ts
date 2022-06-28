@@ -46,6 +46,12 @@ context('SignIn', () => {
     page.linkForSectionShouldNotExist('ap-type')
   })
 
+  it('allows me to click confirm checkbox and "Submit" button', () => {
+    const page = ReferralApplicationTasklist.visit()
+    page.clickSubmissionCheckbox()
+    page.submit()
+  })
+
   it('allows me to select a type of AP', () => {
     // Given I have checked the person's eligiblity
     const page = ReferralApplicationTasklist.visit()
