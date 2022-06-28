@@ -1,5 +1,6 @@
 {
   "name": "eligibility",
   "previousSection": null,
-  "nextSection": "ap-type"
+  "nextSection": "ap-type",
+  "steps": ["referral-reason", "not-eligible"]
 }

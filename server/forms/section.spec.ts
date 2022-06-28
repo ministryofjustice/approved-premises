@@ -9,6 +9,7 @@ const sectionDataMock = {
   name: 'eligibility',
   previousSection: null,
   nextSection: 'ap-type',
+  steps: ['referral-reason', 'not-eligible'],
 } as unknown as SectionData
 
 jest.mock('fs/promises', () => {
@@ -38,6 +39,7 @@ describe('Section', () => {
       expect(section.name).toEqual('eligibility')
       expect(section.previousSection).toEqual(null)
       expect(section.nextSection).toEqual('ap-type')
+      expect(section.steps).toEqual(['referral-reason', 'not-eligible'])
     })
   })
 

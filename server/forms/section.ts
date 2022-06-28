@@ -2,12 +2,13 @@ import { Request } from 'express'
 import { readFile } from 'fs/promises'
 
 import { retrieveSavedSession } from './helpers/retrieveSavedSession'
-import type { AllowedSectionNames } from './interfaces'
+import type { AllowedSectionNames, AllowedStepNames } from './interfaces'
 
 export interface SectionData {
   name: string
   previousSection: AllowedSectionNames
   nextSection: AllowedSectionNames
+  steps: Array<AllowedStepNames>
 }
 
 export default class Section {
@@ -16,6 +17,8 @@ export default class Section {
   previousSection: AllowedSectionNames = this.sectionData.previousSection
 
   nextSection: AllowedSectionNames = this.sectionData.nextSection
+
+  steps: Array<AllowedStepNames> = this.sectionData.steps
 
   private constructor(
     readonly sectionData: SectionData,

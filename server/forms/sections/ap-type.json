@@ -1,5 +1,6 @@
 {
   "name": "ap-type",
   "previousSection": "eligibility",
-  "nextSection": null
+  "nextSection": null,
+  "steps": ["type-of-ap", "opd-pathway", "esap-reasons", "room-searches", "cctv"]
 }
