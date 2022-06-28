@@ -4,11 +4,14 @@ import fsPromises from 'fs/promises'
 import { pathExists, outputFile } from 'fs-extra'
 
 import Section, { SectionData } from './section'
+import Step from './step'
+import { UnknownStepError } from './errors'
 
 const sectionDataMock = {
   name: 'eligibility',
   previousSection: null,
   nextSection: 'ap-type',
+  steps: ['referral-reason', 'not-eligible'],
 } as unknown as SectionData
 
 jest.mock('fs/promises', () => {
@@ -38,6 +41,7 @@ describe('Section', () => {
       expect(section.name).toEqual('eligibility')
       expect(section.previousSection).toEqual(null)
       expect(section.nextSection).toEqual('ap-type')
+      expect(section.steps).toEqual(['referral-reason', 'not-eligible'])
     })
   })
 
@@ -174,6 +178,93 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('cannot_start')
+    })
+  })
+
+  describe('getStep', () => {
+    let stepSpy: any
+
+    beforeEach(() => {
+      sectionDataMock.steps = ['referral-reason', 'not-eligible']
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(sectionDataMock))
+
+      stepSpy = jest.spyOn(Step, 'initialize')
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks()
+    })
+
+    it('should return a step object when it exists in a section', async () => {
+      const body = { foo: 'bar' } as any
+      const request = createMock<Request>({
+        body,
+      })
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', body)
+    })
+
+    it('should send the session data as the body when the request body does not exist', async () => {
+      const body = {} as any
+      const session = { referralApplication: { foo: 'bar' } } as any
+      const request = createMock<Request>({
+        body,
+        session,
+      })
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', session.referralApplication)
+    })
+
+    it('should send an empty object as the body when the request body does not exist', async () => {
+      const body = {} as any
+      const session = {} as any
+      const request = createMock<Request>({
+        body,
+        session,
+      })
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      await section.getStep('referral-reason')
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', {})
+    })
+
+    it('should raise an error when the section does not exist', async () => {
+      const request = createMock<Request>({})
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      expect(async () => section.getStep('cctv')).rejects.toThrowError(UnknownStepError)
+
+      expect(stepSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('allSteps', () => {
+    it('should return all steps', async () => {
+      sectionDataMock.steps = ['referral-reason', 'not-eligible']
+      jest.spyOn(fsPromises, 'readFile').mockResolvedValueOnce(JSON.stringify(sectionDataMock))
+
+      const request = createMock<Request>({})
+      const stepSpy = jest.spyOn(Step, 'initialize')
+
+      const section = await Section.initialize('eligibility', request, 'referralApplication')
+
+      const allSteps = await section.allSteps()
+
+      expect(allSteps.length).toEqual(2)
+
+      expect(stepSpy).toHaveBeenCalledWith('referral-reason', request)
+      expect(stepSpy).toHaveBeenCalledWith('not-eligible', request)
     })
   })
 })

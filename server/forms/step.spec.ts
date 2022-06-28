@@ -1,4 +1,5 @@
 import fsPromises from 'fs/promises'
+import { createMock } from '@golevelup/ts-jest'
 
 import Step from './step'
 import Question from './question'
@@ -20,6 +21,8 @@ jest.mock('fs/promises', () => {
     readFile: () => JSON.stringify(stepMock),
   }
 })
+
+jest.mock('./question')
 
 describe('Step', () => {
   let step: Step
@@ -249,13 +252,89 @@ describe('Step', () => {
     it('should return an array of questions', async () => {
       stepMock.questions = ['question1', 'question2']
 
+      const questionSpy = jest.spyOn(Question, 'initialize')
+
       step = await Step.initialize('step', {})
-      const questions = step.questions()
+      const questions = await step.questions()
 
       expect(questions.length).toEqual(2)
 
-      expect(questions[0]).toBeInstanceOf(Question)
-      expect(questions[1]).toBeInstanceOf(Question)
+      expect(questionSpy).toHaveBeenCalledTimes(2)
+      expect(questionSpy).toHaveBeenCalledWith(step, stepMock.questions[0])
+      expect(questionSpy).toHaveBeenCalledWith(step, stepMock.questions[1])
+    })
+  })
+
+  describe('answers', () => {
+    it('should return answers', async () => {
+      stepMock.questions = ['question1', 'question2']
+      const question1 = createMock<Question>({
+        key: () => 'Question 1',
+        value: () => 'Value 1',
+      })
+      const question2 = createMock<Question>({
+        key: () => 'Question 2',
+        value: () => 'Value 2',
+      })
+
+      jest.spyOn(Question, 'initialize').mockImplementation(async (_step: Step, question: string) => {
+        if (question === 'question1') {
+          return question1
+        }
+        return question2
+      })
+
+      step = await Step.initialize('step', {})
+      const answers = await step.answers()
+
+      expect(answers).toEqual([
+        {
+          actions: {
+            items: [{ href: '/referral-application/bar/new/foo', text: 'Change', visuallyHiddenText: 'Question 1' }],
+          },
+          key: { text: 'Question 1' },
+          value: { html: 'Value 1' },
+        },
+        {
+          actions: {
+            items: [{ href: '/referral-application/bar/new/foo', text: 'Change', visuallyHiddenText: 'Question 2' }],
+          },
+          key: { text: 'Question 2' },
+          value: { html: 'Value 2' },
+        },
+      ])
+    })
+
+    it('should hide unanswered questions', async () => {
+      stepMock.questions = ['question1', 'question2']
+      const question1 = createMock<Question>({
+        key: () => 'Question 1',
+        value: () => 'Value 1',
+      })
+      const question2 = createMock<Question>({
+        key: () => 'Question 2',
+        value: () => undefined,
+      })
+
+      jest.spyOn(Question, 'initialize').mockImplementation(async (_step: Step, question: string) => {
+        if (question === 'question1') {
+          return question1
+        }
+        return question2
+      })
+
+      step = await Step.initialize('step', {})
+      const answers = await step.answers()
+
+      expect(answers).toEqual([
+        {
+          actions: {
+            items: [{ href: '/referral-application/bar/new/foo', text: 'Change', visuallyHiddenText: 'Question 1' }],
+          },
+          key: { text: 'Question 1' },
+          value: { html: 'Value 1' },
+        },
+      ])
     })
   })
 })

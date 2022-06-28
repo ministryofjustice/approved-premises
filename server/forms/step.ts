@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises'
 
 import { jsonLogic, RulesLogic } from './utils/jsonlogic'
-import { StepDefinition, ErrorMessages } from './interfaces'
+import { StepDefinition, ErrorMessages, SummaryListItem } from './interfaces'
 import Question from './question'
 
 export default class Step {
@@ -39,8 +39,8 @@ export default class Step {
     return Object.keys(this.errorMessages).length === 0
   }
 
-  public questions(): Array<Question> {
-    return this.step.questions.map(question => new Question(this, question))
+  public async questions(): Promise<Array<Question>> {
+    return Promise.all(this.step.questions.map(async question => Question.initialize(this, question)))
   }
 
   public allowedToAccess(data: any) {
@@ -51,6 +51,31 @@ export default class Step {
     }
 
     return rule
+  }
+
+  public async answers(): Promise<Array<SummaryListItem>> {
+    const questions = await this.questions()
+    return questions
+      .map(question => {
+        return {
+          key: {
+            text: question.key(),
+          },
+          value: {
+            html: question.value(),
+          },
+          actions: {
+            items: [
+              {
+                href: `/referral-application/${this.section}/new/${this.name}`,
+                text: 'Change',
+                visuallyHiddenText: question.key(),
+              },
+            ],
+          },
+        }
+      })
+      .filter(item => item.value.html)
   }
 
   private validate(): void {

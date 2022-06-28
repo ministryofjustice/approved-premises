@@ -4,7 +4,7 @@ import { pathExists, outputFile } from 'fs-extra'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-import { OutOfSequenceError, UnknownStepError } from './errors'
+import { OutOfSequenceError } from './errors'
 
 import Form from './form'
 import Section from './section'
@@ -37,24 +37,18 @@ describe('Form', () => {
       name: 'eligibility',
     })
 
-    jest.spyOn(Step, 'initialize').mockResolvedValue(mockStep)
     jest.spyOn(Section, 'initialize').mockResolvedValue(mockSection)
+    jest.spyOn(mockSection, 'getStep').mockResolvedValue(mockStep)
   })
 
   describe('initialize', () => {
     it('raises an error if the step is not allowed', async () => {
-      const request = createMock<Request>({})
+      const request = createMock<Request>({ params: { step: 'some-step' } })
       mockStep.allowedToAccess.mockImplementation(() => false)
 
       expect(async () => Form.initialize(request)).rejects.toThrowError(OutOfSequenceError)
     })
 
-    it('raises an error if the section does not match the step', async () => {
-      const request = createMock<Request>({})
-      mockSection.name = 'ap-type'
-
-      expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
-    })
     it('when called with a request with an empty body then it attempts to read the session from file', async () => {
       const pathExistsMock = (pathExists as jest.Mock).mockResolvedValue(true)
       const readFileMock = (readFile as jest.Mock).mockResolvedValue('{}')
@@ -77,6 +71,14 @@ describe('Form', () => {
       await Form.initialize(request)
       expect(pathExistsMock).not.toHaveBeenCalled()
       expect(readFileMock).not.toHaveBeenCalled()
+    })
+
+    it('initializes the form without a step if there is not a step in the parameters', async () => {
+      const request = createMock<Request>({})
+
+      const form = await Form.initialize(request)
+
+      expect(form.step).toBeUndefined()
     })
   })
 
@@ -128,7 +130,7 @@ describe('Form', () => {
   })
 
   describe('nextStep', () => {
-    it('returns the next step from the session', async () => {
+    it('returns the next step from the step', async () => {
       mockStep.nextStep.mockReturnValue('some-step')
 
       const request = createMock<Request>({
@@ -142,6 +144,24 @@ describe('Form', () => {
       const form = await Form.initialize(request)
 
       expect(form.nextStep()).toEqual('some-step')
+
+      expect(mockStep.nextStep).toHaveBeenCalledWith(request.session[Form.sessionVarName])
+    })
+
+    it('returns check_your_answers if there is no next step', async () => {
+      mockStep.nextStep.mockReturnValue(undefined)
+
+      const request = createMock<Request>({
+        params: {
+          section: 'eligibility',
+          step: 'referral-reason',
+        },
+        body: {},
+      })
+
+      const form = await Form.initialize(request)
+
+      expect(form.nextStep()).toEqual('check_your_answers')
 
       expect(mockStep.nextStep).toHaveBeenCalledWith(request.session[Form.sessionVarName])
     })

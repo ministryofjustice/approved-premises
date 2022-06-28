@@ -3,8 +3,8 @@ import { Request } from 'express'
 import Step from './step'
 import Section from './section'
 
-import { ErrorMessages, AllowedSectionNames } from './interfaces'
-import { OutOfSequenceError, UnknownStepError } from './errors'
+import { ErrorMessages, AllowedSectionNames, AllowedStepNames } from './interfaces'
+import { OutOfSequenceError } from './errors'
 import { retrieveSavedSession } from './helpers/retrieveSavedSession'
 import { saveSession } from './helpers/saveSession'
 
@@ -18,12 +18,8 @@ export default class Form {
   sessionData = this.request.session[Form.sessionVarName]
 
   private constructor(readonly step: Step, readonly section: Section, readonly request: Request) {
-    if (this.step.allowedToAccess(this.sessionData) === false) {
+    if (this.step && this.step.allowedToAccess(this.sessionData) === false) {
       throw new OutOfSequenceError()
-    }
-
-    if (this.step.section !== this.section.name) {
-      throw new UnknownStepError()
     }
   }
 
@@ -32,12 +28,12 @@ export default class Form {
       ? request
       : ((await retrieveSavedSession(request, sessionVarName)) as Request)
 
-    const step = await Step.initialize(request.params.step, requestWithSavedSession.body)
     const section = await Section.initialize(
       request.params.section as AllowedSectionNames,
       requestWithSavedSession,
       Form.sessionVarName
     )
+    const step = request.params.step ? await section.getStep(request.params.step as AllowedStepNames) : undefined
 
     return new Form(step, section, request)
   }
@@ -57,7 +53,7 @@ export default class Form {
   }
 
   nextStep(): string {
-    return this.step.nextStep(this.request.session[Form.sessionVarName])
+    return this.step.nextStep(this.request.session[Form.sessionVarName]) || 'check_your_answers'
   }
 
   validForCurrentStep(): boolean {

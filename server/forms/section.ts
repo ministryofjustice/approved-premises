@@ -2,12 +2,16 @@ import { Request } from 'express'
 import { readFile } from 'fs/promises'
 
 import { retrieveSavedSession } from './helpers/retrieveSavedSession'
-import type { AllowedSectionNames } from './interfaces'
+import type { AllowedSectionNames, AllowedStepNames } from './interfaces'
+import { UnknownStepError } from './errors'
+
+import Step from './step'
 
 export interface SectionData {
   name: string
   previousSection: AllowedSectionNames
   nextSection: AllowedSectionNames
+  steps: Array<AllowedStepNames>
 }
 
 export default class Section {
@@ -16,6 +20,8 @@ export default class Section {
   previousSection: AllowedSectionNames = this.sectionData.previousSection
 
   nextSection: AllowedSectionNames = this.sectionData.nextSection
+
+  steps: Array<AllowedStepNames> = this.sectionData.steps
 
   private constructor(
     readonly sectionData: SectionData,
@@ -31,6 +37,21 @@ export default class Section {
 
   public complete(): void {
     this.setSectionStatus('complete')
+  }
+
+  public async getStep(stepName: AllowedStepNames): Promise<Step> {
+    if (!this.steps.includes(stepName)) {
+      throw new UnknownStepError()
+    }
+
+    const body =
+      Object.keys(this.request.body).length > 0 ? this.request.body : this.request.session[this.sessionVarName] || {}
+
+    return Step.initialize(stepName, body)
+  }
+
+  public async allSteps(): Promise<Step[]> {
+    return Promise.all(this.steps.map(step => this.getStep(step)))
   }
 
   public async status(): Promise<string> {

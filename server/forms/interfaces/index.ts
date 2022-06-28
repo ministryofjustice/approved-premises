@@ -47,13 +47,15 @@ export interface ErrorMessages {
   [key: string]: Array<string>
 }
 
+export type RadioOrCheckBoxItems = Array<InputItem | Divider>
+
 export type RadioOptions = {
   idPrefix?: string
   name: string
   hint?: { html: string } | { text: string }
   fieldset?: FieldSetOptions
   errorMessage?: ErrorMessage
-  items?: Array<InputItem | Divider>
+  items?: RadioOrCheckBoxItems
 }
 
 export type TextAreaOptions = {
@@ -65,6 +67,17 @@ export type TextAreaOptions = {
 }
 
 export type CheckBoxOptions = RadioOptions
+
+export type DateInputItems = Array<DateInputItem>
+
+export type DateInputOptions = {
+  idPrefix?: string
+  name: string
+  hint?: { html: string } | { text: string }
+  fieldset?: FieldSetOptions
+  errorMessage?: ErrorMessage
+  items?: DateInputItems
+}
 
 export interface Label {
   text: string
@@ -85,6 +98,12 @@ export interface LegendOptions {
   classes?: string
 }
 
+export interface DateInputItem {
+  classes?: string
+  name: string
+  value?: string
+}
+
 export interface InputItem {
   value: string
   text: string
@@ -95,4 +114,22 @@ export interface InputItem {
 
 export interface Divider {
   divider: string
+}
+
+export type SummaryListActionItem = {
+  href: string
+  text: string
+  visuallyHiddenText: string
+}
+
+export type SummaryListItem = {
+  key: { text: string } | { html: string }
+  value: { text: string } | { html: string }
+  actions?: { items: Array<SummaryListActionItem> }
+}
+
+export type SummaryList = {
+  classes?: string
+  attributes?: any
+  rows: Array<SummaryListItem>
 }
