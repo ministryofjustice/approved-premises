@@ -15,6 +15,10 @@ context('SignIn', () => {
     cy.signIn()
   })
 
+  afterEach(() => {
+    cy.task('deleteSessionFile')
+  })
+
   it('allows me to check eligibility', () => {
     // Given I am on the referral tasklist
     const page = ReferralApplicationTasklist.visit()
@@ -79,12 +83,45 @@ context('SignIn', () => {
     page.checkStatus('ap-type', 'Completed')
   })
 
-  const checkEligibility = (page: ReferralApplicationTasklist) => {
-    page.startSection('Check if the person is eligible')
+  it('Answers are saved in the session ', () => {
+    // Given I complete the questionaire
+    const page = ReferralApplicationTasklist.visit()
+    checkEligibility(page)
+    page.startSection('Select the type of AP Required')
+    const typeOfAp = Page.verifyOnPage(TypeOfAP)
+    typeOfAp.answerType('esap')
+    typeOfAp.saveAndContinue()
+    const esapReasons = Page.verifyOnPage(EsapReasons)
+    esapReasons.chooseReasons(['secreting', 'cctv'])
+    esapReasons.saveAndContinue()
+    const roomSearches = Page.verifyOnPage(RoomSearches)
+    roomSearches.answerItems(['weapons', 'drugs'])
+    roomSearches.answerAgencyRequest('no')
+    roomSearches.saveAndContinue()
+    const cctv = Page.verifyOnPage(CCTV)
+    cctv.answerCctvReasons(['assualt-staff'])
+    cctv.answerCctvAgencyRequest('no')
+    cctv.saveAndContinue()
 
-    const checkEligibilityPage = Page.verifyOnPage(ReferralReason)
+    Page.verifyOnPage(ReferralApplicationTasklist)
 
-    checkEligibilityPage.answerReason('likely')
-    checkEligibilityPage.saveAndContinue()
-  }
+    // When the session is cleared
+    page.signOut().click()
+    cy.signIn()
+
+    // When I go back to the tasklist and the previously answered section
+    // Then my previous answers aren't visible
+    ReferralApplicationTasklist.visit()
+    page.checkStatus('eligibility', 'Completed')
+    page.checkStatus('ap-type', 'Completed')
+  })
 })
+
+const checkEligibility = (page: ReferralApplicationTasklist) => {
+  page.startSection('Check if the person is eligible')
+
+  const checkEligibilityPage = Page.verifyOnPage(ReferralReason)
+
+  checkEligibilityPage.answerReason('likely')
+  checkEligibilityPage.saveAndContinue()
+}

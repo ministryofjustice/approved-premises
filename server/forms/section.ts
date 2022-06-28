@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import { readFile } from 'fs/promises'
 
+import { retrieveSavedSession } from './helpers/retrieveSavedSession'
 import type { AllowedSectionNames } from './interfaces'
 
 export interface SectionData {
@@ -43,6 +44,10 @@ export default class Section {
         if (['not_started' || 'cannot_start'].includes(previousStatus)) {
           return 'cannot_start'
         }
+      }
+      const savedSession = await retrieveSavedSession(this.request, this.sessionVarName)
+      if (savedSession?.session?.[this.sessionVarName]?.sections?.[this.name]) {
+        return savedSession.session[this.sessionVarName].sections[this.name].status
       }
 
       return 'not_started'

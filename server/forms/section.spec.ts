@@ -1,6 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
 import fsPromises from 'fs/promises'
+import { pathExists, outputFile } from 'fs-extra'
 
 import Section, { SectionData } from './section'
 
@@ -13,6 +14,13 @@ const sectionDataMock = {
 jest.mock('fs/promises', () => {
   return {
     readFile: () => JSON.stringify(sectionDataMock),
+  }
+})
+
+jest.mock('fs-extra', () => {
+  return {
+    pathExists: jest.fn(),
+    outputFile: jest.fn(),
   }
 })
 
@@ -99,6 +107,8 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('complete')
+      expect(pathExists).not.toHaveBeenCalled()
+      expect(outputFile).not.toHaveBeenCalled()
     })
 
     it('returns the status when the session variable has a different status value', async () => {
@@ -115,6 +125,8 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('in_progress')
+      expect(pathExists).not.toHaveBeenCalled()
+      expect(outputFile).not.toHaveBeenCalled()
     })
 
     it('returns not_started when the session variable has no status value', async () => {
@@ -127,6 +139,8 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('not_started')
+      expect(pathExists).toHaveBeenCalled()
+      expect(outputFile).not.toHaveBeenCalled()
     })
 
     it('returns not_started when there is no session variable', async () => {
@@ -137,6 +151,8 @@ describe('Section', () => {
       const section = await Section.initialize('eligibility', request, 'referralApplication')
 
       expect(await section.status()).toEqual('not_started')
+      expect(pathExists).toHaveBeenCalled()
+      expect(outputFile).not.toHaveBeenCalled()
     })
 
     it('returns cannot_start when the previous section has not been completed', async () => {
