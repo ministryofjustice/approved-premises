@@ -52,7 +52,7 @@ context('SignIn', () => {
     checkEligibility(page)
 
     // And I visit the type of AP section
-    page.startSection('Select the type of AP Required')
+    page.startSection('Select the type of AP required')
 
     // And I choose an ESAP AP
     const typeOfAp = Page.verifyOnPage(TypeOfAP)
@@ -92,7 +92,7 @@ context('SignIn', () => {
     // Given I complete the questionaire
     const page = ReferralApplicationTasklist.visit()
     checkEligibility(page)
-    page.startSection('Select the type of AP Required')
+    page.startSection('Select the type of AP required')
     const typeOfAp = Page.verifyOnPage(TypeOfAP)
     typeOfAp.answerType('esap')
     typeOfAp.saveAndContinue()
