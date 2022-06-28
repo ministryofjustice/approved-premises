@@ -4,7 +4,7 @@ import { pathExists, outputFile } from 'fs-extra'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
-import { OutOfSequenceError, UnknownStepError } from './errors'
+import { OutOfSequenceError } from './errors'
 
 import Form from './form'
 import Section from './section'
@@ -37,8 +37,8 @@ describe('Form', () => {
       name: 'eligibility',
     })
 
-    jest.spyOn(Step, 'initialize').mockResolvedValue(mockStep)
     jest.spyOn(Section, 'initialize').mockResolvedValue(mockSection)
+    jest.spyOn(mockSection, 'getStep').mockResolvedValue(mockStep)
   })
 
   describe('initialize', () => {
@@ -49,12 +49,6 @@ describe('Form', () => {
       expect(async () => Form.initialize(request)).rejects.toThrowError(OutOfSequenceError)
     })
 
-    it('raises an error if the section does not match the step', async () => {
-      const request = createMock<Request>({})
-      mockSection.name = 'ap-type'
-
-      expect(async () => Form.initialize(request)).rejects.toThrowError(UnknownStepError)
-    })
     it('when called with a request with an empty body then it attempts to read the session from file', async () => {
       const pathExistsMock = (pathExists as jest.Mock).mockResolvedValue(true)
       const readFileMock = (readFile as jest.Mock).mockResolvedValue('{}')

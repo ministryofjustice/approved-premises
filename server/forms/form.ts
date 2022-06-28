@@ -3,8 +3,8 @@ import { Request } from 'express'
 import Step from './step'
 import Section from './section'
 
-import { ErrorMessages, AllowedSectionNames } from './interfaces'
-import { OutOfSequenceError, UnknownStepError } from './errors'
+import { ErrorMessages, AllowedSectionNames, AllowedStepNames } from './interfaces'
+import { OutOfSequenceError } from './errors'
 import { retrieveSavedSession } from './helpers/retrieveSavedSession'
 import { saveSession } from './helpers/saveSession'
 
@@ -21,10 +21,6 @@ export default class Form {
     if (this.step.allowedToAccess(this.sessionData) === false) {
       throw new OutOfSequenceError()
     }
-
-    if (this.step.section !== this.section.name) {
-      throw new UnknownStepError()
-    }
   }
 
   public static async initialize(request: Request): Promise<Form> {
@@ -32,12 +28,12 @@ export default class Form {
       ? request
       : ((await retrieveSavedSession(request, sessionVarName)) as Request)
 
-    const step = await Step.initialize(request.params.step, requestWithSavedSession.body)
     const section = await Section.initialize(
       request.params.section as AllowedSectionNames,
       requestWithSavedSession,
       Form.sessionVarName
     )
+    const step = await section.getStep(request.params.step as AllowedStepNames)
 
     return new Form(step, section, request)
   }
