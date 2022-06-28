@@ -63,7 +63,19 @@
 									</span>
 									{{ tag(apTypeStatus, 'ap-type') }}
 								</li>
-						</li>
+							</li>
+							<li class="app-task-list__item" data-task="confirm-ap-need">
+								<span class="app-task-list__task-name">
+									{% if confirmApNeed == 'cannot_start' %}
+												Confirm the need for an AP
+											{% else %}
+										<a href="" aria-describedby="confirm-ap-need">Confirm the need for an AP</a>
+									{% endif %}
+								</span>
+								{{ tag(confirmApNeed, 'confirm-ap-need') }}
+							</li>
+						</ul>
+					</li>
 
 					<li>
 						<h2 class="app-task-list__section">

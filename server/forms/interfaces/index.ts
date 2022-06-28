@@ -2,7 +2,7 @@ import { Request } from 'express'
 
 import { RulesLogic } from 'json-logic-js'
 
-export type AllowedSectionNames = 'eligibility' | 'ap-type'
+export type AllowedSectionNames = 'eligibility' | 'ap-type' | 'confirm-ap-need'
 
 export type AllowedStepNames =
   | 'referral-reason'
