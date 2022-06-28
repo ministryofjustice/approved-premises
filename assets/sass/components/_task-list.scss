@@ -67,3 +67,35 @@
     margin-bottom: 0;
   }
 }
+
+.app-task-list__header-text {
+  color: $govuk-secondary-text-colour;
+  div {
+    margin-bottom: govuk-spacing(3);
+  }
+  .seperator {
+    margin: 0 govuk-spacing(1);
+  }
+  hr {
+    color: govuk-colour('mid-grey');
+  }
+}
+
+.app-task-list__definition-row {
+  dd:not(:last-child) {
+    border-right: 2px solid $govuk-border-colour;
+    padding-right: govuk-spacing(2);
+  }
+  dt:not(:first-child) {
+    padding-left: govuk-spacing(2);
+  }
+}
+
+.app-task-list__definition-term {
+  display: inline-block;
+}
+
+.app-task-list__definition-description {
+  display: inline-block;
+  margin-left: 0;
+}
