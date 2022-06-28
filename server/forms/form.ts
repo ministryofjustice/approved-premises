@@ -18,7 +18,7 @@ export default class Form {
   sessionData = this.request.session[Form.sessionVarName]
 
   private constructor(readonly step: Step, readonly section: Section, readonly request: Request) {
-    if (this.step.allowedToAccess(this.sessionData) === false) {
+    if (this.step && this.step.allowedToAccess(this.sessionData) === false) {
       throw new OutOfSequenceError()
     }
   }
@@ -33,7 +33,7 @@ export default class Form {
       requestWithSavedSession,
       Form.sessionVarName
     )
-    const step = await section.getStep(request.params.step as AllowedStepNames)
+    const step = request.params.step ? await section.getStep(request.params.step as AllowedStepNames) : undefined
 
     return new Form(step, section, request)
   }

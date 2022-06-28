@@ -43,7 +43,7 @@ describe('Form', () => {
 
   describe('initialize', () => {
     it('raises an error if the step is not allowed', async () => {
-      const request = createMock<Request>({})
+      const request = createMock<Request>({ params: { step: 'some-step' } })
       mockStep.allowedToAccess.mockImplementation(() => false)
 
       expect(async () => Form.initialize(request)).rejects.toThrowError(OutOfSequenceError)
@@ -71,6 +71,14 @@ describe('Form', () => {
       await Form.initialize(request)
       expect(pathExistsMock).not.toHaveBeenCalled()
       expect(readFileMock).not.toHaveBeenCalled()
+    })
+
+    it('initializes the form without a step if there is not a step in the parameters', async () => {
+      const request = createMock<Request>({})
+
+      const form = await Form.initialize(request)
+
+      expect(form.step).toBeUndefined()
     })
   })
 
