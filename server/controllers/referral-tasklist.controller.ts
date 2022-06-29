@@ -19,6 +19,10 @@ export const ReferralTasklistController = {
         riskToStaff: 'HIGH',
         lastUpdated: '10th October 2021',
       },
+      tier: {
+        level: 'A1',
+        lastUpdated: '10th October 2021',
+      },
     }
 
     const sections = await Promise.all([
