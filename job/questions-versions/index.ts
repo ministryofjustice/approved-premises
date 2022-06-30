@@ -1,24 +1,22 @@
 import { loadQuestionFiles } from './loadQuestionFiles'
-import { loadVersionFile } from './loadVersionFile'
 import { incrementVersion } from './incrementVersion'
-import { writeNewVersionFile } from './writeNewVersionFile'
+import { overwritePreviousQuestions } from './overwritePreviousQuestions'
 
-const main = async () => {
+const main = async (): Promise<void> => {
   console.log(`loading questions...`)
   const { previousQuestions, currentQuestions } = await loadQuestionFiles('previous.json', 'current.json')
 
   if (previousQuestions !== currentQuestions) {
     console.log(`questions do not match previous version`)
 
-    const currentVersionFile = await loadVersionFile('version.json')
-    const newVersion = incrementVersion(currentVersionFile)
+    const newVersion = await incrementVersion()
+    console.log(`wrote new version ${JSON.stringify(newVersion)}`)
 
-    await writeNewVersionFile('version.json', newVersion)
-    return newVersion
+    await overwritePreviousQuestions(currentQuestions)
+    console.log(`overwrote previous questions`)
+    return
   }
-
   console.log(`questions match previous version`)
-  return undefined
 }
 
 main()
