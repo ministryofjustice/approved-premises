@@ -1,0 +1,25 @@
+name: Check questions version
+
+on:
+  pull_request:
+
+env:
+  NODE_ENV: test
+
+jobs:
+  check_questions_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+
+      - name: Installing dependencies
+        run: npm install
+
+      - name: Run script
+        id: check-version
+        run: npm run check-questions-version
