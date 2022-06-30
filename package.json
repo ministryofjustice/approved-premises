@@ -34,7 +34,8 @@
     "clean": "rm -rf dist build node_modules stylesheets",
     "seed:premises": "npm run console -- seed:premises",
     "seed:bookings": "npm run console -- seed:bookings",
-    "index:bed-availability": "npm run console -- index:bed-availability"
+    "index:bed-availability": "npm run console -- index:bed-availability",
+    "check-questions-version": "ts-node ./job/questions-versions/index.ts"
   },
   "engines": {
     "node": "^16",
