@@ -4,7 +4,10 @@ import { overwritePreviousQuestions } from './overwritePreviousQuestions'
 
 const main = async (): Promise<void> => {
   console.log(`loading questions...`)
-  const { previousQuestions, currentQuestions } = await loadQuestionFiles('previous.json', 'current.json')
+  const { previousQuestions, currentQuestions } = await loadQuestionFiles(
+    'previous.json',
+    '../../server/forms/questions/'
+  )
 
   if (previousQuestions !== currentQuestions) {
     console.log(`questions do not match previous version`)
