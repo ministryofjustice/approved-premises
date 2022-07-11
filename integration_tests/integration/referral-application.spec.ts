@@ -46,13 +46,19 @@ context('SignIn', () => {
     page.linkForSectionShouldNotExist('ap-type')
   })
 
+  it('allows me to click confirm checkbox and "Submit" button', () => {
+    const page = ReferralApplicationTasklist.visit()
+    page.clickSubmissionCheckbox()
+    page.submit()
+  })
+
   it('allows me to select a type of AP', () => {
     // Given I have checked the person's eligiblity
     const page = ReferralApplicationTasklist.visit()
     checkEligibility(page)
 
     // And I visit the type of AP section
-    page.startSection('Select the type of AP Required')
+    page.startSection('Select the type of AP required')
 
     // And I choose an ESAP AP
     const typeOfAp = Page.verifyOnPage(TypeOfAP)
@@ -92,7 +98,7 @@ context('SignIn', () => {
     // Given I complete the questionaire
     const page = ReferralApplicationTasklist.visit()
     checkEligibility(page)
-    page.startSection('Select the type of AP Required')
+    page.startSection('Select the type of AP required')
     const typeOfAp = Page.verifyOnPage(TypeOfAP)
     typeOfAp.answerType('esap')
     typeOfAp.saveAndContinue()
