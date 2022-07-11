@@ -23,3 +23,9 @@ jobs:
       - name: Run script
         id: check-version
         run: npm run check-questions-version
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: job/questions-versions/previous.json job/questions-versions/version.json
+          commit_message: Increment questions + versions file
+          push_options: '--no-verify'
