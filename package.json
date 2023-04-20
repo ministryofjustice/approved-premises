@@ -127,7 +127,7 @@
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.3",
     "nocache": "^3.0.1",
-    "nunjucks": "^3.2.3",
+    "nunjucks": "^3.2.4",
     "passport": "^0.5.2",
     "passport-oauth2": "^1.6.1",
     "pg": "^8.7.3",
